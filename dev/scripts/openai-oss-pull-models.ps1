@@ -20,9 +20,9 @@ $models = @(
     "hermes-2-theta-llama-3-8b"
 )
 
-# LocalAI may be published on 8090 (ai-text) or 8082 (ai-audio)
-$ports = @(8090, 8082)
-Write-Host "Installing LocalAI models via /models/apply API (trying host ports 8090, 8082)"
+# LocalAI may be published on 48090 (ai-text) or 48082 (ai-audio)
+$ports = @(48090, 48082)
+Write-Host "Installing LocalAI models via /models/apply API (trying host ports 48090, 48082)"
 foreach ($m in $models) {
     Write-Host "Install $m ..."
     $body = '{"id":"' + $m + '"}'
@@ -36,4 +36,4 @@ foreach ($m in $models) {
     }
     if (-not $ok) { Write-Host "  (install failed or skipped: $m)" }
 }
-Write-Host "Done. List models: curl -s http://localhost:8090/v1/models (or 8082 for audio stack)"
+Write-Host "Done. List models: curl -s http://localhost:48090/v1/models (or 48082 for audio stack)"

@@ -32,8 +32,8 @@ $models = @(
 Write-Host "Pulling Ollama models into container: $container"
 foreach ($m in $models) {
     Write-Host "Pull $m ..."
-    # Suppress stderr so Ollama progress output (written to stderr) does not trigger PowerShell errors
-    $null = docker exec $container ollama pull $m 2>$null
+    # Keep stderr/stdout visible so Ollama download progress is shown live.
+    docker exec $container ollama pull $m
     if ($LASTEXITCODE -ne 0) { Write-Host "  (pull failed or skipped: $m)" }
 }
 Write-Host "Done. List: docker exec $container ollama list"

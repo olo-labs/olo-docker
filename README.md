@@ -1,6 +1,6 @@
 # OLO Docker Stack
 
-This repository provides Docker Compose setups to bring up the OLO stack in three environments: **dev**, **prod**, and **demo**. Each environment has its own folder with a `docker-compose.yml` and install scripts. You can bring up a stack from the repository root (with an optional folder argument) or from inside each folder.
+This repository provides Docker Compose setups to bring up the OLO stack in three environments: **dev**, **prod**, and **demo**. **Dev** uses multiple `docker-compose-*.yml` files merged at install time; **prod** and **demo** use a single `docker-compose.yml` each. You can bring up a stack from the repository root (with an optional folder argument) or from inside each folder.
 
 ---
 
@@ -20,6 +20,17 @@ This repository provides Docker Compose setups to bring up the OLO stack in thre
 - [Stopping the Stack](#stopping-the-stack)
 - [Customization](#customization)
 - [Troubleshooting](#troubleshooting)
+- [Detailed documentation (docs/)](#detailed-documentation-docs)
+
+---
+
+## Detailed documentation (docs/)
+
+For a deeper walkthrough (directory layout, every Compose file, scripts, internal vs host ports, architecture):
+
+- [docs/README.md](docs/README.md) — documentation index  
+- [docs/architecture.md](docs/architecture.md) — system diagram and data flow  
+- [docs/reference.md](docs/reference.md) — YAML inventory, scripts, configuration paths, port table  
 
 ---
 
@@ -45,10 +56,13 @@ Before bringing up any stack, ensure you have:
 ```
 olo-docker/
 ├── README.md                 # This file
-├── install.sh                # Root install script (default: demo)
-├── install.bat               # Root install script for Windows (default: demo)
+├── install.sh                # Root install script (default: dev)
+├── install.bat               # Root install script for Windows (default: dev)
+├── docs/                     # Architecture + full reference (see docs/README.md)
 ├── dev/
-│   ├── docker-compose.yml    # Development stack
+│   ├── docker-compose-*.yml  # Split dev stack (db, cache, olo, AI, …)
+│   ├── configuration/        # DB init, worker JSON, Temporal, pgAdmin, RedisInsight
+│   ├── scripts/              # Ollama / LocalAI model helpers after install
 │   ├── install.sh            # Bring up dev stack (Unix/macOS)
 │   └── install.bat           # Bring up dev stack (Windows)
 ├── prod/
@@ -66,7 +80,7 @@ olo-docker/
 
 ## Quick Start
 
-**From the repository root (default is demo):**
+**From the repository root (default is dev):**
 
 - **Linux/macOS:**  
   `./install.sh`  
@@ -102,7 +116,7 @@ You can either use the **root install scripts** (recommended) or the **per-folde
 
 #### Option A — From root (recommended)
 
-- **Default stack (demo):**  
+- **Default stack (dev):**  
   - Unix/macOS: `./install.sh` (make executable once: `chmod +x install.sh`)  
   - Windows: `install.bat`
 
@@ -110,7 +124,7 @@ You can either use the **root install scripts** (recommended) or the **per-folde
   - Unix/macOS: `./install.sh dev` or `./install.sh prod` or `./install.sh demo`  
   - Windows: `install.bat dev` or `install.bat prod` or `install.bat demo`
 
-The root script checks that the argument is `dev`, `prod`, or `demo`; if you omit the argument, it uses **demo**.
+The root script checks that the argument is `dev`, `prod`, or `demo`; if you omit the argument, it uses **dev**.
 
 #### Option B — From inside each folder
 
@@ -217,10 +231,21 @@ The **prod** stack reads database credentials from environment variables. The in
 
 If you prefer not to use the install scripts:
 
-**Dev:**
+**Dev** uses multiple compose files. Ensure `olo-net` exists (`docker network create olo-net`), then from `dev/` run `docker compose` with the same `-f` files as `dev/install.bat` / `dev/install.sh` (core + `docker-compose-ai-text.yml` at minimum). See [docs/reference.md](docs/reference.md) for the full file list and optional AI overlays.
+
+Example (core + text AI only):
+
 ```bash
 cd dev
-docker compose up -d
+docker compose -p olo \
+  -f docker-compose-db.yml \
+  -f docker-compose-cache.yml \
+  -f docker-compose-ElasticSearch.yml \
+  -f docker-compose-vectordb.yml \
+  -f docker-compose-temporal.yml \
+  -f docker-compose-olo.yml \
+  -f docker-compose-ai-text.yml \
+  up -d
 ```
 
 **Prod (from repo root, with .env in prod/):**
@@ -238,7 +263,6 @@ docker compose up -d
 Or from the repository root without changing directory:
 
 ```bash
-docker compose -f dev/docker-compose.yml up -d
 docker compose -f prod/docker-compose.yml --env-file prod/.env up -d
 docker compose -f demo/docker-compose.yml up -d
 ```
@@ -373,8 +397,8 @@ docker compose down -v
 
 | Goal                    | Command (root)              | Or from folder   |
 |-------------------------|-----------------------------|------------------|
-| Bring up demo (default) | `./install.sh` or `install.bat` | `cd demo` → `./install.sh` or `install.bat` |
-| Bring up dev            | `./install.sh dev` or `install.bat dev` | `cd dev` → run install |
+| Bring up dev (default)  | `./install.sh` or `install.bat` | `cd dev` → `./install.sh` or `install.bat` |
+| Bring up demo           | `./install.sh demo` or `install.bat demo` | `cd demo` → run install |
 | Bring up prod           | `./install.sh prod` or `install.bat prod` | Create `prod/.env`, then `cd prod` → run install |
 
 Ensure Docker is installed and running, and for production always set a strong `POSTGRES_PASSWORD` in `prod/.env`.

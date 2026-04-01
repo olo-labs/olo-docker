@@ -21,16 +21,16 @@ MODELS=(
     hermes-2-theta-llama-3-8b
 )
 
-# LocalAI may be published on 8090 (ai-text) or 8082 (ai-audio). Call API from host.
-echo "Installing LocalAI models via /models/apply API (trying host ports 8090, 8082)"
+# LocalAI may be published on 48090 (ai-text) or 48082 (ai-audio). Call API from host.
+echo "Installing LocalAI models via /models/apply API (trying host ports 48090, 48082)"
 for m in "${MODELS[@]}"; do
     echo "Install $m ..."
-    if curl -s -X POST "http://localhost:8090/models/apply" -H "Content-Type: application/json" -d "{\"id\":\"$m\"}" --max-time 300 2>/dev/null; then
+    if curl -s -X POST "http://localhost:48090/models/apply" -H "Content-Type: application/json" -d "{\"id\":\"$m\"}" --max-time 300 2>/dev/null; then
         :
-    elif curl -s -X POST "http://localhost:8082/models/apply" -H "Content-Type: application/json" -d "{\"id\":\"$m\"}" --max-time 300 2>/dev/null; then
+    elif curl -s -X POST "http://localhost:48082/models/apply" -H "Content-Type: application/json" -d "{\"id\":\"$m\"}" --max-time 300 2>/dev/null; then
         :
     else
         echo "  (install failed or skipped: $m)"
     fi
 done
-echo "Done. List models: curl -s http://localhost:8090/v1/models (or 8082 for audio stack)"
+echo "Done. List models: curl -s http://localhost:48090/v1/models (or 48082 for audio stack)"
