@@ -1,0 +1,24 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: olo-qdrant
+    restart: unless-stopped
+    ports:
+      - "46333:6333"   # REST / gRPC over HTTP
+      - "46334:6334"   # gRPC
+    environment:
+      - QDRANT__STORAGE__STORAGE_PATH=/qdrant/storage
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__SERVICE__HTTP_PORT=6333
+    volumes:
+      - olo-dev-qdrant-data:/qdrant/storage
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-dev-qdrant-data:

@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:${POSTGRESQL_VERSION:-15}
+    container_name: olo-db
+    restart: unless-stopped
+    env_file:
+      - ./configuration/envirinment/database.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pguser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgpass}
+      POSTGRES_DB: ${POSTGRES_DB:-pgdb}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "45432:5432"
+    volumes:
+      - olo-db-data:/var/lib/postgresql/data
+      - ./configuration/database-initialization:/docker-entrypoint-initdb.d
+    networks:
+      - olo-net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: olo-pgadmin
+    restart: unless-stopped
+    env_file:
+      - ./configuration/envirinment/database.env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: ${PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED:-False}
+    volumes:
+      - ./configuration/pgadmin/servers.json:/pgadmin4/servers.json 
+    ports:
+      - "48081:80"
+    depends_on:
+      - db
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-db-data:

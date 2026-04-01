@@ -1,0 +1,44 @@
+# Demo stack - demo mode, sample data friendly, DB exposed for inspection
+# Run: docker compose up -d              → starts db only (no app image needed)
+# Run: docker compose --profile app up -d → starts db + app (requires your-app:latest)
+services:
+  app:
+    image: your-app:latest
+    container_name: olo-app-demo
+    restart: unless-stopped
+    profiles:
+      - app
+    ports:
+      - "53010:3000"
+    environment:
+      - NODE_ENV=demo
+      - DEBUG=false
+      - LOG_LEVEL=info
+      - DEMO_MODE=true
+    depends_on:
+      - db
+    networks:
+      - olo-net
+
+  db:
+    image: postgres:16-alpine
+    container_name: olo-db-demo
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+      - POSTGRES_DB=olo_demo
+    ports:
+      - "45433:5432"
+    volumes:
+      - olo-demo-db-data:/var/lib/postgresql/data
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-demo-db-data:

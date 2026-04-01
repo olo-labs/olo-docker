@@ -1,0 +1,76 @@
+# Dev AI stack - image: Stable Diffusion WebUI, InvokeAI, ComfyUI
+# Uses all NVIDIA GPUs. Requires nvidia-container-toolkit.
+services:
+  stable-diffusion:
+    image: ghcr.io/ai-dock/stable-diffusion-webui:latest-cuda
+    container_name: olo-stable-diffusion
+    restart: unless-stopped
+    ports:
+      - "47860:7860"
+    environment:
+      - CLI_ARGS=--allow-code
+    volumes:
+      - olo-dev-sd-data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+  invokeai:
+    image: ghcr.io/invoke-ai/invokeai:latest
+    container_name: olo-invokeai
+    restart: unless-stopped
+    ports:
+      - "49090:9090"
+    environment:
+      - INVOKEAI_ROOT=/invokeai
+    volumes:
+      - olo-dev-invokeai-data:/invokeai
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+  comfyui:
+    image: ghcr.io/ai-dock/comfyui:latest-cuda
+    container_name: olo-comfyui
+    restart: unless-stopped
+    ports:
+      - "48188:8188"
+    environment:
+      - COMFYUI_PORT=8188
+    volumes:
+      - olo-dev-comfyui-models:/opt/ComfyUI/models
+      - olo-dev-comfyui-output:/opt/ComfyUI/output
+      - olo-dev-comfyui-input:/opt/ComfyUI/input
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-dev-sd-data:
+  olo-dev-invokeai-data:
+  olo-dev-comfyui-models:
+  olo-dev-comfyui-output:
+  olo-dev-comfyui-input:

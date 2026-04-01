@@ -1,0 +1,40 @@
+CREATE ROLE temporal
+WITH
+  LOGIN
+  PASSWORD 'pgpass';
+
+ALTER ROLE temporal SUPERUSER;
+
+CREATE DATABASE temporal OWNER temporal;
+
+
+
+
+
+CREATE ROLE olo_chat
+WITH
+  LOGIN
+  PASSWORD 'pgpass';
+
+ALTER ROLE olo_chat SUPERUSER;
+
+CREATE DATABASE olo_chat OWNER olo_chat;
+
+
+
+
+
+CREATE ROLE olo
+WITH
+  LOGIN
+  PASSWORD 'pgpass';
+
+ALTER ROLE olo SUPERUSER;
+
+CREATE DATABASE olo OWNER olo;
+
+
+
+
+
+

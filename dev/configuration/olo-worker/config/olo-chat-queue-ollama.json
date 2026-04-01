@@ -1,0 +1,139 @@
+{
+  "version": "1.0.0",
+  "executionDefaults": {
+    "engine": "TEMPORAL",
+    "temporal": {
+      "target": "temporal:7233",
+      "namespace": "default",
+      "taskQueuePrefix": "olo-"
+    },
+    "activity": {
+      "payload": {
+        "maxAccumulatedOutputKeys": 0,
+        "maxResultOutputKeys": 0
+      },
+      "defaultTimeouts": {
+        "scheduleToStartSeconds": 6000,
+        "startToCloseSeconds": 3000,
+        "scheduleToCloseSeconds": 30000
+      },
+      "retryPolicy": {
+        "maximumAttempts": 3,
+        "initialIntervalSeconds": 1,
+        "backoffCoefficient": 2,
+        "maximumIntervalSeconds": 60,
+        "nonRetryableErrors": []
+      }
+    }
+  },
+  "pluginRestrictions": [],
+  "featureRestrictions": [],
+  "pipelines": {
+    "olo-chat-queue-ollama": {
+      "name": "olo-chat-queue-ollama",
+      "workflowId": "olo-chat-queue-ollama",
+      "inputContract": {
+        "strict": true,
+        "parameters": [
+          {
+            "name": "userQuery",
+            "type": "STRING",
+            "required": true
+          }
+        ]
+      },
+      "variableRegistry": [
+        {
+          "name": "userQuery",
+          "type": "STRING",
+          "scope": "IN"
+        },
+        {
+          "name": "__planner_result",
+          "type": "STRING",
+          "scope": "INTERNAL"
+        },
+        {
+          "name": "__planner_step_0_response",
+          "type": "STRING",
+          "scope": "OUT"
+        }
+      ],
+      "scope": {
+        "plugins": [
+          {
+            "id": "ECHO_TOOL",
+            "displayName": "Echo",
+            "contractType": "MODEL_EXECUTOR",
+            "inputParameters": [
+              {
+                "name": "prompt",
+                "type": "STRING",
+                "required": true
+              }
+            ],
+            "outputParameters": [
+              {
+                "name": "responseText",
+                "type": "STRING"
+              }
+            ]
+          },
+          {
+            "id": "GPT4_EXECUTOR",
+            "displayName": "Ollama (Planner)",
+            "contractType": "MODEL_EXECUTOR",
+            "inputParameters": [
+              {
+                "name": "prompt",
+                "type": "STRING",
+                "required": true
+              }
+            ],
+            "outputParameters": [
+              {
+                "name": "responseText",
+                "type": "STRING"
+              }
+            ]
+          }
+        ],
+        "features": []
+      },
+      "executionTree": {
+        "id": "root",
+        "displayName": "Echo via Planner",
+        "type": "SEQUENCE",
+        "children": [
+          {
+            "id": "plannerNode",
+            "displayName": "Planner",
+            "type": "PLANNER",
+            "params": {
+              "modelPluginRef": "GPT4_EXECUTOR",
+              "userQueryVariable": "userQuery",
+              "resultVariable": "__planner_result",
+              "treeBuilder": "default"
+            },
+            "children": []
+          }
+        ]
+      },
+      "outputContract": {
+        "parameters": [
+          {
+            "name": "answer",
+            "type": "STRING"
+          }
+        ]
+      },
+      "resultMapping": [
+        {
+          "variable": "__planner_step_0_response",
+          "outputParameter": "answer"
+        }
+      ],
+      "executionType": "SYNC"
+    }
+  }
+}

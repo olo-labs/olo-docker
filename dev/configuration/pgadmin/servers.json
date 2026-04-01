@@ -1,0 +1,40 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "olo",
+      "Group": "olo",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "olo",
+      "Username": "olo",
+      "SSLMode": "prefer"
+    },
+    "2": {
+      "Name": "pgdb",
+      "Group": "olo",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "pgdb",
+      "Username": "pguser",
+      "SSLMode": "prefer"
+    },    
+    "3": {
+      "Name": "olo_chat",
+      "Group": "olo",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "olo_chat",
+      "Username": "olo_chat",
+      "SSLMode": "prefer"
+    },    
+    "4": {
+      "Name": "temporal",
+      "Group": "olo",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "temporal",
+      "Username": "temporal",
+      "SSLMode": "prefer"
+    }
+  }
+}

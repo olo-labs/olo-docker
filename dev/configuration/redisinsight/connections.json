@@ -1,0 +1,7 @@
+[
+  {
+    "name": "olo Redis",
+    "host": "olo-redis",
+    "port": 6379
+  }
+]

@@ -1,0 +1,55 @@
+services:
+  temporal:
+    container_name: olo-temporal
+    image: temporalio/auto-setup:${TEMPORAL_VERSION:-1.22.4}
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=pgpass
+      - POSTGRES_SEEDS=db
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development-sql.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=elasticsearch
+      - ES_VERSION=v7
+    ports:
+      - "48001:8000"
+      - "47233:7233"
+    volumes:
+      - ./configuration/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - olo-net
+    restart: unless-stopped
+
+  temporal-admin-tools:
+    container_name: olo-temporal-admin-tools
+    image: temporalio/admin-tools:${TEMPORAL_ADMINTOOLS_VERSION:-1.22.4}
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    stdin_open: true
+    tty: true
+    networks:
+      - olo-net
+    restart: unless-stopped
+
+  temporal-ui:
+    container_name: olo-temporal-ui
+    image: temporalio/ui:${TEMPORAL_UI_VERSION:-2.47.2}
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:43000
+    ports:
+      - "48092:8080"
+    networks:
+      - olo-net
+    restart: unless-stopped
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net

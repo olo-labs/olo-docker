@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: olo-redis
+    restart: unless-stopped
+    ports:
+      - "46379:6379"
+    volumes:
+      - olo-redis-data:/data
+    networks:
+      - olo-net
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: olo-redisinsight
+    restart: unless-stopped
+    ports:
+      - "45540:5540"
+    environment:
+      - RI_PRE_SETUP_DATABASES_PATH=/db/import-data/connections.json
+      # Optional: Auto-accept terms to skip initial setup screen
+      - RI_ACCEPT_TERMS_AND_CONDITIONS=true
+    volumes:
+      # persist connections and optionally preload them
+      - olo-redisinsight_data:/db
+      - ./configuration/redisinsight/connections.json:/db/import-data/connections.json
+    depends_on:
+      - redis
+     
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-redis-data:
+  olo-redisinsight_data:

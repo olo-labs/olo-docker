@@ -1,0 +1,34 @@
+# Dev AI stack - video: ComfyUI (AnimateDiff, SVD, etc.)
+# Uses all NVIDIA GPUs. Requires nvidia-container-toolkit.
+services:
+  comfyui:
+    image: ghcr.io/ai-dock/comfyui:latest-cuda
+    container_name: olo-comfyui-video
+    restart: unless-stopped
+    ports:
+      - "48189:8188"
+    environment:
+      - COMFYUI_PORT=8188
+    volumes:
+      - olo-dev-comfyui-video-models:/opt/ComfyUI/models
+      - olo-dev-comfyui-video-output:/opt/ComfyUI/output
+      - olo-dev-comfyui-video-input:/opt/ComfyUI/input
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-dev-comfyui-video-models:
+  olo-dev-comfyui-video-output:
+  olo-dev-comfyui-video-input:

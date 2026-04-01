@@ -1,0 +1,91 @@
+services:
+  olo:
+    image: openllmorchestrator/olo:latest
+    container_name: olo-api
+    restart: unless-stopped
+    ports:
+      - "47080:7080"
+    environment:
+      SERVER_PORT: "7080"
+      OLO_SWAGGER_UI_ENABLED: "true"
+      OLO_CACHE_HOST: redis
+      OLO_CACHE_PORT: "6379"
+      OLO_CACHE_DATABASE: "0"
+      OLO_DB_HOST: db
+      OLO_DB_PORT: "5432"
+      OLO_DB_NAME: olo
+      OLO_DB_USER: olo
+      OLO_DB_PASSWORD: pgpass
+      OLO_TEMPORAL_TARGET: temporal:7233
+      OLO_TEMPORAL_NAMESPACE: default
+      OLO_TEMPORAL_TASK_QUEUE: chat-queue-ollama-debug
+      OLO_CHAT_CALLBACK_BASE_URL: "http://localhost:47080"
+      OLO_WS_JWT_REQUIRED: "false"
+      OLO_DEFAULT_TENANT_ID: "2a2a91fb-f5b4-4cf0-b917-524d242b2e3d"
+    depends_on:
+      - redis
+      - db
+    networks:
+      - olo-net
+
+  olo-worker:
+    image: openllmorchestrator/olo-worker:latest
+    container_name: olo-worker
+    restart: unless-stopped
+    environment:
+      - OLO_CONFIG_DIR=/app/config
+      - TEMPORAL_HOST=temporal:7233
+      - OLO_QUEUE=olo-chat-queue-ollama,olo-rag-queue-openai,olo-echo-planner
+      - OLO_IS_DEBUG_ENABLED=true
+      - OLO_CACHE_HOST=redis
+      - OLO_CACHE_PORT=6379
+      - OLO_DB_HOST=db
+      - OLO_DB_PORT=5432
+      - OLO_DB_NAME=olo
+      - OLO_DB_USER=olo
+      - OLO_DB_PASSWORD=pgpass
+      - OLO_RUN_LEDGER=true
+      - OLO_DEFAULT_TENANT_ID=2a2a91fb-f5b4-4cf0-b917-524d242b2e3d
+      - OLO_DEFAULT_TENANT_NAME=default
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_BASE_URL=http://qdrant:6333
+    volumes:
+      - ./configuration/olo-worker/config:/app/config
+    depends_on:
+      - olo
+      - temporal
+    networks:
+      - olo-net
+
+  olo-ui:
+    image: openllmorchestrator/olo-ui:latest
+    container_name: olo-ui
+    restart: unless-stopped
+    ports:
+      - "43001:80"
+    environment:
+      - OLO_API_BASE_URL=http://localhost:47080
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - OLO_TENANT_IDS=olo:tenants
+    depends_on:
+      - olo
+    networks:
+      - olo-net
+
+  olo-chat:
+    image: openllmorchestrator/olo-chat:latest
+    container_name: olo-chat
+    restart: unless-stopped
+    ports:
+      - "43000:80"
+    depends_on:
+      - olo
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+

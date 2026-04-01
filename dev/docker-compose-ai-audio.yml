@@ -1,0 +1,52 @@
+# Dev AI stack - audio: OpenAI-compatible (LocalAI TTS/STT) + Ollama (whisper)
+# Uses all NVIDIA GPUs. Requires nvidia-container-toolkit.
+services:
+  openai-oss:
+    image: localai/localai:latest-gpu-nvidia-cuda-12
+    container_name: olo-openai-oss
+    restart: unless-stopped
+    ports:
+      - "48082:8080"
+    environment:
+      - THREADS=4
+      - DEBUG=true
+    volumes:
+      - olo-dev-localai-audio-models:/models
+      - olo-dev-localai-audio-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: olo-ollama
+    restart: unless-stopped
+    ports:
+      - "51434:11434"
+    volumes:
+      - olo-dev-ollama-audio-data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-dev-localai-audio-models:
+  olo-dev-localai-audio-cache:
+  olo-dev-ollama-audio-data:

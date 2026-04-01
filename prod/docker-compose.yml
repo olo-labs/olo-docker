@@ -1,0 +1,44 @@
+# Production stack - no debug, always restart, no DB port exposure
+services:
+  app:
+    image: your-app:latest
+    container_name: olo-app-prod
+    restart: always
+    ports:
+      - "53000:3000"
+    environment:
+      - NODE_ENV=production
+      - DEBUG=false
+      - LOG_LEVEL=info
+    depends_on:
+      - db
+    networks:
+      - olo-net
+    # Uncomment for resource limits in production
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 1G
+
+  db:
+    image: postgres:16-alpine
+    container_name: olo-db-prod
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-prod}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-olo_prod}
+    # No port exposure in prod - app connects via internal network only
+    volumes:
+      - olo-prod-db-data:/var/lib/postgresql/data
+    networks:
+      - olo-net
+
+networks:
+  olo-net:
+    external: true
+    name: olo-net
+
+volumes:
+  olo-prod-db-data:

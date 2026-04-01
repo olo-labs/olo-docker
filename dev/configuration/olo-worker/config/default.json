@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "executionDefaults": {
+    "engine": "TEMPORAL",
+    "temporal": {
+      "target": "temporal:7233",
+      "namespace": "default",
+      "taskQueuePrefix": "olo-"
+    },
+    "activity": {
+      "payload": {
+        "maxAccumulatedOutputKeys": 0,
+        "maxResultOutputKeys": 0
+      },
+      "defaultTimeouts": {
+        "scheduleToStartSeconds": 6000,
+        "startToCloseSeconds": 3000,
+        "scheduleToCloseSeconds": 30000
+      },
+      "retryPolicy": {
+        "maximumAttempts": 3,
+        "initialIntervalSeconds": 1,
+        "backoffCoefficient": 2,
+        "maximumIntervalSeconds": 60,
+        "nonRetryableErrors": []
+      }
+    }
+  },
+  "pluginRestrictions": [],
+  "featureRestrictions": [],
+  "pipelines": {
+    "default-pipeline": {
+      "name": "default-pipeline",
+      "workflowId": "default",
+      "inputContract": {
+        "strict": false,
+        "parameters": []
+      },
+      "variableRegistry": [],
+      "scope": {
+        "plugins": [],
+        "features": []
+      },
+      "executionTree": {
+        "id": "root",
+        "displayName": "Pipeline",
+        "type": "SEQUENCE",
+        "children": []
+      },
+      "outputContract": {
+        "parameters": []
+      },
+      "resultMapping": []
+    }
+  }
+}
