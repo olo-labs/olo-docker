@@ -1,0 +1,462 @@
+{
+  "schemaVersion" : "1.0",
+  "generatedBy" : "olo-annotation-processor",
+  "generatedByVersion" : "1.0.0",
+  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "defaults" : {
+    "runtime" : {
+      "capabilities" : [ "DEBUG", "REPLAY" ]
+    },
+    "connectionRules" : {
+      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
+      "strategy" : "schema_match",
+      "wildcards" : [ "any", "*" ],
+      "version" : "1.0",
+      "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
+    },
+    "connectionPolicy" : {
+      "maxOutputs" : -1,
+      "maxInputs" : -1
+    },
+    "designer" : {
+      "nodeSize" : {
+        "height" : 80,
+        "width" : 200
+      },
+      "resizable" : true,
+      "draggable" : true
+    }
+  },
+  "catalogMetadata" : {
+    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
+  },
+  "catalogType" : "nodes",
+  "nodes" : [ {
+    "designer" : {
+      "paletteGroup" : "Agents",
+      "searchKeywords" : [ "planning", "task", "agent", "core" ],
+      "nodeSize" : {
+        "width" : 300,
+        "height" : 120
+      }
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:AGENT",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Agent",
+    "description" : "Autonomous agent node — dispatches to a child workflow (provider runtime pending)",
+    "category" : "agent",
+    "emoji" : "\uD83E\uDD16",
+    "tags" : [ "agent", "core" ],
+    "featured" : true,
+    "examples" : [ "Answer customer support questions", "Research a topic and draft a report", "Plan multi-step tasks autonomously" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "CHILD_WORKFLOW",
+      "capabilities" : [ "TIMEOUT" ]
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "message in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "required" : true,
+      "minConnections" : 0,
+      "description" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "available tools",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "name" : "available agents",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "minConnections" : 0,
+      "description" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "message out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "systemPrompt",
+      "label" : "System Prompt",
+      "type" : "string",
+      "description" : "System instructions passed to the agent runtime",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Optional instructions that shape agent behavior.",
+        "placeholder" : "You are a helpful assistant…",
+        "order" : 0
+      }
+    } ],
+    "contract" : {
+      "inputSchema" : {
+        "type" : "object",
+        "properties" : {
+          "userQuery" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "userQuery" ]
+      },
+      "outputSchema" : {
+        "type" : "object",
+        "properties" : {
+          "response" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "response" ]
+      }
+    }
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human",
+      "searchKeywords" : [ "human", "approval", "core" ]
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:APPROVAL",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Approval",
+    "description" : "Human-in-the-loop approval gate",
+    "category" : "human",
+    "emoji" : "✋",
+    "tags" : [ "human", "approval", "core" ],
+    "featured" : true,
+    "examples" : [ "Approve expense before payment", "Review generated content before publish", "Confirm destructive actions" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "CHILD_WORKFLOW"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "in",
+      "schema" : "any",
+      "type" : "any",
+      "acceptType" : "any",
+      "required" : true,
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "out",
+      "schema" : "any",
+      "type" : "any",
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "message",
+      "label" : "Approval Message",
+      "type" : "string",
+      "description" : "Approval gate user-facing message",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "help" : "Shown to the reviewer when this node runs.",
+        "placeholder" : "Do you approve this action?",
+        "order" : 0
+      }
+    }, {
+      "id" : "options",
+      "label" : "Options",
+      "type" : "object",
+      "description" : "Structured approval choices for the gate",
+      "required" : false,
+      "ui" : {
+        "widget" : "JSON",
+        "help" : "JSON array of choices presented to the reviewer.",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Control",
+      "searchKeywords" : [ "loop", "core" ]
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:LOOP",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Loop",
+    "description" : "Iteration counter for loop constructs",
+    "category" : "control",
+    "emoji" : "\uD83D\uDD01",
+    "tags" : [ "loop", "core" ],
+    "examples" : [ "Retry until validation passes", "Process each item in a batch", "Poll status until complete" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "INLINE"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "in",
+      "schema" : "any",
+      "type" : "any",
+      "acceptType" : "any",
+      "required" : true,
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "out",
+      "schema" : "any",
+      "type" : "any",
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "connectionPolicy" : {
+      "maxInputs" : 1,
+      "maxOutputs" : -1
+    },
+    "parameters" : [ {
+      "id" : "maxIterations",
+      "label" : "Max Iterations",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 1,
+      "ui" : {
+        "widget" : "NUMBER"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Control",
+      "searchKeywords" : [ "parallel", "core" ]
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:PARALLEL",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Parallel",
+    "description" : "Parallel fan-out marker for branch execution",
+    "category" : "control",
+    "emoji" : "⑂",
+    "tags" : [ "parallel", "core" ],
+    "examples" : [ "Fetch data from multiple APIs at once", "Run independent enrichment steps in parallel", "Fan out to several reviewers" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "INLINE"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "in",
+      "schema" : "any",
+      "type" : "any",
+      "acceptType" : "any",
+      "required" : true,
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "out",
+      "schema" : "any",
+      "type" : "any",
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "connectionPolicy" : {
+      "maxInputs" : 1,
+      "maxOutputs" : -1
+    },
+    "parameters" : [ {
+      "id" : "branches",
+      "label" : "Branches",
+      "type" : "number",
+      "description" : "Parallel branch count for fan-out",
+      "required" : false,
+      "defaultValue" : 2,
+      "ui" : {
+        "widget" : "NUMBER",
+        "help" : "How many branches to execute in parallel."
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Llm",
+      "searchKeywords" : [ "prompt", "core" ]
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:PROMPT",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Prompt",
+    "description" : "Template prompt assembly without external LLM call",
+    "category" : "llm",
+    "emoji" : "\uD83D\uDCAC",
+    "tags" : [ "prompt", "core" ],
+    "featured" : true,
+    "examples" : [ "Summarize a document", "Generate release notes", "Translate text" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "INLINE"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "in",
+      "schema" : "any",
+      "type" : "any",
+      "acceptType" : "any",
+      "required" : true,
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "out",
+      "schema" : "string",
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "prompt",
+      "label" : "Prompt Template",
+      "type" : "string",
+      "description" : "Template used by PromptNode",
+      "required" : false,
+      "examples" : [ "Summarize document", "Generate email" ],
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "help" : "Use {{input}} to reference workflow input.",
+        "placeholder" : "Summarize the following content",
+        "order" : 0
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Control",
+      "searchKeywords" : [ "branch", "core" ]
+    },
+    "kind" : "NODE",
+    "id" : "olo-core:SWITCH",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Switch",
+    "description" : "Conditional branch selection",
+    "category" : "control",
+    "emoji" : "\uD83D\uDD00",
+    "tags" : [ "branch", "core" ],
+    "examples" : [ "Route by user intent", "Branch on API response status", "Select workflow path by category" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "INLINE"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "in",
+      "schema" : "any",
+      "type" : "any",
+      "acceptType" : "any",
+      "required" : true,
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "out",
+      "schema" : "any",
+      "type" : "any",
+      "minConnections" : 0,
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "connectionPolicy" : {
+      "maxInputs" : 1,
+      "maxOutputs" : -1
+    },
+    "parameters" : [ {
+      "id" : "defaultBranch",
+      "label" : "Default Branch",
+      "type" : "string",
+      "required" : false,
+      "defaultValue" : "default",
+      "ui" : {
+        "widget" : "STRING"
+      }
+    } ]
+  } ]
+}

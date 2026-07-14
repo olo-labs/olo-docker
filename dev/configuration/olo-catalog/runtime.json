@@ -1,0 +1,92 @@
+{
+  "schemaVersion" : "1.0",
+  "generatedBy" : "olo-annotation-processor",
+  "generatedByVersion" : "1.0.0",
+  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "bindings" : [ {
+    "kind" : "NODE",
+    "id" : "olo-core:AGENT",
+    "implementationClass" : "org.olo.core.node.AgentNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "NODE",
+    "id" : "olo-core:APPROVAL",
+    "implementationClass" : "org.olo.core.node.ApprovalNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "NODE",
+    "id" : "olo-core:LOOP",
+    "implementationClass" : "org.olo.core.node.LoopNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "NODE",
+    "id" : "olo-core:PARALLEL",
+    "implementationClass" : "org.olo.core.node.ParallelNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "NODE",
+    "id" : "olo-core:PROMPT",
+    "implementationClass" : "org.olo.core.node.PromptNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "NODE",
+    "id" : "olo-core:SWITCH",
+    "implementationClass" : "org.olo.core.node.SwitchNode",
+    "spiInterface" : "org.olo.spi.node.Node"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:calculator",
+    "implementationClass" : "org.olo.core.tool.CalculatorTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:cpu-usage",
+    "implementationClass" : "org.olo.core.tool.CpuUsageTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:http-tool",
+    "implementationClass" : "org.olo.core.tool.HttpTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:log-reader",
+    "implementationClass" : "org.olo.core.tool.LogReaderTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:memory-usage",
+    "implementationClass" : "org.olo.core.tool.MemoryUsageTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:numeric-metric",
+    "implementationClass" : "org.olo.core.tool.NumericMetricTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:recently-changed-code",
+    "implementationClass" : "org.olo.core.tool.RecentlyChangedCodeTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:web-search",
+    "implementationClass" : "org.olo.core.tool.WebSearchTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "HOOK",
+    "id" : "olo-core:logging-hook",
+    "implementationClass" : "org.olo.core.hook.LoggingHook",
+    "spiInterface" : "org.olo.spi.hook.Hook"
+  }, {
+    "kind" : "HOOK",
+    "id" : "olo-core:metrics-hook",
+    "implementationClass" : "org.olo.core.hook.MetricsHook",
+    "spiInterface" : "org.olo.spi.hook.Hook"
+  }, {
+    "kind" : "HOOK",
+    "id" : "olo-core:tracing-hook",
+    "implementationClass" : "org.olo.core.hook.TracingHook",
+    "spiInterface" : "org.olo.spi.hook.Hook"
+  } ]
+}

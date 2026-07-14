@@ -1,0 +1,1072 @@
+{
+  "id" : "travel-orchestrator",
+  "enabled" : true,
+  "isDefault" : true,
+  "label" : "Travel Orchestrator",
+  "role" : "Travel Orchestrator",
+  "shortDescription" : "Plans trips by querying destination guides and travel offers, with specialist agents",
+  "emoji" : "✈️",
+  "designer" : {
+    "paletteGroup" : "Agents",
+    "searchKeywords" : [ "travel-orchestrator", "planner", "scenario" ],
+    "nodeSize" : {
+      "width" : 300,
+      "height" : 120
+    },
+    "resizable" : true,
+    "draggable" : true,
+    "layout" : {
+      "originX" : 80,
+      "originY" : 80,
+      "columnGap" : 360,
+      "rowGap" : 200,
+      "columns" : 4
+    },
+    "canvas" : {
+      "backgroundColor" : "#3f3f46",
+      "gridGap" : 16,
+      "edgeStroke" : "#52525b",
+      "selectionBorder" : "#3b82f6",
+      "minimapNodeColor" : "#52525b"
+    },
+    "portColors" : {
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635"
+    },
+    "nodeTypes" : {
+      "AGENT" : {
+        "emoji" : "✈️",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      },
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
+      }
+    }
+  },
+  "queue" : "oloQueue2",
+  "workflowType" : "olo",
+  "runAgain" : true,
+  "childWorkflows" : [ {
+    "workflowId" : "destination-agent",
+    "workflowVersion" : "1.0.0"
+  }, {
+    "workflowId" : "itinerary-agent",
+    "workflowVersion" : "1.0.0"
+  } ],
+  "availableAgents" : [ {
+    "id" : "destination-agent"
+  }, {
+    "id" : "itinerary-agent"
+  } ],
+  "version" : "1.0.0",
+  "capability" : {
+    "name" : "Travel Orchestrator",
+    "description" : "Plans trips by querying destination guides and travel offers, with specialist agents",
+    "tags" : [ "agent", "scenario" ],
+    "examples" : [ ],
+    "required_inputs" : [ "input" ],
+    "required_outputs" : [ "output" ],
+    "tool_requirements" : [ ],
+    "required_context" : [ "message", "availableToolsJson", "toolCallSequenceJson" ]
+  },
+  "runtime" : {
+    "contractVersion" : "1.0",
+    "executionModel" : "INLINE",
+    "capabilities" : [ "DEBUG", "REPLAY" ],
+    "delegation" : {
+      "enabled" : true,
+      "parallelEnabled" : true,
+      "maxDepth" : 3,
+      "maxDelegations" : 10,
+      "resultAggregation" : "MERGE",
+      "memoryScope" : "SHARED"
+    }
+  },
+  "inputs" : {
+    "message" : {
+      "schema" : "string",
+      "required" : true,
+      "populateState" : true
+    }
+  },
+  "state" : { },
+  "parameters" : {
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    },
+    "maxIterations" : {
+      "type" : "integer",
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    }
+  },
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "START",
+    "ports" : [ {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ "input.message" ],
+    "writes" : [ ],
+    "configuration" : {
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "x" : 80,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-load",
+      "designer" : {
+        "position" : {
+          "x" : 440,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-store",
+      "designer" : {
+        "position" : {
+          "x" : 1520,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "human-input",
+    "type" : "HUMAN",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "HUMAN_WAIT",
+      "subtype" : "INPUT",
+      "routers" : [ ],
+      "approval" : {
+        "title" : "Approve ticket booking",
+        "description" : "Review the request and add any missing context, constraints, or priorities before Travel Orchestrator runs. Plans trips by querying destination guides and travel offers, with specialist agents For the final human-approved action (ticket booking), provide: offerId and passengerName (optional email) for the selected package.",
+        "approvers" : [ "operator" ],
+        "timeoutSeconds" : 3600,
+        "requireCommentOnReject" : false
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 800,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "agent",
+    "type" : "AGENT",
+    "label" : "Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "ACTIVITY",
+      "executionModel" : "INLINE",
+      "routers" : [ ]
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolCallPlanner" : true,
+      "outputVariable" : "toolCallSequenceJson",
+      "maxInvalidJsonRetries" : 3,
+      "continueNodeId" : "conversation-store",
+      "promptTemplate" : "You are a travel planning agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:travel-destinations\", \"arguments\": { \"region\": \"europe\" } },\n    { \"toolId\": \"olo-core:travel-offers\", \"arguments\": { \"origin\": \"London\", \"destination\": \"Paris\" } }\n  ],\n  \"directResponse\": null\n}\n3. Use olo-core:travel-destinations for destination ideas and olo-core:travel-offers for packages.\n4. Delegate only to agents listed in availableAgentsJson when specialist help is needed.\n5. If no tools are needed, set \"toolCalls\": [] and put the final answer in \"directResponse\".\n6. Final human-approved action — after itinerary-agent completes, call olo-core:book-ticket with offerId\n   and passengerName from the operator's human-input approval. Include confirmationId, bookingReference,\n   and logPath in directResponse.\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "designer" : {
+        "position" : {
+          "x" : 1160,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "end",
+    "type" : "END",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 1880,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "destination-agent",
+    "type" : "AGENT",
+    "label" : "Destination Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "destination-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "destination-agent",
+      "designer" : {
+        "position" : {
+          "x" : 80,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "itinerary-agent",
+    "type" : "AGENT",
+    "label" : "Itinerary Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "itinerary-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "itinerary-agent",
+      "designer" : {
+        "position" : {
+          "x" : 440,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "travel-destinations",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:travel-destinations",
+      "designer" : {
+        "position" : {
+          "x" : 800,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "travel-offers",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:travel-offers",
+      "designer" : {
+        "position" : {
+          "x" : 1160,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "book-ticket",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:book-ticket",
+      "designer" : {
+        "position" : {
+          "x" : 1520,
+          "y" : 80
+        }
+      }
+    }
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-load",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetNodeId" : "human-input",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "human-input",
+    "sourcePortId" : "out",
+    "targetNodeId" : "agent",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-store",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetNodeId" : "end",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "destination-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "itinerary-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "travel-destinations",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "travel-offers",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "book-ticket",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  } ],
+  "variables" : [ {
+    "name" : "message",
+    "type" : "string",
+    "description" : "",
+    "required" : true,
+    "scope" : "READONLY_EXTERNAL",
+    "metadata" : { }
+  }, {
+    "name" : "availableToolsJson",
+    "type" : "string",
+    "description" : "JSON array of tools connected on the canvas and registered in tools[]",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "available-tools"
+    }
+  }, {
+    "name" : "availableAgentsJson",
+    "type" : "string",
+    "description" : "JSON array of child agents connected on the canvas agentPlug port",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "available-agents"
+    }
+  }, {
+    "name" : "agentResultsJson",
+    "type" : "string",
+    "description" : "Aggregated JSON results from child agent workflows delegated by the planner",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "agent-results"
+    }
+  }, {
+    "name" : "toolCallSequenceJson",
+    "type" : "string",
+    "description" : "Model-produced strict JSON tool call sequence",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "tool-call-sequence"
+    }
+  }, {
+    "name" : "toolResultsJson",
+    "type" : "string",
+    "description" : "Aggregated JSON results from executed tool nodes for synthesis",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "toolCallSequenceJsonRetryCount",
+    "type" : "number",
+    "description" : "Invalid JSON retry counter for the tool-call planner",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "toolCallSequenceJsonValidationError",
+    "type" : "string",
+    "description" : "Last validation error from toolCallSequenceJson, injected into planner retries",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "conversationSummary",
+    "type" : "string",
+    "description" : "Summary of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-summary"
+    }
+  }, {
+    "name" : "conversationHistory",
+    "type" : "string",
+    "description" : "JSON array of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-history"
+    }
+  }, {
+    "name" : "ReturnValue",
+    "type" : "string",
+    "description" : "Workflow return message returned to the caller",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "return"
+    }
+  } ],
+  "tools" : [ {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Load",
+      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "tags" : [ ],
+      "examples" : [ "Restore operator chat context before triage begins" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-load"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Store",
+      "description" : "Persists the current turn to conversation history for the next run",
+      "tags" : [ ],
+      "examples" : [ "Save assistant response after scenario completion" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-store"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "travel-destinations",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Travel Destinations",
+      "description" : "Returns mock destination guides for travel planner scenarios",
+      "tags" : [ ],
+      "examples" : [ "Suggest destinations in Europe for summer" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:travel-destinations"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "travel-offers",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Travel Offers",
+      "description" : "Returns mock flight and hotel offers for travel planner scenarios",
+      "tags" : [ ],
+      "examples" : [ "Find weekend offers from London to Paris" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:travel-offers"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "book-ticket",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Book Ticket",
+      "description" : "Mock-books a travel offer after human approval; writes confirmation to the mock action log",
+      "tags" : [ ],
+      "examples" : [ "Book offer LON-PAR-42 for passenger Alex Morgan" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:book-ticket"
+    },
+    "configuration" : { }
+  } ],
+  "agents" : [ ],
+  "hooks" : [ ],
+  "modelProviders" : [ {
+    "id" : "model-provider",
+    "provider" : "local",
+    "model" : "llama3.2:latest",
+    "configuration" : {
+      "baseUrl" : "http://localhost:11435"
+    }
+  } ],
+  "modelRouting" : [ {
+    "id" : "default-routing",
+    "defaultProviderId" : "model-provider",
+    "rules" : [ ],
+    "metadata" : { }
+  } ],
+  "extensions" : [ ],
+  "metadata" : {
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "continueNodeId" : "conversation-store",
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson",
+      "outputVariable" : "toolCallSequenceJson"
+    },
+    "role" : "travel-orchestrator",
+    "agentSelectionStrategy" : "dynamic",
+    "description" : "Plans trips by querying destination guides and travel offers, with specialist agents",
+    "plannerContext" : {
+      "selectedAgents" : [ "destination-agent", "itinerary-agent" ],
+      "injectAgents" : true,
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "selectedTools" : [ "olo-core:travel-destinations", "olo-core:travel-offers", "olo-core:book-ticket" ]
+    }
+  }
+}

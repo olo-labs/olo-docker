@@ -1,0 +1,1304 @@
+{
+  "id" : "performance-triage-orchestrator",
+  "enabled" : true,
+  "isDefault" : true,
+  "label" : "Performance Triage Orchestrator",
+  "role" : "Performance Triage Orchestrator",
+  "shortDescription" : "Investigates latency spikes using mock metrics and specialist child workflows",
+  "emoji" : "⚡",
+  "designer" : {
+    "paletteGroup" : "Agents",
+    "searchKeywords" : [ "performance-triage-orchestrator", "planner", "scenario" ],
+    "nodeSize" : {
+      "width" : 300,
+      "height" : 120
+    },
+    "resizable" : true,
+    "draggable" : true,
+    "layout" : {
+      "originX" : 80,
+      "originY" : 80,
+      "columnGap" : 360,
+      "rowGap" : 200,
+      "columns" : 4
+    },
+    "canvas" : {
+      "backgroundColor" : "#3f3f46",
+      "gridGap" : 16,
+      "edgeStroke" : "#52525b",
+      "selectionBorder" : "#3b82f6",
+      "minimapNodeColor" : "#52525b"
+    },
+    "portColors" : {
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444"
+    },
+    "nodeTypes" : {
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      },
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
+      },
+      "AGENT" : {
+        "emoji" : "⚡",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      }
+    }
+  },
+  "queue" : "oloQueue2",
+  "workflowType" : "olo",
+  "runAgain" : true,
+  "childWorkflows" : [ {
+    "workflowId" : "latency-analysis-agent",
+    "workflowVersion" : "1.0.0"
+  }, {
+    "workflowId" : "resource-pressure-agent",
+    "workflowVersion" : "1.0.0"
+  }, {
+    "workflowId" : "optimization-agent",
+    "workflowVersion" : "1.0.0"
+  }, {
+    "workflowId" : "performance-report-agent",
+    "workflowVersion" : "1.0.0"
+  } ],
+  "availableAgents" : [ {
+    "id" : "latency-analysis-agent"
+  }, {
+    "id" : "resource-pressure-agent"
+  }, {
+    "id" : "optimization-agent"
+  }, {
+    "id" : "performance-report-agent"
+  } ],
+  "version" : "1.0.0",
+  "capability" : {
+    "name" : "Performance Triage Orchestrator",
+    "description" : "Investigates latency spikes using mock metrics and specialist child workflows",
+    "tags" : [ "agent", "scenario" ],
+    "examples" : [ ],
+    "required_inputs" : [ "input" ],
+    "required_outputs" : [ "output" ],
+    "tool_requirements" : [ ],
+    "required_context" : [ "message", "availableToolsJson", "toolCallSequenceJson" ]
+  },
+  "runtime" : {
+    "contractVersion" : "1.0",
+    "executionModel" : "INLINE",
+    "capabilities" : [ "DEBUG", "REPLAY" ],
+    "delegation" : {
+      "enabled" : true,
+      "parallelEnabled" : true,
+      "maxDepth" : 3,
+      "maxDelegations" : 10,
+      "resultAggregation" : "MERGE",
+      "memoryScope" : "SHARED"
+    }
+  },
+  "inputs" : {
+    "message" : {
+      "schema" : "string",
+      "required" : true,
+      "populateState" : true
+    }
+  },
+  "state" : { },
+  "parameters" : {
+    "maxIterations" : {
+      "type" : "integer",
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    },
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    }
+  },
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "START",
+    "ports" : [ {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ "input.message" ],
+    "writes" : [ ],
+    "configuration" : {
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-load",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 440
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-store",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1520
+        }
+      }
+    }
+  }, {
+    "id" : "human-input",
+    "type" : "HUMAN",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "HUMAN_WAIT",
+      "subtype" : "INPUT",
+      "routers" : [ ],
+      "approval" : {
+        "title" : "Approve container restart",
+        "description" : "Review the request and add any missing context, constraints, or priorities before Performance Triage Orchestrator runs. Investigates latency spikes using mock metrics and specialist child workflows For the final human-approved action (container restart), provide: containerId and namespace (e.g. payment-api-7f8c9d / production).",
+        "inputPluginId" : "olo-core:human-input-restart-container",
+        "approvers" : [ "operator" ],
+        "timeoutSeconds" : 3600,
+        "requireCommentOnReject" : false
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 800
+        }
+      }
+    }
+  }, {
+    "id" : "agent",
+    "type" : "AGENT",
+    "label" : "Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "ACTIVITY",
+      "executionModel" : "INLINE",
+      "routers" : [ ]
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolCallPlanner" : true,
+      "outputVariable" : "toolCallSequenceJson",
+      "maxInvalidJsonRetries" : 3,
+      "continueNodeId" : "conversation-store",
+      "promptTemplate" : "You are a performance triage and latency investigation agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Signal collection — query CPU, memory, and latency metrics for the incident window (ISO-8601 startTime/endTime).\n   Use olo-core:cpu-usage, olo-core:memory-usage, and olo-core:numeric-metric.\n2. Specialist analysis — delegate to child workflows:\n   - latency-analysis-agent: interpret p95/p99 latency spikes and user impact\n   - resource-pressure-agent: correlate CPU and memory pressure with the latency window\n   - optimization-agent: recommend tuning actions (timeouts, pool sizes, circuit breakers)\n3. Final report — delegate to performance-report-agent with findings from all prior agents.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"payment-api-7f8c9d\", \"namespace\": \"production\" }).\n  Purpose: restart the degraded service container after triage completes\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1160
+        }
+      }
+    }
+  }, {
+    "id" : "end",
+    "type" : "END",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1880
+        }
+      }
+    }
+  }, {
+    "id" : "latency-analysis-agent",
+    "type" : "AGENT",
+    "label" : "Latency Analysis Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "latency-analysis-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "latency-analysis-agent",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "resource-pressure-agent",
+    "type" : "AGENT",
+    "label" : "Resource Pressure Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "resource-pressure-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "resource-pressure-agent",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 440
+        }
+      }
+    }
+  }, {
+    "id" : "optimization-agent",
+    "type" : "AGENT",
+    "label" : "Optimization Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "optimization-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "optimization-agent",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 800
+        }
+      }
+    }
+  }, {
+    "id" : "performance-report-agent",
+    "type" : "AGENT",
+    "label" : "Performance Report Agent",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "SUBWORKFLOW",
+      "executionModel" : "CHILD_WORKFLOW",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "performance-report-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "delegateAgentId" : "performance-report-agent",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1160
+        }
+      }
+    }
+  }, {
+    "id" : "cpu-usage",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:cpu-usage",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1520
+        }
+      }
+    }
+  }, {
+    "id" : "memory-usage",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:memory-usage",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1880
+        }
+      }
+    }
+  }, {
+    "id" : "latency-metric",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:numeric-metric",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 2240
+        }
+      }
+    }
+  }, {
+    "id" : "restart-container",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:restart-container",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 2600
+        }
+      }
+    }
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-load",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetNodeId" : "human-input",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "human-input",
+    "sourcePortId" : "out",
+    "targetNodeId" : "agent",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-store",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetNodeId" : "end",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "latency-analysis-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "resource-pressure-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "optimization-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "performance-report-agent",
+    "sourcePortId" : "agentPlug",
+    "targetNodeId" : "agent",
+    "targetPortId" : "agentPlug"
+  }, {
+    "sourceNodeId" : "cpu-usage",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "memory-usage",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "latency-metric",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "restart-container",
+    "sourcePortId" : "capabilities",
+    "targetNodeId" : "agent",
+    "targetPortId" : "capabilities"
+  } ],
+  "variables" : [ {
+    "name" : "message",
+    "type" : "string",
+    "description" : "",
+    "required" : true,
+    "scope" : "READONLY_EXTERNAL",
+    "metadata" : { }
+  }, {
+    "name" : "availableToolsJson",
+    "type" : "string",
+    "description" : "JSON array of tools connected on the canvas and registered in tools[]",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "available-tools"
+    }
+  }, {
+    "name" : "availableAgentsJson",
+    "type" : "string",
+    "description" : "JSON array of child agents connected on the canvas agentPlug port",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "available-agents"
+    }
+  }, {
+    "name" : "agentResultsJson",
+    "type" : "string",
+    "description" : "Aggregated JSON results from child agent workflows delegated by the planner",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "agent-results"
+    }
+  }, {
+    "name" : "toolCallSequenceJson",
+    "type" : "string",
+    "description" : "Model-produced strict JSON tool call sequence",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "tool-call-sequence"
+    }
+  }, {
+    "name" : "toolResultsJson",
+    "type" : "string",
+    "description" : "Aggregated JSON results from executed tool nodes for synthesis",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "toolCallSequenceJsonRetryCount",
+    "type" : "number",
+    "description" : "Invalid JSON retry counter for the tool-call planner",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "toolCallSequenceJsonValidationError",
+    "type" : "string",
+    "description" : "Last validation error from toolCallSequenceJson, injected into planner retries",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : { }
+  }, {
+    "name" : "conversationSummary",
+    "type" : "string",
+    "description" : "Summary of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-summary"
+    }
+  }, {
+    "name" : "conversationHistory",
+    "type" : "string",
+    "description" : "JSON array of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-history"
+    }
+  }, {
+    "name" : "ReturnValue",
+    "type" : "string",
+    "description" : "Workflow return message returned to the caller",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "return"
+    }
+  } ],
+  "tools" : [ {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Load",
+      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "tags" : [ ],
+      "examples" : [ "Restore operator chat context before triage begins" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-load"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Store",
+      "description" : "Persists the current turn to conversation history for the next run",
+      "tags" : [ ],
+      "examples" : [ "Save assistant response after scenario completion" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-store"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "cpu-usage",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "CPU Usage",
+      "description" : "Returns CPU utilization samples for a time window",
+      "tags" : [ ],
+      "examples" : [ "Check CPU spike during payment gateway outage" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:cpu-usage"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "memory-usage",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Memory Usage",
+      "description" : "Returns heap/memory usage samples for a time window",
+      "tags" : [ ],
+      "examples" : [ "Detect memory pressure during gateway timeout incident" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:memory-usage"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "latency-metric",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Latency Metric",
+      "description" : "Returns upstream latency samples (milliseconds) for a time window",
+      "tags" : [ ],
+      "examples" : [ "Inspect p95 latency spike during outage" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:numeric-metric"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "restart-container",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Restart Container",
+      "description" : "Mock-restarts a container/pod after human approval; writes confirmation to the mock action log",
+      "tags" : [ ],
+      "examples" : [ "Restart container payment-api-7f8c9 in namespace production" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:restart-container"
+    },
+    "configuration" : { }
+  } ],
+  "agents" : [ ],
+  "hooks" : [ ],
+  "modelProviders" : [ {
+    "id" : "model-provider",
+    "provider" : "local",
+    "model" : "llama3.2:latest",
+    "configuration" : {
+      "baseUrl" : "http://localhost:11435"
+    }
+  } ],
+  "modelRouting" : [ {
+    "id" : "default-routing",
+    "defaultProviderId" : "model-provider",
+    "rules" : [ ],
+    "metadata" : { }
+  } ],
+  "extensions" : [ ],
+  "metadata" : {
+    "role" : "performance-triage-orchestrator",
+    "agentSelectionStrategy" : "dynamic",
+    "description" : "Investigates latency spikes using mock metrics and specialist child workflows",
+    "plannerContext" : {
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:numeric-metric", "olo-core:restart-container" ],
+      "selectedAgents" : [ "latency-analysis-agent", "resource-pressure-agent", "optimization-agent", "performance-report-agent" ],
+      "injectAgents" : true
+    },
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson",
+      "outputVariable" : "toolCallSequenceJson",
+      "continueNodeId" : "conversation-store"
+    }
+  }
+}

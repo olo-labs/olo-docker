@@ -88,6 +88,7 @@ PowerShell is used from `dev/install.bat`; shell scripts from `dev/install.sh`.
 |------|------|
 | `envirinment/database.env` | Typo in folder name is historical; referenced by db/pgadmin compose for credentials. |
 | `database-initialization/*.sql` | Runs on first Postgres init (mounted to `/docker-entrypoint-initdb.d`). |
+| `olo-configuration/default/*.json` | Regional `WorkflowDefinition` presets for the **olo** API (`OLO_CONFIGURATION_DIR`). Mounted at `/app/olo-configuration` in the `olo` container. Keep in sync with `olo-mono/olo-configuration` and `olo/olo-configuration`. |
 | `olo-worker/config/*.json` | Worker queue and feature config; mounted into `olo-worker`. |
 | `olo-worker/*.json` | Additional worker-related JSON at repo layout level. |
 | `temporal/dynamicconfig/development-sql.yaml` | Temporal dynamic config (referenced by Temporal container). |

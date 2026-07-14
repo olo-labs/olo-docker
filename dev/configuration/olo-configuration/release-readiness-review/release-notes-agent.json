@@ -1,0 +1,551 @@
+{
+  "id" : "release-notes-agent",
+  "enabled" : true,
+  "isDefault" : false,
+  "label" : "Release Notes Agent",
+  "role" : "Release Notes Agent",
+  "shortDescription" : "Publishes customer-facing release notes and upgrade guidance",
+  "emoji" : "📢",
+  "designer" : {
+    "paletteGroup" : "Agents",
+    "searchKeywords" : [ "release-notes", "publish" ],
+    "nodeSize" : {
+      "width" : 300,
+      "height" : 120
+    },
+    "resizable" : true,
+    "draggable" : true,
+    "layout" : {
+      "originX" : 80,
+      "originY" : 80,
+      "columnGap" : 360,
+      "rowGap" : 200,
+      "columns" : 4
+    },
+    "canvas" : {
+      "backgroundColor" : "#3f3f46",
+      "gridGap" : 16,
+      "edgeStroke" : "#52525b",
+      "selectionBorder" : "#3b82f6",
+      "minimapNodeColor" : "#52525b"
+    },
+    "portColors" : {
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
+      "any" : "#94a3b8"
+    },
+    "nodeTypes" : {
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
+      },
+      "AGENT" : {
+        "emoji" : "📢",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      }
+    }
+  },
+  "queue" : "oloQueue2",
+  "workflowType" : "olo",
+  "runAgain" : true,
+  "childWorkflows" : [ ],
+  "availableAgents" : [ ],
+  "version" : "1.0.0",
+  "capability" : {
+    "name" : "Release Notes Agent",
+    "description" : "Publishes customer-facing release notes and upgrade guidance",
+    "tags" : [ "release-notes-agent" ],
+    "examples" : [ ],
+    "required_inputs" : [ "input" ],
+    "required_outputs" : [ "output" ],
+    "tool_requirements" : [ ],
+    "required_context" : [ "message" ]
+  },
+  "runtime" : {
+    "contractVersion" : "1.0",
+    "executionModel" : "INLINE"
+  },
+  "inputs" : {
+    "message" : {
+      "schema" : "string",
+      "required" : true,
+      "populateState" : true
+    }
+  },
+  "state" : { },
+  "parameters" : {
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    },
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    },
+    "maxIterations" : {
+      "type" : "integer",
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    }
+  },
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "START",
+    "ports" : [ {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ "input.message" ],
+    "writes" : [ ],
+    "configuration" : {
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "x" : 80,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-load",
+      "designer" : {
+        "position" : {
+          "x" : 440,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "agent",
+    "type" : "AGENT",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "execution" : {
+      "executionKind" : "ACTIVITY",
+      "executionModel" : "INLINE",
+      "routers" : [ ],
+      "workflowRef" : {
+        "workflowId" : "release-notes-agent",
+        "version" : "1.0.0",
+        "inputMapping" : { },
+        "outputMapping" : { }
+      }
+    },
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 800,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:conversation-store",
+      "designer" : {
+        "position" : {
+          "x" : 1160,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "end",
+    "type" : "END",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 1520,
+          "y" : 80
+        }
+      }
+    }
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-load",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetNodeId" : "agent",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetNodeId" : "conversation-store",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetNodeId" : "end",
+    "targetPortId" : "in"
+  } ],
+  "variables" : [ {
+    "name" : "message",
+    "type" : "string",
+    "description" : "",
+    "required" : true,
+    "scope" : "READONLY_EXTERNAL",
+    "metadata" : { }
+  }, {
+    "name" : "conversationSummary",
+    "type" : "string",
+    "description" : "Summary of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-summary"
+    }
+  }, {
+    "name" : "conversationHistory",
+    "type" : "string",
+    "description" : "JSON array of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-history"
+    }
+  }, {
+    "name" : "ReturnValue",
+    "type" : "string",
+    "description" : "Workflow return message returned to the caller",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "return"
+    }
+  } ],
+  "tools" : [ {
+    "id" : "conversation-load",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Load",
+      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "tags" : [ ],
+      "examples" : [ "Restore operator chat context before triage begins" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-load"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Store",
+      "description" : "Persists the current turn to conversation history for the next run",
+      "tags" : [ ],
+      "examples" : [ "Save assistant response after scenario completion" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-store"
+    },
+    "configuration" : { }
+  } ],
+  "agents" : [ ],
+  "hooks" : [ ],
+  "modelProviders" : [ {
+    "id" : "model-provider",
+    "provider" : "local",
+    "model" : "llama3.2:latest",
+    "configuration" : {
+      "baseUrl" : "http://localhost:11435"
+    }
+  } ],
+  "modelRouting" : [ {
+    "id" : "default-routing",
+    "defaultProviderId" : "model-provider",
+    "rules" : [ ],
+    "metadata" : { }
+  } ],
+  "extensions" : [ ],
+  "metadata" : {
+    "description" : "Publishes customer-facing release notes and upgrade guidance",
+    "plannerContext" : {
+      "selectedVariables" : [ "message", "conversationSummary" ],
+      "injectCapabilities" : false,
+      "selectedTools" : [ ],
+      "selectedAgents" : [ ]
+    },
+    "role" : "release-notes-agent",
+    "returnVariable" : "ReturnValue"
+  }
+}

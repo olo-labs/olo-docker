@@ -1,0 +1,5 @@
+Kafka receives market data.
+Redis stores JSON records.
+Citus scales PostgreSQL.
+Grafana displays dashboards.
+Market data flows through Kafka.

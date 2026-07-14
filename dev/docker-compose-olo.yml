@@ -1,86 +1,95 @@
 services:
   olo:
-    image: openllmorchestrator/olo:latest
-    container_name: olo-api
+    image: ololab/olo:latest
+    container_name: olo
     restart: unless-stopped
     ports:
       - "47080:7080"
     environment:
       SERVER_PORT: "7080"
+      OLO_VERSION: "v1.0.0-Dev"
       OLO_SWAGGER_UI_ENABLED: "true"
       OLO_CACHE_HOST: redis
       OLO_CACHE_PORT: "6379"
       OLO_CACHE_DATABASE: "0"
-      OLO_DB_HOST: db
-      OLO_DB_PORT: "5432"
-      OLO_DB_NAME: olo
-      OLO_DB_USER: olo
-      OLO_DB_PASSWORD: pgpass
       OLO_TEMPORAL_TARGET: temporal:7233
-      OLO_TEMPORAL_NAMESPACE: default
-      OLO_TEMPORAL_TASK_QUEUE: chat-queue-ollama-debug
-      OLO_CHAT_CALLBACK_BASE_URL: "http://localhost:47080"
+      OLO_UI_TENANT_DISPLAY_NAME: "Default"
+      OLO_UI_USER_DISPLAY_NAME: "Public"
+      # URL workers use to POST run events. Host-run worker (gradlew/IDE): localhost:47080.
+      # Override when worker runs in Docker on olo-net: OLO_CHAT_CALLBACK_BASE_URL=http://olo:7080
+      OLO_CHAT_CALLBACK_BASE_URL: ${OLO_CHAT_CALLBACK_BASE_URL:-http://localhost:47080}
       OLO_WS_JWT_REQUIRED: "false"
-      OLO_DEFAULT_TENANT_ID: "2a2a91fb-f5b4-4cf0-b917-524d242b2e3d"
+      # Must match Dockerfile WORKDIR (/app) and image default OLO_CONFIGURATION_DIR.
+      OLO_CONFIGURATION_DIR: /app/olo-configuration
+    volumes:
+      # Regional workflow presets (default/*.json). Default: dev/configuration/olo-configuration.
+      # Override to bind directly from a monorepo checkout, e.g.:
+      #   OLO_CONFIGURATION_SOURCE=../../olo-labs/olo-mono/olo-configuration
+      #   OLO_CONFIGURATION_SOURCE=../../olo-labs/olo/olo-configuration
+      - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
     depends_on:
       - redis
       - db
     networks:
       - olo-net
 
-  olo-worker:
-    image: openllmorchestrator/olo-worker:latest
-    container_name: olo-worker
-    restart: unless-stopped
-    environment:
-      - OLO_CONFIG_DIR=/app/config
-      - TEMPORAL_HOST=temporal:7233
-      - OLO_QUEUE=olo-chat-queue-ollama,olo-rag-queue-openai,olo-echo-planner
-      - OLO_IS_DEBUG_ENABLED=true
-      - OLO_CACHE_HOST=redis
-      - OLO_CACHE_PORT=6379
-      - OLO_DB_HOST=db
-      - OLO_DB_PORT=5432
-      - OLO_DB_NAME=olo
-      - OLO_DB_USER=olo
-      - OLO_DB_PASSWORD=pgpass
-      - OLO_RUN_LEDGER=true
-      - OLO_DEFAULT_TENANT_ID=2a2a91fb-f5b4-4cf0-b917-524d242b2e3d
-      - OLO_DEFAULT_TENANT_NAME=default
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - QDRANT_BASE_URL=http://qdrant:6333
-    volumes:
-      - ./configuration/olo-worker/config:/app/config
-    depends_on:
-      - olo
-      - temporal
-    networks:
-      - olo-net
-
   olo-ui:
-    image: openllmorchestrator/olo-ui:latest
+    image: ololab/olo-ui:latest
     container_name: olo-ui
     restart: unless-stopped
     ports:
       - "43001:80"
     environment:
-      - OLO_API_BASE_URL=http://localhost:47080
-      - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_DATA_REDIS_PORT=6379
-      - OLO_TENANT_IDS=olo:tenants
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: "6379"
+      # Re-enable after pulling an olo-ui image built without RedisConfig bean conflict.
+      # OLO_REDIS_ENABLED: "true"
+      OLO_TENANT_IDS: olo:tenants
+      OLO_CONFIGURATION_DIRECTORY: /app/olo-configuration/current-active
+      OLO_CATALOG_DIRECTORY: /app/catalog
+      OLO_RUNTIME_BASE_URL: http://olo:7080
+    volumes:
+      - ./configuration/olo-ui/nginx-default.conf:/etc/nginx/http.d/default.conf:ro
+      - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
+      - ${OLO_CATALOG_SOURCE:-./configuration/olo-catalog}:/app/catalog
     depends_on:
+      - redis
       - olo
     networks:
       - olo-net
 
   olo-chat:
-    image: openllmorchestrator/olo-chat:latest
+    image: ololab/olo-chat:latest
     container_name: olo-chat
     restart: unless-stopped
     ports:
       - "43000:80"
+    environment:
+      OLO_BACKEND_URL: http://olo:7080
     depends_on:
       - olo
+    networks:
+      - olo-net
+
+  olo-worker:
+    image: ololab/olo-worker:latest
+    container_name: olo-worker
+    restart: unless-stopped
+    environment:
+      OLO_WORKER_CONFIG_PATH: /app/worker/config/worker-config.yaml
+      OLO_LLM_BASE_URL: http://ollama:11434
+      OLO_CHAT_CALLBACK_BASE_URL: http://olo:7080
+      OLO_DEMO_DATA_ROOT: /app/shared/olo-core/tools
+      OLO_LOG_DIRECTORY: /app/logs
+    depends_on:
+      - olo
+      - temporal
+      - redis
+    volumes:
+      - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
+      - ./configuration/olo-worker/config:/app/worker/config:ro
+      - ./configuration/olo-worker/logs:/app/logs
+      - ${OLO_SHARED_SOURCE:-../../olo-labs/olo-mono/olo-core/tools}:/app/shared/olo-core/tools:ro
     networks:
       - olo-net
 

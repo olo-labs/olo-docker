@@ -1,0 +1,173 @@
+{
+  "schemaVersion" : "1.0",
+  "generatedBy" : "olo-annotation-processor",
+  "generatedByVersion" : "1.0.0",
+  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "catalogType" : "hooks",
+  "hooks" : [ {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "logging", "core" ]
+    },
+    "kind" : "HOOK",
+    "id" : "olo-core:logging-hook",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Logging",
+    "description" : "Structured log lines for hook phases",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDCCB",
+    "tags" : [ "logging", "core" ],
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "phases" : [ "PRE", "ON_ERROR", "FINALLY" ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "metrics", "core" ]
+    },
+    "kind" : "HOOK",
+    "id" : "olo-core:metrics-hook",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Metrics",
+    "description" : "Lightweight metrics events (log-based stub)",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDCCA",
+    "tags" : [ "metrics", "core" ],
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "phases" : [ "PRE", "FINALLY" ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "tracing", "core" ]
+    },
+    "kind" : "HOOK",
+    "id" : "olo-core:tracing-hook",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Tracing",
+    "description" : "Generates a trace span id per hook invocation",
+    "category" : "observability",
+    "emoji" : "\uD83E\uDDF5",
+    "tags" : [ "tracing", "core" ],
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "phases" : [ "PRE", "ON_ERROR", "FINALLY" ]
+  } ]
+}

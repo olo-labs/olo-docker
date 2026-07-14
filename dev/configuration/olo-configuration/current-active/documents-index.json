@@ -1,0 +1,324 @@
+{
+  "id" : "documents-index",
+  "enabled" : true,
+  "isDefault" : false,
+  "label" : "Documents Index",
+  "role" : "Documents Index",
+  "shortDescription" : "Index uploaded files into the vector store (single rag-ingest step)",
+  "emoji" : "📚",
+  "designer" : {
+    "paletteGroup" : "Knowledge",
+    "searchKeywords" : [ "rag", "ingest", "documents-index" ],
+    "nodeSize" : {
+      "width" : 300,
+      "height" : 120
+    },
+    "resizable" : true,
+    "draggable" : true,
+    "layout" : {
+      "originX" : 80,
+      "originY" : 80,
+      "columnGap" : 360,
+      "rowGap" : 200,
+      "columns" : 4
+    },
+    "canvas" : {
+      "backgroundColor" : "#3f3f46",
+      "gridGap" : 16,
+      "edgeStroke" : "#52525b",
+      "selectionBorder" : "#3b82f6",
+      "minimapNodeColor" : "#52525b"
+    },
+    "portColors" : {
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "string" : "#a3e635",
+      "object" : "#c084fc",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "agent-plug" : "#a855f7",
+      "any" : "#94a3b8"
+    },
+    "nodeTypes" : {
+      "TOOL" : {
+        "emoji" : "🔧",
+        "typeLabel" : "Tool",
+        "description" : "Executes a registered tool plugin (e.g. RAG ingest)",
+        "palette" : {
+          "name" : "Tool",
+          "category" : "plugins"
+        },
+        "inlineProperties" : [ {
+          "id" : "toolId",
+          "widget" : "STRING",
+          "label" : "Tool",
+          "binding" : "toolId"
+        }, {
+          "id" : "extensionRef",
+          "widget" : "STRING",
+          "label" : "Vector store",
+          "binding" : "extensionRef"
+        }, {
+          "id" : "vectorTable",
+          "widget" : "STRING",
+          "label" : "Collection table",
+          "binding" : "vectorTable"
+        }, {
+          "id" : "chunkSize",
+          "widget" : "NUMBER",
+          "label" : "Chunk size",
+          "binding" : "chunkSize"
+        } ]
+      },
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      }
+    }
+  },
+  "queue" : "oloQueue2",
+  "workflowType" : "olo",
+  "childWorkflows" : [ ],
+  "availableAgents" : [ ],
+  "version" : "1.0.0",
+  "capability" : {
+    "name" : "Documents Index",
+    "description" : "Ingest uploaded documents into the configured vector store.",
+    "tags" : [ "rag", "ingest", "documents" ],
+    "examples" : [ ],
+    "required_inputs" : [ "input" ],
+    "required_outputs" : [ "output" ],
+    "tool_requirements" : [ ],
+    "required_context" : [ ]
+  },
+  "runtime" : {
+    "contractVersion" : "1.0",
+    "executionModel" : "ACTIVITY"
+  },
+  "inputs" : {
+    "message" : {
+      "schema" : "string",
+      "required" : true,
+      "populateState" : true
+    }
+  },
+  "state" : { },
+  "parameters" : { },
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "START",
+    "ports" : [ {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ "input.message" ],
+    "writes" : [ ],
+    "configuration" : {
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "x" : 80,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "rag-ingest",
+    "type" : "TOOL",
+    "label" : "RAG Ingest",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "vectorSize" : 384,
+      "chunkSize" : 512,
+      "driver" : "qdrant",
+      "extensionRef" : "pgvector-store",
+      "collection" : "documents",
+      "distance" : "Cosine",
+      "connectionRef" : "http://localhost:46333",
+      "vectorTable" : "documents",
+      "toolId" : "olo-core:rag-ingest",
+      "designer" : {
+        "position" : {
+          "x" : 440,
+          "y" : 80
+        }
+      }
+    }
+  }, {
+    "id" : "end",
+    "type" : "END",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : true,
+      "minConnections" : 1,
+      "maxConnections" : 1,
+      "shortDescription" : "Incoming workflow message",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#ef4444"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 800,
+          "y" : 80
+        }
+      }
+    }
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "sourcePortId" : "out",
+    "targetNodeId" : "rag-ingest",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "rag-ingest",
+    "sourcePortId" : "out",
+    "targetNodeId" : "end",
+    "targetPortId" : "in"
+  } ],
+  "variables" : [ {
+    "name" : "message",
+    "type" : "string",
+    "description" : "",
+    "required" : true,
+    "scope" : "READONLY_EXTERNAL",
+    "metadata" : { }
+  }, {
+    "name" : "ReturnValue",
+    "type" : "string",
+    "description" : "Workflow return message returned to the caller",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "return"
+    }
+  } ],
+  "tools" : [ {
+    "id" : "rag-ingest",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "RAG Ingest",
+      "description" : "Chunks uploaded files and writes vector index entries",
+      "tags" : [ ],
+      "examples" : [ "Index selected documents for capabilitySource my-knowledge-base" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:rag-ingest"
+    },
+    "configuration" : { }
+  } ],
+  "agents" : [ ],
+  "hooks" : [ ],
+  "modelProviders" : [ ],
+  "modelRouting" : [ ],
+  "extensions" : [ {
+    "id" : "pgvector-store",
+    "type" : "VECTOR_STORE",
+    "configuration" : {
+      "vectorSize" : 384,
+      "collection" : "documents",
+      "driver" : "qdrant",
+      "distance" : "Cosine",
+      "table" : "documents",
+      "connectionRef" : "http://localhost:46333"
+    }
+  } ],
+  "metadata" : {
+    "description" : "Dedicated ingest pipeline — creates vector DB entries only",
+    "role" : "documents-index",
+    "returnVariable" : "ReturnValue"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "schemaVersion" : "1.0",
+  "generatedBy" : "olo-annotation-processor",
+  "generatedByVersion" : "1.0.0",
+  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "catalogType" : "workflow-presets",
+  "moduleId" : "olo-core",
+  "presets" : [ {
+    "id" : "agent",
+    "designer" : {
+      "paletteGroup" : "Agents",
+      "searchKeywords" : [ "planning", "task", "agent" ],
+      "nodeSize" : {
+        "width" : 300,
+        "height" : 120
+      }
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "agentPlug",
+      "name" : "agentPlug",
+      "label" : "agent plug",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "minConnections" : 0,
+      "description" : "Child workflow indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#a855f7"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "systemPrompt",
+      "label" : "System Prompt",
+      "type" : "string",
+      "description" : "System prompt for the agent",
+      "required" : false,
+      "defaultValue" : "{message}",
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    }, {
+      "id" : "maxIterations",
+      "label" : "Max Iterations",
+      "type" : "integer",
+      "description" : "Maximum agent reasoning iterations",
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
+      "defaultValue" : 10,
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    }, {
+      "id" : "model",
+      "label" : "Model",
+      "type" : "string",
+      "description" : "Default model identifier",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    }, {
+      "id" : "temperature",
+      "label" : "Temperature",
+      "type" : "number",
+      "description" : "Sampling temperature",
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "defaultValue" : 0.2,
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    } ]
+  } ]
+}

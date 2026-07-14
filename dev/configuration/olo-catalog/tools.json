@@ -1,0 +1,808 @@
+{
+  "schemaVersion" : "1.0",
+  "generatedBy" : "olo-annotation-processor",
+  "generatedByVersion" : "1.0.0",
+  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "defaults" : {
+    "runtime" : {
+      "capabilities" : [ "DEBUG", "REPLAY" ]
+    },
+    "connectionRules" : {
+      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
+      "strategy" : "schema_match",
+      "wildcards" : [ "any", "*" ],
+      "version" : "1.0",
+      "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
+    },
+    "connectionPolicy" : {
+      "maxOutputs" : -1,
+      "maxInputs" : -1
+    },
+    "designer" : {
+      "nodeSize" : {
+        "height" : 80,
+        "width" : 200
+      },
+      "resizable" : true,
+      "draggable" : true
+    }
+  },
+  "catalogMetadata" : {
+    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
+  },
+  "catalogType" : "tools",
+  "tools" : [ {
+    "designer" : {
+      "paletteGroup" : "Utility",
+      "searchKeywords" : [ "math", "core" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:calculator",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Calculator",
+    "description" : "Basic arithmetic on two numbers",
+    "category" : "utility",
+    "emoji" : "\uD83E\uDDEE",
+    "tags" : [ "math", "core" ],
+    "examples" : [ "Compute order totals", "Apply a percentage discount", "Convert units with a formula" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "a",
+      "label" : "A",
+      "type" : "number",
+      "required" : true,
+      "ui" : {
+        "widget" : "NUMBER"
+      }
+    }, {
+      "id" : "b",
+      "label" : "B",
+      "type" : "number",
+      "required" : true,
+      "ui" : {
+        "widget" : "NUMBER"
+      }
+    }, {
+      "id" : "op",
+      "label" : "Op",
+      "type" : "enum",
+      "required" : false,
+      "defaultValue" : "+",
+      "values" : [ "+", "-", "*", "/" ],
+      "ui" : {
+        "widget" : "SELECT"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "cpu", "metrics", "observability", "incident" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:cpu-usage",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "CPU Usage",
+    "description" : "Reads CPU usage metrics from CSV files in a configured folder filtered by time range",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDDA5️",
+    "tags" : [ "cpu", "metrics", "observability", "incident" ],
+    "examples" : [ "Check CPU spike during payment gateway outage", "Compare baseline and peak CPU during incident" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "startTime",
+      "label" : "Start Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:29:00Z",
+        "order" : 0
+      }
+    }, {
+      "id" : "dataFolder",
+      "label" : "CPU Metrics Folder",
+      "type" : "string",
+      "description" : "Folder containing CPU metric CSV files (timestamp,value columns; value = cpu %)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "demo-data/cpu",
+        "order" : 0
+      }
+    }, {
+      "id" : "endTime",
+      "label" : "End Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:32:00Z",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Integration",
+      "searchKeywords" : [ "http", "core" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:http-tool",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "HTTP",
+    "description" : "Basic HTTP GET/POST client",
+    "category" : "integration",
+    "emoji" : "\uD83C\uDF10",
+    "tags" : [ "http", "core" ],
+    "featured" : true,
+    "examples" : [ "Call REST API", "Fetch weather data" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY",
+      "capabilities" : [ "CHECKPOINT", "RETRY", "TIMEOUT" ],
+      "defaultTimeout" : "PT30S",
+      "defaultRetryPolicy" : "STANDARD"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "url",
+      "label" : "URL",
+      "type" : "string",
+      "description" : "Request target URL",
+      "required" : true,
+      "validation" : {
+        "minLength" : 8,
+        "maxLength" : 2048
+      },
+      "ui" : {
+        "widget" : "STRING",
+        "help" : "Full URL including https://",
+        "placeholder" : "https://api.example.com/data",
+        "order" : 0
+      }
+    }, {
+      "id" : "method",
+      "label" : "HTTP Method",
+      "type" : "enum",
+      "required" : false,
+      "defaultValue" : "GET",
+      "values" : [ "GET", "POST" ],
+      "ui" : {
+        "widget" : "SELECT",
+        "order" : 1
+      }
+    }, {
+      "id" : "body",
+      "label" : "Request Body",
+      "type" : "object",
+      "description" : "Optional HTTP request body",
+      "required" : false,
+      "visibleWhen" : {
+        "method" : "POST"
+      },
+      "ui" : {
+        "widget" : "JSON",
+        "group" : "Advanced",
+        "help" : "JSON body for POST requests; leave empty for GET.",
+        "placeholder" : "{\"key\": \"value\"}",
+        "order" : 2
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "logs", "observability", "incident" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:log-reader",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Log Reader",
+    "description" : "Reads application log lines from a configured folder filtered by time range",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDCDC",
+    "tags" : [ "logs", "observability", "incident" ],
+    "examples" : [ "Fetch error logs during an outage window", "Correlate gateway timeouts with incident start time" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "startTime",
+      "label" : "Start Time",
+      "type" : "string",
+      "description" : "Inclusive start of the query window (ISO-8601)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:30:00Z",
+        "order" : 0
+      }
+    }, {
+      "id" : "dataFolder",
+      "label" : "Log Folder",
+      "type" : "string",
+      "description" : "Folder containing .log files to scan",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "demo-data/logs",
+        "order" : 0
+      }
+    }, {
+      "id" : "endTime",
+      "label" : "End Time",
+      "type" : "string",
+      "description" : "Inclusive end of the query window (ISO-8601)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:31:00Z",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "memory", "metrics", "observability", "incident" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:memory-usage",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Memory Usage",
+    "description" : "Reads memory usage metrics from CSV files in a configured folder filtered by time range",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDCBE",
+    "tags" : [ "memory", "metrics", "observability", "incident" ],
+    "examples" : [ "Detect memory pressure during gateway timeout incident", "Track heap growth leading up to emergency GC" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "startTime",
+      "label" : "Start Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:29:00Z",
+        "order" : 0
+      }
+    }, {
+      "id" : "dataFolder",
+      "label" : "Memory Metrics Folder",
+      "type" : "string",
+      "description" : "Folder containing memory metric CSV files (timestamp,value columns; value = MB)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "demo-data/memory",
+        "order" : 0
+      }
+    }, {
+      "id" : "endTime",
+      "label" : "End Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:32:00Z",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "metrics", "latency", "observability", "incident" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:numeric-metric",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Numeric Metric",
+    "description" : "Reads generic numeric metrics (latency, error rate, etc.) from CSV files in a configured folder",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDCC8",
+    "tags" : [ "metrics", "latency", "observability", "incident" ],
+    "examples" : [ "Inspect p95 latency spike during outage", "Compare request latency before and during failure window" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "startTime",
+      "label" : "Start Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:29:00Z",
+        "order" : 0
+      }
+    }, {
+      "id" : "dataFolder",
+      "label" : "Metric Folder",
+      "type" : "string",
+      "description" : "Folder containing numeric metric CSV files (timestamp,value columns; value = ms)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "demo-data/latency",
+        "order" : 0
+      }
+    }, {
+      "id" : "endTime",
+      "label" : "End Time",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Time Range",
+        "placeholder" : "2026-06-14T14:32:00Z",
+        "order" : 1
+      }
+    }, {
+      "id" : "metricName",
+      "label" : "Metric Name",
+      "type" : "string",
+      "description" : "Label returned in tool output for the sampled metric series",
+      "required" : false,
+      "defaultValue" : "latencyMs",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "latencyMs",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Observability",
+      "searchKeywords" : [ "github", "pull-request", "code", "incident", "observability" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:recently-changed-code",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Recently Changed Code",
+    "description" : "Returns recently merged pull request code changes from files in a configured folder (GitHub API stub)",
+    "category" : "observability",
+    "emoji" : "\uD83D\uDD00",
+    "tags" : [ "github", "pull-request", "code", "incident", "observability" ],
+    "examples" : [ "Review recent payment-service merges before an outage", "Fetch diff for PR 839 that resized the retry thread pool" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "limit",
+      "label" : "Limit",
+      "type" : "number",
+      "description" : "Maximum number of recent change files to return",
+      "required" : false,
+      "defaultValue" : 5,
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Query",
+        "order" : 0
+      }
+    }, {
+      "id" : "dataFolder",
+      "label" : "Changes Folder",
+      "type" : "string",
+      "description" : "Folder containing pull request change files (.patch, .diff, .java, .json)",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Data Source",
+        "placeholder" : "demo-data/recent-changes",
+        "order" : 0
+      }
+    }, {
+      "id" : "pullRequestNumber",
+      "label" : "Pull Request Number",
+      "type" : "string",
+      "description" : "Optional filter — only return files whose name contains this PR number",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Query",
+        "placeholder" : "839",
+        "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Search",
+      "searchKeywords" : [ "search", "core" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:web-search",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Web search",
+    "description" : "Placeholder web search (connect olo-extensions for live results)",
+    "category" : "search",
+    "emoji" : "\uD83D\uDD0D",
+    "tags" : [ "search", "core" ],
+    "examples" : [ "Look up recent news on a topic", "Find documentation for an API", "Research competitors before a pitch" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY",
+      "capabilities" : [ "TIMEOUT" ]
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "query",
+      "label" : "Query",
+      "type" : "string",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    } ],
+    "contract" : {
+      "inputSchema" : {
+        "type" : "object",
+        "properties" : {
+          "query" : {
+            "type" : "string",
+            "description" : "Search query"
+          }
+        },
+        "required" : [ "query" ]
+      },
+      "outputSchema" : {
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object"
+            }
+          }
+        },
+        "required" : [ "results" ]
+      }
+    }
+  } ]
+}

@@ -29,7 +29,7 @@ services:
     container_name: olo-ollama
     restart: unless-stopped
     ports:
-      - "51435:11434"
+      - "11435:11434"
     volumes:
       - olo-dev-ollama-data:/root/.ollama
     deploy:
