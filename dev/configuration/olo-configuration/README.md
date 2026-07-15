@@ -6,6 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 
 Multi-agent orchestration presets for end-to-end demos. Each folder is a self-contained scenario with an orchestrator workflow, specialist **child workflows**, mock tools where applicable, and a **README** with sample prompts.
 
+This folder is also the contributor map for scenario owners: each scenario README should tell you what it does, how to activate it, and who owns or maintains it.
+
+## Ownership and credit
+n- Keep a short credit line in each scenario README naming the owning team, maintainer, or module owner.
+- If you add or change a scenario, update the README in the same change so future contributors do not have to guess how to use it.
+- When in doubt, prefer explicit links over buried tribal knowledge.
+
 All scenarios use queue **`oloQueue2`** unless noted otherwise.
 
 ## Scenario catalog
@@ -21,9 +28,9 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
 | [api-integration-triage](api-integration-triage/) | `api-integration-orchestrator` | endpoint-probe, dependency-analysis, error-correlation, integration-report | http-tool, log-reader, web-search | [README](api-integration-triage/README.md) |
 | [capacity-planning](capacity-planning/) | `capacity-planning-orchestrator` | resource-utilization, cost-estimation, scaling-recommendation, capacity-report | cpu-usage, memory-usage, calculator | [README](capacity-planning/README.md) |
 | [literature-review](literature-review/) | `literature-review-orchestrator` | paper-discovery, evidence-synthesis, gap-analysis, research-brief | research-literature, web-search | [README](literature-review/README.md) |
-| [dynamic-graph-creation](dynamic-graph-creation/) | `dynamic-graph-creation` | (inline LLM graph) | — | [README](dynamic-graph-creation/README.md) |
+| [dynamic-graph-creation](dynamic-graph-creation/) | `dynamic-graph-creation` | (inline LLM graph) | â€” | [README](dynamic-graph-creation/README.md) |
 | [documents-index](documents-index/) | `documents-index` | RAG ingest (TOOL) | `olo-core:rag-ingest` | [README](documents-index/README.md) |
-| [default](default/) | `agent`, `planner`, … | various presets | calculator, cpu-usage, … | — |
+| [default](default/) | `agent`, `planner`, â€¦ | various presets | calculator, cpu-usage, â€¦ | â€” |
 
 ## Quick start (any scenario)
 
@@ -40,9 +47,9 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
    ./gradlew :olo-definition:generateAllScenarios
    ```
 
-2. **Activate the scenario** (recommended — **olo-ui**):
+2. **Activate the scenario** (recommended â€” **olo-ui**):
 
-   - Open **Administration → Scenarios**
+   - Open **Administration â†’ Scenarios**
    - Click **Activate** next to the scenario folder (e.g. `log-rca-analysis`)
    - This copies the folder into [`current-active/`](current-active/), clears the previous active files, and refreshes olo-worker + studio
 
@@ -56,7 +63,7 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
      recursive: true
    ```
 
-   You do **not** need to change `scanFolder` when using UI activation — only the files inside `current-active` change.
+   You do **not** need to change `scanFolder` when using UI activation â€” only the files inside `current-active` change.
 
 4. **Set demo data root** (observability tools):
 
@@ -64,7 +71,7 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
    OLO_DEMO_DATA_ROOT=olo-core/tools
    ```
 
-5. **Run in olo-ui** — select the orchestrator workflow on `oloQueue2`, paste the sample prompt from the scenario README. Use **Cancel** during a run if needed; **Run** is available again after cancel completes.
+5. **Run in olo-ui** â€” select the orchestrator workflow on `oloQueue2`, paste the sample prompt from the scenario README. Use **Cancel** during a run if needed; **Run** is available again after cancel completes.
 
 ## Shared mock incident (observability scenarios)
 
@@ -90,3 +97,4 @@ Each orchestrator:
 Child workflows run as **Temporal child workflows** when dispatched from the parent workflow thread. Worker logs include `childWorkflowId`, `parentWorkflowId`, and shared `transactionId` for correlation (see [olo-worker/README.md](../../olo-worker/README.md#logging)).
 
 Programmatic builders live under `olo-definition/src/test/java/org/olo/definition/configuration/<scenario>/`.
+

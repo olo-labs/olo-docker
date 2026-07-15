@@ -2,6 +2,11 @@
 
 This repository provides Docker Compose setups to bring up the OLO stack in three environments: **dev**, **prod**, and **demo**. **Dev** uses multiple `docker-compose-*.yml` files merged at install time; **prod** and **demo** use a single `docker-compose.yml` each. You can bring up a stack from the repository root (with an optional folder argument) or from inside each folder.
 
+The docs are written for two audiences at once:
+
+- Visitors who want a working stack quickly
+- Module owners and contributors who need to understand where a scenario lives, how it is activated, and where to add credit for ownership
+
 ---
 
 ## Table of Contents
@@ -15,12 +20,13 @@ This repository provides Docker Compose setups to bring up the OLO stack in thre
 - [Production Setup (.env)](#production-setup-env)
 - [Manual Docker Compose Commands](#manual-docker-compose-commands)
 - [Ports and Services](#ports-and-services)
-- [Dev stack — Web UIs and URLs](#dev-stack--web-uis-and-urls)
-- [Dev stack — Internal hostnames and URLs (worker/config)](#dev-stack--internal-hostnames-and-urls-workerconfig)
+- [Dev stack â€” Web UIs and URLs](#dev-stack--web-uis-and-urls)
+- [Dev stack â€” Internal hostnames and URLs (worker/config)](#dev-stack--internal-hostnames-and-urls-workerconfig)
 - [Stopping the Stack](#stopping-the-stack)
 - [Customization](#customization)
 - [Troubleshooting](#troubleshooting)
 - [Detailed documentation (docs/)](#detailed-documentation-docs)
+- [Contributing](#contributing)
 
 ---
 
@@ -28,9 +34,9 @@ This repository provides Docker Compose setups to bring up the OLO stack in thre
 
 For a deeper walkthrough (directory layout, every Compose file, scripts, internal vs host ports, architecture):
 
-- [docs/README.md](docs/README.md) — documentation index  
-- [docs/architecture.md](docs/architecture.md) — system diagram and data flow  
-- [docs/reference.md](docs/reference.md) — YAML inventory, scripts, configuration paths, port table  
+- [docs/README.md](docs/README.md) â€” documentation index  
+- [docs/architecture.md](docs/architecture.md) â€” system diagram and data flow  
+- [docs/reference.md](docs/reference.md) â€” YAML inventory, scripts, configuration paths, port table  
 
 ---
 
@@ -55,25 +61,25 @@ Before bringing up any stack, ensure you have:
 
 ```
 olo-docker/
-├── README.md                 # This file
-├── install.sh                # Root install script (default: dev)
-├── install.bat               # Root install script for Windows (default: dev)
-├── docs/                     # Architecture + full reference (see docs/README.md)
-├── dev/
-│   ├── docker-compose-*.yml  # Split dev stack (db, cache, olo, AI, …)
-│   ├── configuration/        # DB init, worker JSON, Temporal, pgAdmin, RedisInsight
-│   ├── scripts/              # Ollama / LocalAI model helpers after install
-│   ├── install.sh            # Bring up dev stack (Unix/macOS)
-│   └── install.bat           # Bring up dev stack (Windows)
-├── prod/
-│   ├── docker-compose.yml    # Production stack
-│   ├── .env.example          # Template for production .env
-│   ├── install.sh            # Bring up prod stack (Unix/macOS)
-│   └── install.bat           # Bring up prod stack (Windows)
-└── demo/
-    ├── docker-compose.yml    # Demo stack
-    ├── install.sh            # Bring up demo stack (Unix/macOS)
-    └── install.bat           # Bring up demo stack (Windows)
+â”œâ”€â”€ README.md                 # This file
+â”œâ”€â”€ install.sh                # Root install script (default: dev)
+â”œâ”€â”€ install.bat               # Root install script for Windows (default: dev)
+â”œâ”€â”€ docs/                     # Architecture + full reference (see docs/README.md)
+â”œâ”€â”€ dev/
+â”‚   â”œâ”€â”€ docker-compose-*.yml  # Split dev stack (db, cache, olo, AI, â€¦)
+â”‚   â”œâ”€â”€ configuration/        # DB init, worker JSON, Temporal, pgAdmin, RedisInsight
+â”‚   â”œâ”€â”€ scripts/              # Ollama / LocalAI model helpers after install
+â”‚   â”œâ”€â”€ install.sh            # Bring up dev stack (Unix/macOS)
+â”‚   â””â”€â”€ install.bat           # Bring up dev stack (Windows)
+â”œâ”€â”€ prod/
+â”‚   â”œâ”€â”€ docker-compose.yml    # Production stack
+â”‚   â”œâ”€â”€ .env.example          # Template for production .env
+â”‚   â”œâ”€â”€ install.sh            # Bring up prod stack (Unix/macOS)
+â”‚   â””â”€â”€ install.bat           # Bring up prod stack (Windows)
+â””â”€â”€ demo/
+    â”œâ”€â”€ docker-compose.yml    # Demo stack
+    â”œâ”€â”€ install.sh            # Bring up demo stack (Unix/macOS)
+    â””â”€â”€ install.bat           # Bring up demo stack (Windows)
 ```
 
 ---
@@ -114,7 +120,7 @@ cd /path/to/olo-docker
 
 You can either use the **root install scripts** (recommended) or the **per-folder** scripts.
 
-#### Option A — From root (recommended)
+#### Option A â€” From root (recommended)
 
 - **Default stack (dev):**  
   - Unix/macOS: `./install.sh` (make executable once: `chmod +x install.sh`)  
@@ -126,7 +132,7 @@ You can either use the **root install scripts** (recommended) or the **per-folde
 
 The root script checks that the argument is `dev`, `prod`, or `demo`; if you omit the argument, it uses **dev**.
 
-#### Option B — From inside each folder
+#### Option B â€” From inside each folder
 
 1. **Dev:**  
    - `cd dev`  
@@ -146,7 +152,7 @@ The root script checks that the argument is `dev`, `prod`, or `demo`; if you omi
 
 ### Step 3: What the install scripts do
 
-Each folder’s install script:
+Each folderâ€™s install script:
 
 1. Changes into its own directory (so paths in `docker-compose.yml` resolve correctly).
 2. Runs `docker compose up -d` to start the stack in detached mode.
@@ -214,7 +220,7 @@ The **prod** stack reads database credentials from environment variables. The in
    (Windows: `copy .env.example .env`)
 
 3. Edit `.env` and set at least:
-   - `POSTGRES_PASSWORD` — use a strong, unique password.  
+   - `POSTGRES_PASSWORD` â€” use a strong, unique password.  
    You can also override:
    - `POSTGRES_USER` (default: `prod`)
    - `POSTGRES_DB` (default: `olo_prod`)
@@ -282,7 +288,7 @@ docker compose -f demo/docker-compose.yml up -d
 
 ---
 
-## Dev stack — Web UIs and URLs
+## Dev stack â€” Web UIs and URLs
 
 When you bring up the **full dev stack** from `dev/` (e.g. `install.bat dev` or `./install.sh dev`), these web UIs and APIs are available on the host:
 
@@ -311,22 +317,22 @@ When you bring up the **full dev stack** from `dev/` (e.g. `install.bat dev` or 
 
 ---
 
-## Dev stack — Internal hostnames and URLs (worker/config)
+## Dev stack â€” Internal hostnames and URLs (worker/config)
 
 Use these **internal** hostnames and URLs when configuring services that run inside the same Docker network (e.g. **olo-worker**, olo API, or custom containers). On `olo-net`, containers resolve each other by **service name** (Compose service key), not by container name.
 
 | Container name           | Service name (hostname) | Internal URL / endpoint        | Use in config (e.g. worker)      |
 |--------------------------|-------------------------|---------------------------------|-----------------------------------|
 | olo-api                  | **olo**                 | http://olo:7080                 | OLO API base URL, callbacks       |
-| olo-worker               | olo-worker              | —                               | Consumer (uses others below)      |
+| olo-worker               | olo-worker              | â€”                               | Consumer (uses others below)      |
 | olo-ui                   | olo-ui                  | http://olo-ui:80                | UI (if another service links)     |
 | olo-chat                 | olo-chat                | http://olo-chat:80              | Chat UI (e.g. VITE_API_BASE)     |
 | olo-redis                | **redis**               | redis:6379                      | OLO_CACHE_HOST, OLO_CACHE_PORT    |
 | olo-db                   | **db**                  | db:5432                         | OLO_DB_HOST, POSTGRES_SEEDS       |
 | olo-elasticsearch        | **elasticsearch**       | http://elasticsearch:9200       | ES_SEEDS, Kibana backend          |
-| olo-kibana               | kibana                  | http://kibana:5601              | —                                 |
+| olo-kibana               | kibana                  | http://kibana:5601              | â€”                                 |
 | olo-temporal             | **temporal**            | temporal:7233                   | TEMPORAL_HOST, OLO_TEMPORAL_TARGET |
-| olo-temporal-ui          | temporal-ui             | http://temporal-ui:8080         | —                                 |
+| olo-temporal-ui          | temporal-ui             | http://temporal-ui:8080         | â€”                                 |
 | olo-qdrant               | **qdrant**              | http://qdrant:6333              | QDRANT_BASE_URL                   |
 | olo-openai-oss           | openai-oss              | http://openai-oss:8080          | OpenAI-compatible text (host 48090)|
 | olo-ollama               | **ollama**              | http://ollama:11434             | OLLAMA_BASE_URL                   |
@@ -336,8 +342,8 @@ Use these **internal** hostnames and URLs when configuring services that run ins
 | olo-comfyui-video        | comfyui                 | http://comfyui:8188             | ComfyUI video (host 48189)        |
 | olo-openai-oss-audio     | openai-oss              | http://openai-oss:8080          | LocalAI audio (host 48082)        |
 | olo-ollama-audio         | ollama                  | http://ollama:11434             | Ollama audio                      |
-| olo-pgadmin              | pgadmin                 | http://pgadmin:80               | —                                 |
-| olo-redisinsight         | redisinsight            | http://redisinsight:5540        | —                                 |
+| olo-pgadmin              | pgadmin                 | http://pgadmin:80               | â€”                                 |
+| olo-redisinsight         | redisinsight            | http://redisinsight:5540        | â€”                                 |
 
 **Notes:**
 
@@ -397,8 +403,17 @@ docker compose down -v
 
 | Goal                    | Command (root)              | Or from folder   |
 |-------------------------|-----------------------------|------------------|
-| Bring up dev (default)  | `./install.sh` or `install.bat` | `cd dev` → `./install.sh` or `install.bat` |
-| Bring up demo           | `./install.sh demo` or `install.bat demo` | `cd demo` → run install |
-| Bring up prod           | `./install.sh prod` or `install.bat prod` | Create `prod/.env`, then `cd prod` → run install |
+| Bring up dev (default)  | `./install.sh` or `install.bat` | `cd dev` â†’ `./install.sh` or `install.bat` |
+| Bring up demo           | `./install.sh demo` or `install.bat demo` | `cd demo` â†’ run install |
+| Bring up prod           | `./install.sh prod` or `install.bat prod` | Create `prod/.env`, then `cd prod` â†’ run install |
 
 Ensure Docker is installed and running, and for production always set a strong `POSTGRES_PASSWORD` in `prod/.env`.
+
+---
+
+## Contributing
+
+If you are improving a specific module or scenario, start with [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Scenario authors and maintainers should keep a short credit line in each scenario README under dev/configuration/olo-configuration/ so ownership stays visible to future contributors.
+

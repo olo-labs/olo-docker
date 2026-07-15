@@ -17,16 +17,20 @@ services:
       OLO_UI_USER_DISPLAY_NAME: "Public"
       # URL workers use to POST run events. Host-run worker (gradlew/IDE): localhost:47080.
       # Override when worker runs in Docker on olo-net: OLO_CHAT_CALLBACK_BASE_URL=http://olo:7080
-      OLO_CHAT_CALLBACK_BASE_URL: ${OLO_CHAT_CALLBACK_BASE_URL:-http://localhost:47080}
+      OLO_CHAT_CALLBACK_BASE_URL: ${OLO_CHAT_CALLBACK_BASE_URL:-http://olo:7080}
       OLO_WS_JWT_REQUIRED: "false"
       # Must match Dockerfile WORKDIR (/app) and image default OLO_CONFIGURATION_DIR.
       OLO_CONFIGURATION_DIR: /app/olo-configuration
+      # Shared raw document upload folder. Keep mounted so uploads are visible to
+      # Knowledge source listing and available later for ingest/S3 migration.
+      OLO_RESOURCE_UPLOAD_BASE_DIR: /app/shared/resource-uploads
     volumes:
       # Regional workflow presets (default/*.json). Default: dev/configuration/olo-configuration.
       # Override to bind directly from a monorepo checkout, e.g.:
       #   OLO_CONFIGURATION_SOURCE=../../olo-labs/olo-mono/olo-configuration
       #   OLO_CONFIGURATION_SOURCE=../../olo-labs/olo/olo-configuration
       - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
+      - ${OLO_RESOURCE_UPLOAD_SOURCE:-./configuration/olo-resource-uploads}:/app/shared/resource-uploads
     depends_on:
       - redis
       - db
@@ -49,7 +53,7 @@ services:
       OLO_CATALOG_DIRECTORY: /app/catalog
       OLO_RUNTIME_BASE_URL: http://olo:7080
     volumes:
-      - ./configuration/olo-ui/nginx-default.conf:/etc/nginx/http.d/default.conf:ro
+      - ${OLO_UI_NGINX_CONFIG_SOURCE:-./configuration/olo-ui/nginx-default.conf}:/etc/nginx/http.d/default.conf:ro
       - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
       - ${OLO_CATALOG_SOURCE:-./configuration/olo-catalog}:/app/catalog
     depends_on:
@@ -80,6 +84,7 @@ services:
       OLO_LLM_BASE_URL: http://ollama:11434
       OLO_CHAT_CALLBACK_BASE_URL: http://olo:7080
       OLO_DEMO_DATA_ROOT: /app/shared/olo-core/tools
+      OLO_RESOURCE_UPLOAD_DIR: /app/shared/resource-uploads
       OLO_LOG_DIRECTORY: /app/logs
     depends_on:
       - olo
@@ -87,8 +92,9 @@ services:
       - redis
     volumes:
       - ${OLO_CONFIGURATION_SOURCE:-./configuration/olo-configuration}:/app/olo-configuration
-      - ./configuration/olo-worker/config:/app/worker/config:ro
-      - ./configuration/olo-worker/logs:/app/logs
+      - ${OLO_WORKER_CONFIG_SOURCE:-./configuration/olo-worker/config}:/app/worker/config:ro
+      - ${OLO_WORKER_LOG_SOURCE:-./configuration/olo-worker/logs}:/app/logs
+      - ${OLO_RESOURCE_UPLOAD_SOURCE:-./configuration/olo-resource-uploads}:/app/shared/resource-uploads:ro
       - ${OLO_SHARED_SOURCE:-../../olo-labs/olo-mono/olo-core/tools}:/app/shared/olo-core/tools:ro
     networks:
       - olo-net
