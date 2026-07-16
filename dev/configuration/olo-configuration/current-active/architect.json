@@ -5,7 +5,11 @@
   "label" : "Architect",
   "role" : "Architect",
   "shortDescription" : "System design and architecture guidance",
+<<<<<<< HEAD
   "emoji" : "🏗️",
+=======
+  "emoji" : "\uD83C\uDFD7️",
+>>>>>>> 5eb4dd2 (adding snapshots)
   "designer" : {
     "paletteGroup" : "Agents",
     "searchKeywords" : [ "architect" ],
@@ -43,7 +47,11 @@
     },
     "nodeTypes" : {
       "AGENT" : {
+<<<<<<< HEAD
         "emoji" : "🏗️",
+=======
+        "emoji" : "\uD83C\uDFD7️",
+>>>>>>> 5eb4dd2 (adding snapshots)
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -91,7 +99,13 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
+<<<<<<< HEAD
   "availableAgents" : [ ],
+=======
+  "availableAgents" : [ {
+    "id" : "architect"
+  } ],
+>>>>>>> 5eb4dd2 (adding snapshots)
   "version" : "1.0.0",
   "capability" : {
     "name" : "Architect",
@@ -101,7 +115,11 @@
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
+<<<<<<< HEAD
     "required_context" : [ "message" ]
+=======
+    "required_context" : [ "message", "conversationSummary" ]
+>>>>>>> 5eb4dd2 (adding snapshots)
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -123,9 +141,15 @@
       "defaultValue" : 10,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 1.0,
         "maximum" : 100.0,
         "step" : 1.0
+=======
+        "minimum" : 1,
+        "maximum" : 100,
+        "step" : 1
+>>>>>>> 5eb4dd2 (adding snapshots)
       },
       "ui" : {
         "widget" : "NUMBER",
@@ -154,8 +178,13 @@
       "defaultValue" : 0.2,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 0.0,
         "maximum" : 2.0,
+=======
+        "minimum" : 0,
+        "maximum" : 2,
+>>>>>>> 5eb4dd2 (adding snapshots)
         "step" : 0.1
       },
       "ui" : {
@@ -203,11 +232,20 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 80,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 78.27552031714572,
+          "y" : 93.79583746283448
+        }
+      }
+    },
+    "label" : "start"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -220,10 +258,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -233,10 +278,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -262,7 +314,12 @@
           "y" : 80
         }
       }
+<<<<<<< HEAD
     }
+=======
+    },
+    "label" : "conversation-load"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "agent",
     "type" : "AGENT",
@@ -339,11 +396,20 @@
     "configuration" : {
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 800,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 793.1020812685828,
+          "y" : 93.79583746283447
+        }
+      }
+    },
+    "label" : "Agent"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -356,10 +422,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -369,10 +442,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -394,11 +474,20 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 1160,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 1151.3776015857284,
+          "y" : 80
+        }
+      }
+    },
+    "label" : "conversation-store"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "end",
     "type" : "END",
@@ -423,6 +512,7 @@
     "configuration" : {
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 1520,
           "y" : 80
         }
@@ -448,6 +538,34 @@
     "sourceNodeId" : "conversation-store",
     "sourcePortId" : "out",
     "targetNodeId" : "end",
+=======
+          "x" : 1516.5510406342912,
+          "y" : 92.07135777998018
+        }
+      }
+    },
+    "label" : "end"
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "targetNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "targetNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "targetNodeId" : "end",
+    "sourcePortId" : "out",
+>>>>>>> 5eb4dd2 (adding snapshots)
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -541,11 +659,32 @@
     "description" : "System design and architecture guidance",
     "role" : "architect",
     "plannerContext" : {
+<<<<<<< HEAD
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
       "injectCapabilities" : false,
       "selectedVariables" : [ "message", "conversationSummary" ]
     },
     "returnVariable" : "ReturnValue"
+=======
+      "selectedAgents" : [ "architect" ],
+      "selectedTools" : [ "olo-core:conversation-load", "olo-core:conversation-store" ],
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary" ],
+      "injectAgents" : false
+    },
+    "returnVariable" : "ReturnValue",
+    "canvasView" : {
+      "viewport" : {
+        "x" : 79.61,
+        "y" : 765.27,
+        "zoom" : 0.58
+      },
+      "size" : {
+        "width" : 1259,
+        "height" : 1769
+      }
+    }
+>>>>>>> 5eb4dd2 (adding snapshots)
   }
 }

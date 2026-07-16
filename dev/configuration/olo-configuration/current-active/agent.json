@@ -5,7 +5,11 @@
   "label" : "Agent",
   "role" : "Agent",
   "shortDescription" : "Autonomous tool-using agent with strict JSON tool-call planning",
+<<<<<<< HEAD
   "emoji" : "🤖",
+=======
+  "emoji" : "\uD83E\uDD16",
+>>>>>>> 5eb4dd2 (adding snapshots)
   "designer" : {
     "paletteGroup" : "Agents",
     "searchKeywords" : [ "planning", "task", "agent" ],
@@ -43,7 +47,11 @@
     },
     "nodeTypes" : {
       "AGENT" : {
+<<<<<<< HEAD
         "emoji" : "🤖",
+=======
+        "emoji" : "\uD83E\uDD16",
+>>>>>>> 5eb4dd2 (adding snapshots)
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -119,7 +127,11 @@
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
+<<<<<<< HEAD
     "required_context" : [ "message", "availableToolsJson", "toolCallSequenceJson" ]
+=======
+    "required_context" : [ "message", "conversationSummary", "availableToolsJson", "toolCallSequenceJson" ]
+>>>>>>> 5eb4dd2 (adding snapshots)
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -150,9 +162,15 @@
       "defaultValue" : 10,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 1.0,
         "maximum" : 100.0,
         "step" : 1.0
+=======
+        "minimum" : 1,
+        "maximum" : 100,
+        "step" : 1
+>>>>>>> 5eb4dd2 (adding snapshots)
       },
       "ui" : {
         "widget" : "NUMBER",
@@ -181,8 +199,13 @@
       "defaultValue" : 0.2,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 0.0,
         "maximum" : 2.0,
+=======
+        "minimum" : 0,
+        "maximum" : 2,
+>>>>>>> 5eb4dd2 (adding snapshots)
         "step" : 0.1
       },
       "ui" : {
@@ -230,11 +253,20 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 80,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 46.919078594747276,
+          "y" : 81.74110112659227
+        }
+      }
+    },
+    "label" : "start"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -247,10 +279,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -260,10 +299,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -285,11 +331,20 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 440,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 380.73623591759696,
+          "y" : 68.37055056329605
+        }
+      }
+    },
+    "label" : "conversation-load"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -302,10 +357,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -315,10 +377,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -340,11 +409,20 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 1520,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 1392,
+          "y" : 68.5
+        }
+      }
+    },
+    "label" : "conversation-store"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "human-input",
     "type" : "HUMAN",
@@ -395,11 +473,20 @@
     "configuration" : {
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 800,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 722.1650449303348,
+          "y" : 81.37055056329608
+        }
+      }
+    },
+    "label" : "human-input"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "calculator",
     "type" : "TOOL",
@@ -412,10 +499,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -425,10 +519,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -450,11 +551,20 @@
       "toolId" : "olo-core:calculator",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 2240,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 1370.4692697153641,
+          "y" : 735.6149778682201
+        }
+      }
+    },
+    "label" : "calculator"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "cpu-usage",
     "type" : "TOOL",
@@ -467,10 +577,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -480,10 +597,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -505,11 +629,20 @@
       "toolId" : "olo-core:cpu-usage",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 2600,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 1013.0533932404467,
+          "y" : 733.373876741628
+        }
+      }
+    },
+    "label" : "cpu-usage"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "restart-container",
     "type" : "TOOL",
@@ -522,10 +655,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -535,10 +675,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -560,11 +707,20 @@
       "toolId" : "olo-core:restart-container",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 2960,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 664.8652695820093,
+          "y" : 733.7444273049241
+        }
+      }
+    },
+    "label" : "restart-container"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "agent",
     "type" : "AGENT",
@@ -641,8 +797,13 @@
       "promptTemplate" : "You are an Open LLM Orchestrator (OLO)         tool-call planner.\n\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\n        User request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Do not wrap the JSON in ```json``` blocks.\n3. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:calculator\", \"arguments\": { } }\n  ],\n  \"directResponse\": null\n}\n4. If no tools are needed, set \"toolCalls\": [] and put the final answer in \"directResponse\".\n5. If tools are needed, set \"directResponse\": null and list toolCalls in execution order.\n6. Each toolId MUST appear in availableToolsJson.\n7. Include arguments when a tool needs structured input (for example ISO-8601 startTime/endTime for observability tools).\n8. Final human-approved action — when the operator approved a container restart at human-input, call\n   olo-core:restart-container with containerId and namespace. Include confirmationId and logPath in directResponse.\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 1160,
           "y" : 80
+=======
+          "x" : 1057.0735826902094,
+          "y" : 82.35660432744768
+>>>>>>> 5eb4dd2 (adding snapshots)
         }
       }
     }
@@ -670,6 +831,7 @@
     "configuration" : {
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 1880,
           "y" : 80
         }
@@ -715,6 +877,54 @@
     "sourceNodeId" : "restart-container",
     "sourcePortId" : "capabilities",
     "targetNodeId" : "agent",
+=======
+          "x" : 1720,
+          "y" : 81.5
+        }
+      }
+    },
+    "label" : "end"
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "targetNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "targetNodeId" : "human-input",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "human-input",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "targetNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "targetNodeId" : "end",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "calculator",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "cpu-usage",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "restart-container",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
+>>>>>>> 5eb4dd2 (adding snapshots)
     "targetPortId" : "capabilities"
   } ],
   "variables" : [ {
@@ -907,11 +1117,32 @@
     "plannerContext" : {
       "selectedAgents" : [ "planner", "reviewer", "architect" ],
       "selectedTools" : [ "olo-core:calculator", "olo-core:cpu-usage" ],
+<<<<<<< HEAD
       "injectCapabilities" : false,
       "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "toolCallSequenceJson" ]
     },
     "description" : "Autonomous tool-using agent with strict JSON tool-call planning",
     "agentSelectionStrategy" : "dynamic",
     "role" : "agent"
+=======
+      "injectCapabilities" : true,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "toolCallSequenceJson" ],
+      "injectAgents" : false
+    },
+    "description" : "Autonomous tool-using agent with strict JSON tool-call planning",
+    "agentSelectionStrategy" : "dynamic",
+    "role" : "agent",
+    "canvasView" : {
+      "viewport" : {
+        "x" : 493.44,
+        "y" : 416.67,
+        "zoom" : 1.03
+      },
+      "size" : {
+        "width" : 1505,
+        "height" : 1973
+      }
+    }
+>>>>>>> 5eb4dd2 (adding snapshots)
   }
 }

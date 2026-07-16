@@ -91,7 +91,13 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
+<<<<<<< HEAD
   "availableAgents" : [ ],
+=======
+  "availableAgents" : [ {
+    "id" : "fast"
+  } ],
+>>>>>>> 5eb4dd2 (adding snapshots)
   "version" : "1.0.0",
   "capability" : {
     "name" : "Fast",
@@ -101,7 +107,11 @@
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
+<<<<<<< HEAD
     "required_context" : [ "message" ]
+=======
+    "required_context" : [ "message", "conversationSummary" ]
+>>>>>>> 5eb4dd2 (adding snapshots)
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -123,9 +133,15 @@
       "defaultValue" : 10,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 1.0,
         "maximum" : 100.0,
         "step" : 1.0
+=======
+        "minimum" : 1,
+        "maximum" : 100,
+        "step" : 1
+>>>>>>> 5eb4dd2 (adding snapshots)
       },
       "ui" : {
         "widget" : "NUMBER",
@@ -154,8 +170,13 @@
       "defaultValue" : 0.2,
       "required" : false,
       "validation" : {
+<<<<<<< HEAD
         "minimum" : 0.0,
         "maximum" : 2.0,
+=======
+        "minimum" : 0,
+        "maximum" : 2,
+>>>>>>> 5eb4dd2 (adding snapshots)
         "step" : 0.1
       },
       "ui" : {
@@ -207,7 +228,12 @@
           "y" : 80
         }
       }
+<<<<<<< HEAD
     }
+=======
+    },
+    "label" : "start"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -220,10 +246,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -233,10 +266,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -258,11 +298,20 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
+<<<<<<< HEAD
           "x" : 440,
           "y" : 80
         }
       }
     }
+=======
+          "x" : 441.7244796828543,
+          "y" : 67.92864222001982
+        }
+      }
+    },
+    "label" : "conversation-load"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "agent",
     "type" : "AGENT",
@@ -343,7 +392,12 @@
           "y" : 80
         }
       }
+<<<<<<< HEAD
     }
+=======
+    },
+    "label" : "Agent"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -356,10 +410,17 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -369,10 +430,17 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
+<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
+=======
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+>>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -395,10 +463,18 @@
       "designer" : {
         "position" : {
           "x" : 1160,
+<<<<<<< HEAD
           "y" : 80
         }
       }
     }
+=======
+          "y" : 67.92864222001982
+        }
+      }
+    },
+    "label" : "conversation-store"
+>>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "end",
     "type" : "END",
@@ -427,6 +503,7 @@
           "y" : 80
         }
       }
+<<<<<<< HEAD
     }
   } ],
   "edges" : [ {
@@ -448,6 +525,30 @@
     "sourceNodeId" : "conversation-store",
     "sourcePortId" : "out",
     "targetNodeId" : "end",
+=======
+    },
+    "label" : "end"
+  } ],
+  "edges" : [ {
+    "sourceNodeId" : "start",
+    "targetNodeId" : "conversation-load",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-load",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "agent",
+    "targetNodeId" : "conversation-store",
+    "sourcePortId" : "out",
+    "targetPortId" : "in"
+  }, {
+    "sourceNodeId" : "conversation-store",
+    "targetNodeId" : "end",
+    "sourcePortId" : "out",
+>>>>>>> 5eb4dd2 (adding snapshots)
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -541,11 +642,32 @@
     "returnVariable" : "ReturnValue",
     "role" : "fast",
     "plannerContext" : {
+<<<<<<< HEAD
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
       "injectCapabilities" : false,
       "selectedVariables" : [ "message", "conversationSummary" ]
     },
     "description" : "Quick, concise responses"
+=======
+      "selectedAgents" : [ "fast" ],
+      "selectedTools" : [ "olo-core:conversation-load", "olo-core:conversation-store" ],
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary" ],
+      "injectAgents" : false
+    },
+    "description" : "Quick, concise responses",
+    "canvasView" : {
+      "viewport" : {
+        "x" : 79.61,
+        "y" : 663.27,
+        "zoom" : 0.58
+      },
+      "size" : {
+        "width" : 1259,
+        "height" : 1769
+      }
+    }
+>>>>>>> 5eb4dd2 (adding snapshots)
   }
 }
