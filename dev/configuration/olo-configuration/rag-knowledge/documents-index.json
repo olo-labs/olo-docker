@@ -208,14 +208,14 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "vectorSize" : 384,
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "chunkSize" : 512,
-      "driver" : "qdrant",
+      "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
       "extensionRef" : "pgvector-store",
-      "collection" : "documents",
-      "distance" : "Cosine",
-      "connectionRef" : "http://localhost:46333",
-      "vectorTable" : "documents",
+      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
+      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
+      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
+      "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}",
       "toolId" : "olo-core:rag-ingest",
       "designer" : {
         "position" : {
@@ -308,12 +308,12 @@
     "id" : "pgvector-store",
     "type" : "VECTOR_STORE",
     "configuration" : {
-      "vectorSize" : 384,
-      "collection" : "documents",
-      "driver" : "qdrant",
-      "distance" : "Cosine",
-      "table" : "documents",
-      "connectionRef" : "http://localhost:46333"
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
+      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
+      "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
+      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
+      "table" : "${env:OLO_VECTOR_STORE_TABLE}",
+      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}"
     }
   } ],
   "metadata" : {

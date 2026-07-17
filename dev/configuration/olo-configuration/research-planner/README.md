@@ -53,3 +53,7 @@ workflowDefinitions:
 
 - `ResearchPlannerConfigurationTest` — on-disk JSON matches programmatic definitions
 - `ResearchPlannerEndToEndTest` (olo-kernel) — registry load, tool execution, tool-call merge
+
+## Contributors and owners
+
+Contributions are welcome. Start with [CONTRIBUTING.md](../../../CONTRIBUTING.md), use the [contributor guide](../../../docs/CONTRIBUTOR_GUIDE.md) to find the right module or scenario, route review through [OWNERS.md](../../../OWNERS.md), and record meaningful module or scenario credit in [CREDITS.md](../../../CREDITS.md).

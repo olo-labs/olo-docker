@@ -42,7 +42,7 @@ Find destination highlights and compare travel offers, then build a day-by-day i
 
 ## Activate scenario
 
-**Recommended:** olo-ui â†’ **Administration â†’ Scenarios** â†’ **Activate** `travel-planner`. See [current-active/README.md](../current-active/README.md).
+**Recommended:** olo-ui → **Administration → Scenarios** → **Activate** `travel-planner`. See [current-active/README.md](../current-active/README.md).
 
 ## Load in worker
 
@@ -58,7 +58,6 @@ workflowDefinitions:
 - `TravelPlannerConfigurationTest`
 - `TravelPlannerEndToEndTest` (olo-kernel)
 
-## Credits
+## Contributors and owners
 
-This scenario is maintained by the travel planner module owner and contributors. Add a more specific owner note here when the owning team wants to be named directly.
-
+Contributions are welcome. Start with [CONTRIBUTING.md](../../../CONTRIBUTING.md), use the [contributor guide](../../../docs/CONTRIBUTOR_GUIDE.md) to find the right module or scenario, route review through [OWNERS.md](../../../OWNERS.md), and record meaningful module or scenario credit in [CREDITS.md](../../../CREDITS.md).

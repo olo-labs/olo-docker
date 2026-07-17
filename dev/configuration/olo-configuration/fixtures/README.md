@@ -11,3 +11,7 @@ Committed samples used by unit tests (injection envelopes, etc.). Not loaded by 
 | `tool-call-agent-agent.json` | `DynamicSubgraphInjectionSupportTest`, `DynamicSubgraphInjectionLoaderTest` |
 
 Refresh from a runtime `log/tool-call-*.json` when the agent preset graph changes materially.
+
+## Contributors and owners
+
+Contributions are welcome. Start with [CONTRIBUTING.md](../../../CONTRIBUTING.md), use the [contributor guide](../../../docs/CONTRIBUTOR_GUIDE.md) to find the right module or scenario, route review through [OWNERS.md](../../../OWNERS.md), and record meaningful module or scenario credit in [CREDITS.md](../../../CREDITS.md).
