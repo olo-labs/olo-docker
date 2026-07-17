@@ -24,6 +24,13 @@ services:
       # Shared raw document upload folder. Keep mounted so uploads are visible to
       # Knowledge source listing and available later for ingest/S3 migration.
       OLO_RESOURCE_UPLOAD_BASE_DIR: /app/shared/resource-uploads
+      # Vector store defaults consumed by workflow JSON via ${env:...} placeholders.
+      OLO_VECTOR_STORE_DRIVER: ${OLO_VECTOR_STORE_DRIVER:-qdrant}
+      OLO_VECTOR_STORE_URL: ${OLO_VECTOR_STORE_URL:-http://qdrant:6333}
+      OLO_VECTOR_STORE_TABLE: ${OLO_VECTOR_STORE_TABLE:-documents}
+      OLO_VECTOR_STORE_COLLECTION: ${OLO_VECTOR_STORE_COLLECTION:-documents}
+      OLO_VECTOR_STORE_VECTOR_SIZE: ${OLO_VECTOR_STORE_VECTOR_SIZE:-384}
+      OLO_VECTOR_STORE_DISTANCE: ${OLO_VECTOR_STORE_DISTANCE:-Cosine}
     volumes:
       # Regional workflow presets (default/*.json). Default: dev/configuration/olo-configuration.
       # Override to bind directly from a monorepo checkout, e.g.:
@@ -86,6 +93,13 @@ services:
       OLO_DEMO_DATA_ROOT: /app/shared/olo-core/tools
       OLO_RESOURCE_UPLOAD_DIR: /app/shared/resource-uploads
       OLO_LOG_DIRECTORY: /app/logs
+      # Vector store defaults consumed by workflow JSON via ${env:...} placeholders.
+      OLO_VECTOR_STORE_DRIVER: ${OLO_VECTOR_STORE_DRIVER:-qdrant}
+      OLO_VECTOR_STORE_URL: ${OLO_VECTOR_STORE_URL:-http://qdrant:6333}
+      OLO_VECTOR_STORE_TABLE: ${OLO_VECTOR_STORE_TABLE:-documents}
+      OLO_VECTOR_STORE_COLLECTION: ${OLO_VECTOR_STORE_COLLECTION:-documents}
+      OLO_VECTOR_STORE_VECTOR_SIZE: ${OLO_VECTOR_STORE_VECTOR_SIZE:-384}
+      OLO_VECTOR_STORE_DISTANCE: ${OLO_VECTOR_STORE_DISTANCE:-Cosine}
     depends_on:
       - olo
       - temporal
@@ -96,6 +110,8 @@ services:
       - ${OLO_WORKER_LOG_SOURCE:-./configuration/olo-worker/logs}:/app/logs
       - ${OLO_RESOURCE_UPLOAD_SOURCE:-./configuration/olo-resource-uploads}:/app/shared/resource-uploads:ro
       - ${OLO_SHARED_SOURCE:-../../olo-labs/olo-mono/olo-core/tools}:/app/shared/olo-core/tools:ro
+      # Conversation tools persist session JSON here; keep this writable even when demo fixtures are read-only.
+      - ${OLO_CONVERSATION_STORE_SOURCE:-./configuration/olo-worker/conversations}:/app/shared/olo-core/tools/demo-data/conversations
     networks:
       - olo-net
 
@@ -103,4 +119,3 @@ networks:
   olo-net:
     external: true
     name: olo-net
-

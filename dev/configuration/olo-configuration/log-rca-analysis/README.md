@@ -130,3 +130,7 @@ OLO_DEMO_DATA_ROOT=olo-core/tools
 - `LogRcaAnalysisConfigurationTest` — on-disk JSON matches programmatic definitions
 - `LogRcaAnalysisRegenerationTest` — regenerates presets
 - Programmatic source: `LogRcaAnalysisDefinitions.java`
+
+## Contributors and owners
+
+Contributions are welcome. Start with [CONTRIBUTING.md](../../../CONTRIBUTING.md), use the [contributor guide](../../../docs/CONTRIBUTOR_GUIDE.md) to find the right module or scenario, route review through [OWNERS.md](../../../OWNERS.md), and record meaningful module or scenario credit in [CREDITS.md](../../../CREDITS.md).
