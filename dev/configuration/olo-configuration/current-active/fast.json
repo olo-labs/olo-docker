@@ -30,18 +30,33 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
       "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "agent-plug" : "#a855f7",
-      "any" : "#94a3b8"
+      "any" : "#94a3b8",
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8"
     },
     "nodeTypes" : {
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      },
       "AGENT" : {
         "emoji" : "⚡",
         "typeLabel" : "Agent",
@@ -69,21 +84,6 @@
           "label" : "Output variable",
           "binding" : "outputVariableMapping"
         } ]
-      },
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
       }
     }
   },
@@ -91,13 +91,7 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
-<<<<<<< HEAD
   "availableAgents" : [ ],
-=======
-  "availableAgents" : [ {
-    "id" : "fast"
-  } ],
->>>>>>> 5eb4dd2 (adding snapshots)
   "version" : "1.0.0",
   "capability" : {
     "name" : "Fast",
@@ -107,11 +101,7 @@
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-<<<<<<< HEAD
     "required_context" : [ "message" ]
-=======
-    "required_context" : [ "message", "conversationSummary" ]
->>>>>>> 5eb4dd2 (adding snapshots)
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -126,43 +116,6 @@
   },
   "state" : { },
   "parameters" : {
-    "maxIterations" : {
-      "type" : "integer",
-      "label" : "Max Iterations",
-      "description" : "Maximum agent reasoning iterations",
-      "defaultValue" : 10,
-      "required" : false,
-      "validation" : {
-<<<<<<< HEAD
-        "minimum" : 1.0,
-        "maximum" : 100.0,
-        "step" : 1.0
-=======
-        "minimum" : 1,
-        "maximum" : 100,
-        "step" : 1
->>>>>>> 5eb4dd2 (adding snapshots)
-      },
-      "ui" : {
-        "widget" : "NUMBER",
-        "group" : "Model Settings",
-        "help" : "Caps how many planner/tool loops the agent may run.",
-        "order" : 1
-      }
-    },
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
-    },
     "temperature" : {
       "type" : "number",
       "label" : "Temperature",
@@ -170,13 +123,8 @@
       "defaultValue" : 0.2,
       "required" : false,
       "validation" : {
-<<<<<<< HEAD
         "minimum" : 0.0,
         "maximum" : 2.0,
-=======
-        "minimum" : 0,
-        "maximum" : 2,
->>>>>>> 5eb4dd2 (adding snapshots)
         "step" : 0.1
       },
       "ui" : {
@@ -198,6 +146,37 @@
         "help" : "Include {message} to inject the workflow input into the system prompt.",
         "placeholder" : "You are a helpful assistant…\n\n{message}",
         "order" : 0
+      }
+    },
+    "maxIterations" : {
+      "type" : "integer",
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    },
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     }
   },
@@ -224,16 +203,11 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
-<<<<<<< HEAD
     }
-=======
-    },
-    "label" : "start"
->>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -246,17 +220,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
-=======
-      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "LEFT",
-        "color" : "#71717a"
->>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -266,17 +233,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
-=======
-      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "RIGHT",
-        "color" : "#71717a"
->>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -298,20 +258,11 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-<<<<<<< HEAD
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
-=======
-          "x" : 441.7244796828543,
-          "y" : 67.92864222001982
-        }
-      }
-    },
-    "label" : "conversation-load"
->>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "agent",
     "type" : "AGENT",
@@ -388,16 +339,11 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
-<<<<<<< HEAD
     }
-=======
-    },
-    "label" : "Agent"
->>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -410,17 +356,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-<<<<<<< HEAD
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
-=======
-      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "LEFT",
-        "color" : "#71717a"
->>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "out",
@@ -430,17 +369,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-<<<<<<< HEAD
       "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
         "color" : "#ef4444"
-=======
-      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "RIGHT",
-        "color" : "#71717a"
->>>>>>> 5eb4dd2 (adding snapshots)
       }
     }, {
       "id" : "capabilities",
@@ -462,19 +394,11 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "x" : 1160,
-<<<<<<< HEAD
-          "y" : 80
+          "y" : 80,
+          "x" : 1160
         }
       }
     }
-=======
-          "y" : 67.92864222001982
-        }
-      }
-    },
-    "label" : "conversation-store"
->>>>>>> 5eb4dd2 (adding snapshots)
   }, {
     "id" : "end",
     "type" : "END",
@@ -499,11 +423,10 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
-<<<<<<< HEAD
     }
   } ],
   "edges" : [ {
@@ -525,30 +448,6 @@
     "sourceNodeId" : "conversation-store",
     "sourcePortId" : "out",
     "targetNodeId" : "end",
-=======
-    },
-    "label" : "end"
-  } ],
-  "edges" : [ {
-    "sourceNodeId" : "start",
-    "targetNodeId" : "conversation-load",
-    "sourcePortId" : "out",
-    "targetPortId" : "in"
-  }, {
-    "sourceNodeId" : "conversation-load",
-    "targetNodeId" : "agent",
-    "sourcePortId" : "out",
-    "targetPortId" : "in"
-  }, {
-    "sourceNodeId" : "agent",
-    "targetNodeId" : "conversation-store",
-    "sourcePortId" : "out",
-    "targetPortId" : "in"
-  }, {
-    "sourceNodeId" : "conversation-store",
-    "targetNodeId" : "end",
-    "sourcePortId" : "out",
->>>>>>> 5eb4dd2 (adding snapshots)
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -639,35 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
     "role" : "fast",
     "plannerContext" : {
-<<<<<<< HEAD
+      "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary" ]
-    },
-    "description" : "Quick, concise responses"
-=======
-      "selectedAgents" : [ "fast" ],
-      "selectedTools" : [ "olo-core:conversation-load", "olo-core:conversation-store" ],
-      "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary" ],
-      "injectAgents" : false
+      "injectCapabilities" : false
     },
     "description" : "Quick, concise responses",
-    "canvasView" : {
-      "viewport" : {
-        "x" : 79.61,
-        "y" : 663.27,
-        "zoom" : 0.58
-      },
-      "size" : {
-        "width" : 1259,
-        "height" : 1769
-      }
-    }
->>>>>>> 5eb4dd2 (adding snapshots)
+    "returnVariable" : "ReturnValue"
   }
 }
