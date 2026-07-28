@@ -5,7 +5,7 @@
   "label" : "Documents Index",
   "role" : "Documents Index",
   "shortDescription" : "Index uploaded files into the vector store (single rag-ingest step)",
-  "emoji" : "📚",
+  "emoji" : "\uD83D\uDCDA",
   "designer" : {
     "paletteGroup" : "Knowledge",
     "searchKeywords" : [ "rag", "ingest", "documents-index" ],
@@ -43,7 +43,7 @@
     },
     "nodeTypes" : {
       "TOOL" : {
-        "emoji" : "🔧",
+        "emoji" : "\uD83D\uDD27",
         "typeLabel" : "Tool",
         "description" : "Executes a registered tool plugin (e.g. RAG ingest)",
         "palette" : {
@@ -155,11 +155,12 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "x" : 71.29449436703877,
+          "y" : 93.05825844944185
         }
       }
-    }
+    },
+    "label" : "start"
   }, {
     "id" : "rag-ingest",
     "type" : "TOOL",
@@ -173,10 +174,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -186,10 +187,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -248,21 +249,22 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "x" : 796.5177977468154,
+          "y" : 92.18770788614574
         }
       }
-    }
+    },
+    "label" : "end"
   } ],
   "edges" : [ {
     "sourceNodeId" : "start",
-    "sourcePortId" : "out",
     "targetNodeId" : "rag-ingest",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "rag-ingest",
-    "sourcePortId" : "out",
     "targetNodeId" : "end",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -302,8 +304,20 @@
   } ],
   "agents" : [ ],
   "hooks" : [ ],
-  "modelProviders" : [ ],
-  "modelRouting" : [ ],
+  "modelProviders" : [ {
+    "id" : "default-local",
+    "provider" : "local",
+    "model" : "llama3.2:latest",
+    "configuration" : {
+      "baseUrl" : "http://localhost:51435"
+    }
+  } ],
+  "modelRouting" : [ {
+    "id" : "default-routing",
+    "defaultProviderId" : "default-local",
+    "rules" : [ ],
+    "metadata" : { }
+  } ],
   "extensions" : [ {
     "id" : "pgvector-store",
     "type" : "VECTOR_STORE",
@@ -319,6 +333,17 @@
   "metadata" : {
     "description" : "Dedicated ingest pipeline — creates vector DB entries only",
     "role" : "documents-index",
-    "returnVariable" : "ReturnValue"
+    "returnVariable" : "ReturnValue",
+    "canvasView" : {
+      "viewport" : {
+        "x" : -550.5,
+        "y" : 336,
+        "zoom" : 2
+      },
+      "size" : {
+        "width" : 1259,
+        "height" : 1459
+      }
+    }
   }
 }

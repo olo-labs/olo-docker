@@ -5,7 +5,7 @@
   "label" : "RAG Chat",
   "role" : "RAG Chat",
   "shortDescription" : "Answers using retrieved knowledge from an indexed capability source",
-  "emoji" : "🔎",
+  "emoji" : "\uD83D\uDD0E",
   "designer" : {
     "paletteGroup" : "Agents",
     "searchKeywords" : [ "rag", "chat", "knowledge" ],
@@ -43,7 +43,7 @@
     },
     "nodeTypes" : {
       "AGENT" : {
-        "emoji" : "🔎",
+        "emoji" : "\uD83D\uDD0E",
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -91,7 +91,9 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
-  "availableAgents" : [ ],
+  "availableAgents" : [ {
+    "id" : "rag-chat"
+  } ],
   "version" : "1.0.0",
   "capability" : {
     "name" : "RAG Chat",
@@ -101,7 +103,7 @@
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message" ]
+    "required_context" : [ "message", "conversationSummary", "ragContext" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -165,8 +167,15 @@
     "reads" : [ "input.message" ],
     "writes" : [ ],
     "configuration" : {
-      "inputVariableMappings" : [ "message" ]
-    }
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "x" : 134,
+          "y" : 82
+        }
+      }
+    },
+    "label" : "start"
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -179,10 +188,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -192,10 +201,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -214,8 +223,15 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "toolId" : "olo-core:conversation-load"
-    }
+      "toolId" : "olo-core:conversation-load",
+      "designer" : {
+        "position" : {
+          "x" : 472,
+          "y" : 69
+        }
+      }
+    },
+    "label" : "conversation-load"
   }, {
     "id" : "rag-query",
     "type" : "TOOL",
@@ -229,10 +245,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -242,10 +258,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -273,7 +289,13 @@
       "topK" : 5,
       "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "scoreThreshold" : 0.25,
-      "extensionRef" : "pgvector-store"
+      "extensionRef" : "pgvector-store",
+      "designer" : {
+        "position" : {
+          "x" : 801,
+          "y" : 69
+        }
+      }
     }
   }, {
     "id" : "agent",
@@ -306,6 +328,34 @@
         "position" : "RIGHT",
         "color" : "#ef4444"
       }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
+      }
     } ],
     "execution" : {
       "executionKind" : "ACTIVITY",
@@ -320,7 +370,15 @@
     },
     "reads" : [ ],
     "writes" : [ ],
-    "configuration" : { }
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 1160,
+          "y" : 80
+        }
+      }
+    },
+    "label" : "Agent"
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -333,10 +391,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -346,10 +404,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -368,8 +426,15 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "toolId" : "olo-core:conversation-store"
-    }
+      "toolId" : "olo-core:conversation-store",
+      "designer" : {
+        "position" : {
+          "x" : 1521.374771118164,
+          "y" : 68
+        }
+      }
+    },
+    "label" : "conversation-store"
   }, {
     "id" : "end",
     "type" : "END",
@@ -391,32 +456,40 @@
     } ],
     "reads" : [ ],
     "writes" : [ ],
-    "configuration" : { }
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "x" : 1852,
+          "y" : 80
+        }
+      }
+    },
+    "label" : "end"
   } ],
   "edges" : [ {
     "sourceNodeId" : "start",
-    "sourcePortId" : "out",
     "targetNodeId" : "conversation-load",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-load",
-    "sourcePortId" : "out",
     "targetNodeId" : "rag-query",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "rag-query",
-    "sourcePortId" : "out",
     "targetNodeId" : "agent",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "agent",
-    "sourcePortId" : "out",
     "targetNodeId" : "conversation-store",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-store",
-    "sourcePortId" : "out",
     "targetNodeId" : "end",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -501,8 +574,22 @@
     "role" : "rag-chat",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary", "ragContext" ],
-      "injectCapabilities" : false
+      "injectCapabilities" : false,
+      "selectedTools" : [ "olo-core:rag-query" ],
+      "selectedAgents" : [ "rag-chat" ],
+      "injectAgents" : true
     },
-    "description" : "Answers using retrieved knowledge from an indexed capability source"
+    "description" : "Answers using retrieved knowledge from an indexed capability source",
+    "canvasView" : {
+      "viewport" : {
+        "x" : 0,
+        "y" : 0,
+        "zoom" : 1
+      },
+      "size" : {
+        "width" : 1748,
+        "height" : 928
+      }
+    }
   }
 }
