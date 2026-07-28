@@ -109,7 +109,7 @@ services:
       - ${OLO_WORKER_CONFIG_SOURCE:-./configuration/olo-worker/config}:/app/worker/config:ro
       - ${OLO_WORKER_LOG_SOURCE:-./configuration/olo-worker/logs}:/app/logs
       - ${OLO_RESOURCE_UPLOAD_SOURCE:-./configuration/olo-resource-uploads}:/app/shared/resource-uploads:ro
-      - ${OLO_SHARED_SOURCE:-../../olo-labs/olo-mono/olo-core/tools}:/app/shared/olo-core/tools:ro
+      - ${OLO_SHARED_SOURCE:-../../olo-labs/olo-mono/olo-core/tools}:/app/shared/olo-core/tools
       # Conversation tools persist session JSON here; keep this writable even when demo fixtures are read-only.
       - ${OLO_CONVERSATION_STORE_SOURCE:-./configuration/olo-worker/conversations}:/app/shared/olo-core/tools/demo-data/conversations
     networks:
