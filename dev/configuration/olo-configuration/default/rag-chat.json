@@ -1,7 +1,7 @@
 {
   "id" : "rag-chat",
   "enabled" : true,
-  "isDefault" : false,
+  "isDefault" : true,
   "label" : "RAG Chat",
   "role" : "RAG Chat",
   "shortDescription" : "Answers using retrieved knowledge from an indexed capability source",
@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "capabilities" : "#22c55e",
       "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
@@ -38,7 +39,6 @@
       "any" : "#94a3b8",
       "message" : "#ef4444",
       "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
       "integer" : "#38bdf8"
     },
     "nodeTypes" : {
@@ -165,7 +165,13 @@
     "reads" : [ "input.message" ],
     "writes" : [ ],
     "configuration" : {
-      "inputVariableMappings" : [ "message" ]
+      "inputVariableMappings" : [ "message" ],
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 80
+        }
+      }
     }
   }, {
     "id" : "conversation-load",
@@ -214,7 +220,13 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "toolId" : "olo-core:conversation-load"
+      "toolId" : "olo-core:conversation-load",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 440
+        }
+      }
     }
   }, {
     "id" : "rag-query",
@@ -273,7 +285,13 @@
       "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
       "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
       "toolId" : "olo-core:rag-query",
-      "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}"
+      "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 800
+        }
+      }
     }
   }, {
     "id" : "agent",
@@ -292,6 +310,34 @@
       "ui" : {
         "position" : "LEFT",
         "color" : "#ef4444"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "acceptType" : "capabilities",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Tools and hooks registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#22c55e"
+      }
+    }, {
+      "id" : "agentPlug",
+      "label" : "available agents",
+      "schema" : "agent-plug",
+      "type" : "agent-plug",
+      "acceptType" : "agent-plug",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Child workflows registered for runtime prompt assembly (0 or more)",
+      "ui" : {
+        "position" : "BOTTOM",
+        "color" : "#a855f7"
       }
     }, {
       "id" : "out",
@@ -320,7 +366,14 @@
     },
     "reads" : [ ],
     "writes" : [ ],
-    "configuration" : { }
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1160
+        }
+      }
+    }
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -368,7 +421,13 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "toolId" : "olo-core:conversation-store"
+      "toolId" : "olo-core:conversation-store",
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1520
+        }
+      }
     }
   }, {
     "id" : "end",
@@ -391,7 +450,14 @@
     } ],
     "reads" : [ ],
     "writes" : [ ],
-    "configuration" : { }
+    "configuration" : {
+      "designer" : {
+        "position" : {
+          "y" : 80,
+          "x" : 1880
+        }
+      }
+    }
   } ],
   "edges" : [ {
     "sourceNodeId" : "start",
@@ -488,12 +554,12 @@
     "id" : "pgvector-store",
     "type" : "VECTOR_STORE",
     "configuration" : {
+      "table" : "${env:OLO_VECTOR_STORE_TABLE}",
       "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
       "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
       "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
-      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
-      "table" : "${env:OLO_VECTOR_STORE_TABLE}"
+      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}"
     }
   } ],
   "metadata" : {

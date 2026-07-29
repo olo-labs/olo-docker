@@ -30,8 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "any" : "#94a3b8",
-      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "object" : "#c084fc",
@@ -39,24 +37,11 @@
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
       "boolean" : "#fb923c",
-      "message" : "#ef4444"
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7"
     },
     "nodeTypes" : {
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
-      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -83,6 +68,21 @@
           "id" : "model",
           "widget" : "MODEL_SELECTOR",
           "label" : "Model"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       }
     }
@@ -116,6 +116,19 @@
   },
   "state" : { },
   "parameters" : {
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    },
     "maxIterations" : {
       "type" : "integer",
       "label" : "Max Iterations",
@@ -165,19 +178,6 @@
         "help" : "Higher values increase response creativity.",
         "order" : 3
       }
-    },
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
     }
   },
   "nodes" : [ {
@@ -203,8 +203,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -258,8 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -339,8 +339,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -394,8 +394,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -423,8 +423,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -538,14 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "description" : "Interprets latency spikes and customer-facing impact",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary" ],
       "injectCapabilities" : false,
       "selectedTools" : [ ],
-      "selectedAgents" : [ ]
+      "selectedAgents" : [ ],
+      "selectedVariables" : [ "message", "conversationSummary" ]
     },
     "role" : "latency-analysis-agent",
-    "returnVariable" : "ReturnValue"
+    "returnVariable" : "ReturnValue",
+    "description" : "Interprets latency spikes and customer-facing impact"
   }
 }

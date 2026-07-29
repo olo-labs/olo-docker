@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -39,7 +38,8 @@
       "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
-      "integer" : "#38bdf8"
+      "integer" : "#38bdf8",
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
       "START" : {
@@ -386,6 +386,7 @@
       "approval" : {
         "title" : "Approve container restart",
         "description" : "Review the request and add any missing context, constraints, or priorities before Capacity Planning Orchestrator runs. Plans post-incident capacity using mock metrics, calculator, and specialist child workflows For the final human-approved action (container restart), provide: containerId and namespace to apply approved capacity changes.",
+        "inputPluginId" : "olo-core:human-input-restart-container",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
@@ -1279,13 +1280,6 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "plannerContext" : {
-      "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:calculator", "olo-core:restart-container" ],
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false,
-      "injectAgents" : true,
-      "selectedAgents" : [ "resource-utilization-agent", "cost-estimation-agent", "scaling-recommendation-agent", "capacity-report-agent" ]
-    },
     "description" : "Plans post-incident capacity using mock metrics, calculator, and specialist child workflows",
     "agentSelectionStrategy" : "dynamic",
     "role" : "capacity-planning-orchestrator",
@@ -1298,6 +1292,13 @@
     },
     "planningStrategy" : "react",
     "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue"
+    "returnVariable" : "ReturnValue",
+    "plannerContext" : {
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "injectCapabilities" : false,
+      "injectAgents" : true,
+      "selectedAgents" : [ "resource-utilization-agent", "cost-estimation-agent", "scaling-recommendation-agent", "capacity-report-agent" ],
+      "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:calculator", "olo-core:restart-container" ]
+    }
   }
 }

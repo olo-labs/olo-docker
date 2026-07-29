@@ -2,16 +2,16 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
   "defaults" : {
     "runtime" : {
       "capabilities" : [ "DEBUG", "REPLAY" ]
     },
     "connectionRules" : {
-      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
-      "strategy" : "schema_match",
       "wildcards" : [ "any", "*" ],
       "version" : "1.0",
+      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
+      "strategy" : "schema_match",
       "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
     },
     "connectionPolicy" : {

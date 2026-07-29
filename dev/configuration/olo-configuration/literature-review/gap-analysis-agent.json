@@ -30,15 +30,15 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
+      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
       "any" : "#94a3b8"
     },
     "nodeTypes" : {
@@ -57,6 +57,19 @@
           "binding" : "outputVariableMapping"
         } ]
       },
+      "AGENT" : {
+        "emoji" : "🕳️",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -70,19 +83,6 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "🕳️",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
         } ]
       }
     }
@@ -116,19 +116,6 @@
   },
   "state" : { },
   "parameters" : {
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
-    },
     "temperature" : {
       "type" : "number",
       "label" : "Temperature",
@@ -147,18 +134,17 @@
         "order" : 3
       }
     },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     },
     "maxIterations" : {
@@ -177,6 +163,20 @@
         "group" : "Model Settings",
         "help" : "Caps how many planner/tool loops the agent may run.",
         "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     }
   },
@@ -538,14 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
-    "role" : "gap-analysis-agent",
+    "description" : "Identifies research gaps, conflicts, and limitations in the evidence",
     "plannerContext" : {
-      "selectedAgents" : [ ],
-      "selectedTools" : [ ],
+      "selectedVariables" : [ "message", "conversationSummary" ],
       "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary" ]
+      "selectedTools" : [ ],
+      "selectedAgents" : [ ]
     },
-    "description" : "Identifies research gaps, conflicts, and limitations in the evidence"
+    "role" : "gap-analysis-agent",
+    "returnVariable" : "ReturnValue"
   }
 }

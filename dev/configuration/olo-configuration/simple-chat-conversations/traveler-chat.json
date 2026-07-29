@@ -1,14 +1,14 @@
 {
-  "id" : "rag-chat",
+  "id" : "traveler-chat",
   "enabled" : true,
   "isDefault" : false,
-  "label" : "RAG Chat",
-  "role" : "RAG Chat",
-  "shortDescription" : "Answers using retrieved knowledge from an indexed capability source",
-  "emoji" : "\uD83D\uDD0E",
+  "label" : "Traveler Chat",
+  "role" : "Traveler Chat",
+  "shortDescription" : "Travel planning conversation with preferences remembered",
+  "emoji" : "💬",
   "designer" : {
     "paletteGroup" : "Agents",
-    "searchKeywords" : [ "rag", "chat", "knowledge" ],
+    "searchKeywords" : [ "travel", "itinerary", "chat" ],
     "nodeSize" : {
       "width" : 300,
       "height" : 120
@@ -30,20 +30,35 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "agent-plug" : "#a855f7",
-      "any" : "#94a3b8"
+      "any" : "#94a3b8",
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
+        } ]
+      },
       "AGENT" : {
-        "emoji" : "\uD83D\uDD0E",
+        "emoji" : "💬",
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -69,21 +84,6 @@
           "label" : "Output variable",
           "binding" : "outputVariableMapping"
         } ]
-      },
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
       }
     }
   },
@@ -91,19 +91,17 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
-  "availableAgents" : [ {
-    "id" : "rag-chat"
-  } ],
+  "availableAgents" : [ ],
   "version" : "1.0.0",
   "capability" : {
-    "name" : "RAG Chat",
-    "description" : "Retrieve indexed chunks then answer the user question",
-    "tags" : [ "rag" ],
+    "name" : "Traveler Chat",
+    "description" : "Travel planning conversation with preferences remembered",
+    "tags" : [ "chat", "travel" ],
     "examples" : [ ],
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message", "conversationSummary", "ragContext" ]
+    "required_context" : [ "message", "conversationSummary" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -118,31 +116,66 @@
   },
   "state" : { },
   "parameters" : {
-    "systemPrompt" : {
-      "type" : "string",
-      "label" : "System Prompt",
-      "defaultValue" : "You answer using the retrieved knowledge context when provided.\n\nRetrieved context:\n{ragContext}\n\nQuestion:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nAnswer concisely and cite the retrieved context when relevant.",
-      "ui" : {
-        "widget" : "TEXTAREA",
-        "group" : "Model Settings",
-        "order" : 0
-      }
-    },
     "temperature" : {
       "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
       "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
       "ui" : {
         "widget" : "SLIDER",
         "group" : "Model Settings",
-        "order" : 1
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "You are a travel conversation specialist. Remember preferences, ask only necessary follow-up questions, and suggest practical itinerary options.\nCurrent user message:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nPrior conversation turns:\n{conversationHistory}\n\nAnswer as the assigned role, preserving useful context from the prior conversation while staying focused on the current user message.\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "maxIterations" : {
       "type" : "integer",
-      "defaultValue" : 6,
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
+      "required" : false,
+      "validation" : {
+        "minimum" : 1.0,
+        "maximum" : 100.0,
+        "step" : 1.0
+      },
       "ui" : {
         "widget" : "NUMBER",
         "group" : "Model Settings",
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
+      }
+    },
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
         "order" : 2
       }
     }
@@ -170,12 +203,11 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 134,
-          "y" : 82
+          "y" : 80,
+          "x" : 80
         }
       }
-    },
-    "label" : "start"
+    }
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -188,10 +220,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#71717a"
+        "color" : "#ef4444"
       }
     }, {
       "id" : "out",
@@ -201,10 +233,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#71717a"
+        "color" : "#ef4444"
       }
     }, {
       "id" : "capabilities",
@@ -226,74 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "x" : 472,
-          "y" : 69
-        }
-      }
-    },
-    "label" : "conversation-load"
-  }, {
-    "id" : "rag-query",
-    "type" : "TOOL",
-    "label" : "RAG Query",
-    "ports" : [ {
-      "id" : "in",
-      "label" : "message in",
-      "schema" : "message",
-      "type" : "message",
-      "acceptType" : "message",
-      "direction" : "INPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "LEFT",
-        "color" : "#71717a"
-      }
-    }, {
-      "id" : "out",
-      "label" : "message out",
-      "schema" : "message",
-      "type" : "message",
-      "direction" : "OUTPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
-      "ui" : {
-        "position" : "RIGHT",
-        "color" : "#71717a"
-      }
-    }, {
-      "id" : "capabilities",
-      "label" : "available tools",
-      "schema" : "capabilities",
-      "type" : "capabilities",
-      "direction" : "OUTPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
-      "ui" : {
-        "position" : "TOP",
-        "color" : "#22c55e"
-      }
-    } ],
-    "reads" : [ ],
-    "writes" : [ ],
-    "configuration" : {
-      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
-      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
-      "toolId" : "olo-core:rag-query",
-      "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}",
-      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
-      "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
-      "topK" : 5,
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
-      "scoreThreshold" : 0.25,
-      "extensionRef" : "pgvector-store",
-      "designer" : {
-        "position" : {
-          "x" : 801,
-          "y" : 69
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -313,19 +279,6 @@
       "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
-      }
-    }, {
-      "id" : "out",
-      "label" : "message out",
-      "schema" : "message",
-      "type" : "message",
-      "direction" : "OUTPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
-      "ui" : {
-        "position" : "RIGHT",
         "color" : "#ef4444"
       }
     }, {
@@ -356,13 +309,26 @@
         "position" : "BOTTOM",
         "color" : "#a855f7"
       }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing workflow message",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#ef4444"
+      }
     } ],
     "execution" : {
       "executionKind" : "ACTIVITY",
       "executionModel" : "INLINE",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "rag-chat",
+        "workflowId" : "traveler-chat",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -373,12 +339,11 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
-    },
-    "label" : "Agent"
+    }
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -391,10 +356,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "shortDescription" : "Incoming workflow message",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#71717a"
+        "color" : "#ef4444"
       }
     }, {
       "id" : "out",
@@ -404,10 +369,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "shortDescription" : "Outgoing workflow message",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#71717a"
+        "color" : "#ef4444"
       }
     }, {
       "id" : "capabilities",
@@ -429,12 +394,11 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "x" : 1521.374771118164,
-          "y" : 68
+          "y" : 80,
+          "x" : 1160
         }
       }
-    },
-    "label" : "conversation-store"
+    }
   }, {
     "id" : "end",
     "type" : "END",
@@ -459,37 +423,31 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1852,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
-    },
-    "label" : "end"
+    }
   } ],
   "edges" : [ {
     "sourceNodeId" : "start",
-    "targetNodeId" : "conversation-load",
     "sourcePortId" : "out",
+    "targetNodeId" : "conversation-load",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-load",
-    "targetNodeId" : "rag-query",
     "sourcePortId" : "out",
-    "targetPortId" : "in"
-  }, {
-    "sourceNodeId" : "rag-query",
     "targetNodeId" : "agent",
-    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "agent",
-    "targetNodeId" : "conversation-store",
     "sourcePortId" : "out",
+    "targetNodeId" : "conversation-store",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-store",
-    "targetNodeId" : "end",
     "sourcePortId" : "out",
+    "targetNodeId" : "end",
     "targetPortId" : "in"
   } ],
   "variables" : [ {
@@ -502,16 +460,20 @@
   }, {
     "name" : "conversationSummary",
     "type" : "string",
-    "required" : false,
-    "scope" : "LOCAL",
-    "metadata" : { }
-  }, {
-    "name" : "ragContext",
-    "type" : "string",
+    "description" : "Summary of prior conversation turns loaded by the conversation-load plugin",
     "required" : false,
     "scope" : "LOCAL",
     "metadata" : {
-      "role" : "rag-context"
+      "role" : "conversation-summary"
+    }
+  }, {
+    "name" : "conversationHistory",
+    "type" : "string",
+    "description" : "JSON array of prior conversation turns loaded by the conversation-load plugin",
+    "required" : false,
+    "scope" : "LOCAL",
+    "metadata" : {
+      "role" : "conversation-history"
     }
   }, {
     "name" : "ReturnValue",
@@ -524,20 +486,37 @@
     }
   } ],
   "tools" : [ {
-    "id" : "rag-query",
+    "id" : "conversation-load",
     "type" : "TOOL",
     "capability" : {
-      "name" : "RAG Query",
-      "description" : "Retrieves indexed chunks from Qdrant",
+      "name" : "Conversation Load",
+      "description" : "Loads prior conversation and attaches summary to the workflow message",
       "tags" : [ ],
-      "examples" : [ "Retrieve selected documents for capabilitySource my-knowledge-base" ],
+      "examples" : [ "Restore operator chat context before triage begins" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
       "required_context" : [ ]
     },
     "runtimeBinding" : {
-      "implementationId" : "olo-core:rag-query"
+      "implementationId" : "olo-core:conversation-load"
+    },
+    "configuration" : { }
+  }, {
+    "id" : "conversation-store",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "Conversation Store",
+      "description" : "Persists the current turn to conversation history for the next run",
+      "tags" : [ ],
+      "examples" : [ "Save assistant response after scenario completion" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:conversation-store"
     },
     "configuration" : { }
   } ],
@@ -557,39 +536,17 @@
     "rules" : [ ],
     "metadata" : { }
   } ],
-  "extensions" : [ {
-    "id" : "pgvector-store",
-    "type" : "VECTOR_STORE",
-    "configuration" : {
-      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
-      "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
-      "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
-      "table" : "${env:OLO_VECTOR_STORE_TABLE}",
-      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}"
-    }
-  } ],
+  "extensions" : [ ],
   "metadata" : {
+    "collection" : "simple-chat-conversations",
     "returnVariable" : "ReturnValue",
-    "role" : "rag-chat",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary", "ragContext" ],
-      "injectCapabilities" : false,
-      "selectedTools" : [ "olo-core:rag-query" ],
-      "selectedAgents" : [ "rag-chat" ],
-      "injectAgents" : true
+      "selectedVariables" : [ "message", "conversationSummary" ],
+      "selectedAgents" : [ ],
+      "selectedTools" : [ ],
+      "injectCapabilities" : false
     },
-    "description" : "Answers using retrieved knowledge from an indexed capability source",
-    "canvasView" : {
-      "viewport" : {
-        "x" : 0,
-        "y" : 0,
-        "zoom" : 1
-      },
-      "size" : {
-        "width" : 1748,
-        "height" : 928
-      }
-    }
+    "role" : "traveler-chat",
+    "description" : "Travel planning conversation with preferences remembered"
   }
 }

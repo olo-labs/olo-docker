@@ -30,15 +30,15 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
+      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
       "any" : "#94a3b8"
     },
     "nodeTypes" : {
@@ -57,6 +57,19 @@
           "binding" : "outputVariableMapping"
         } ]
       },
+      "AGENT" : {
+        "emoji" : "📚",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -70,19 +83,6 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "📚",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
         } ]
       }
     }
@@ -145,19 +145,6 @@
   },
   "state" : { },
   "parameters" : {
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
-    },
     "temperature" : {
       "type" : "number",
       "label" : "Temperature",
@@ -176,18 +163,17 @@
         "order" : 3
       }
     },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     },
     "maxIterations" : {
@@ -206,6 +192,20 @@
         "group" : "Model Settings",
         "help" : "Caps how many planner/tool loops the agent may run.",
         "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     }
   },
@@ -386,6 +386,7 @@
       "approval" : {
         "title" : "Approve publish pull request",
         "description" : "Review the request and add any missing context, constraints, or priorities before Literature Review Orchestrator runs. Runs mock literature search and delegates synthesis to specialist child workflows For the final human-approved action (publish pull request), provide: title and headBranch for the research brief PR.",
+        "inputPluginId" : "olo-core:human-input-create-pull-request",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
@@ -1202,25 +1203,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "dynamicToolExecution" : {
-      "continueNodeId" : "conversation-store",
-      "outputVariable" : "toolCallSequenceJson",
-      "availableToolsVariable" : "availableToolsJson",
-      "availableAgentsVariable" : "availableAgentsJson",
-      "plannerNodeId" : "agent"
-    },
-    "planningStrategy" : "react",
-    "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue",
-    "plannerContext" : {
-      "injectAgents" : true,
-      "selectedAgents" : [ "paper-discovery-agent", "evidence-synthesis-agent", "gap-analysis-agent", "research-brief-agent" ],
-      "selectedTools" : [ "olo-core:research-literature", "olo-core:web-search", "olo-core:create-pull-request" ],
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false
-    },
-    "description" : "Runs mock literature search and delegates synthesis to specialist child workflows",
     "agentSelectionStrategy" : "dynamic",
+    "description" : "Runs mock literature search and delegates synthesis to specialist child workflows",
+    "plannerContext" : {
+      "selectedTools" : [ "olo-core:research-literature", "olo-core:web-search", "olo-core:create-pull-request" ],
+      "selectedAgents" : [ "paper-discovery-agent", "evidence-synthesis-agent", "gap-analysis-agent", "research-brief-agent" ],
+      "injectAgents" : true,
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
+    },
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "availableToolsVariable" : "availableToolsJson",
+      "outputVariable" : "toolCallSequenceJson",
+      "continueNodeId" : "conversation-store",
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson"
+    },
     "role" : "literature-review-orchestrator"
   }
 }

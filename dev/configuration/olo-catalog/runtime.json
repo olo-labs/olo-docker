@@ -2,7 +2,7 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
   "bindings" : [ {
     "kind" : "NODE",
     "id" : "olo-core:AGENT",
@@ -67,6 +67,21 @@
     "kind" : "TOOL",
     "id" : "olo-core:recently-changed-code",
     "implementationClass" : "org.olo.core.tool.RecentlyChangedCodeTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:research-literature",
+    "implementationClass" : "org.olo.core.tool.ResearchLiteratureTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:travel-destinations",
+    "implementationClass" : "org.olo.core.tool.TravelDestinationTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:travel-offers",
+    "implementationClass" : "org.olo.core.tool.TravelOffersTool",
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",

@@ -21,6 +21,7 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
 | [api-integration-triage](api-integration-triage/) | `api-integration-orchestrator` | endpoint-probe, dependency-analysis, error-correlation, integration-report | http-tool, log-reader, web-search | [README](api-integration-triage/README.md) |
 | [capacity-planning](capacity-planning/) | `capacity-planning-orchestrator` | resource-utilization, cost-estimation, scaling-recommendation, capacity-report | cpu-usage, memory-usage, calculator | [README](capacity-planning/README.md) |
 | [literature-review](literature-review/) | `literature-review-orchestrator` | paper-discovery, evidence-synthesis, gap-analysis, research-brief | research-literature, web-search | [README](literature-review/README.md) |
+| [simple-chat-conversations](simple-chat-conversations/) | role-specific chat pipelines | end-user, architect, traveler, literature, teacher, reviewer | conversation-load, conversation-store | [README](simple-chat-conversations/README.md) |
 | [dynamic-graph-creation](dynamic-graph-creation/) | `dynamic-graph-creation` | (inline LLM graph) | — | [README](dynamic-graph-creation/README.md) |
 | [documents-index](documents-index/) | `documents-index` | RAG ingest (TOOL) | `olo-core:rag-ingest` | [README](documents-index/README.md) |
 | [default](default/) | `agent`, `planner`, … | various presets | calculator, cpu-usage, … | — |
@@ -37,6 +38,7 @@ All scenarios use queue **`oloQueue2`** unless noted otherwise.
    ./gradlew :olo-definition:generateApiIntegrationTriage
    ./gradlew :olo-definition:generateCapacityPlanning
    ./gradlew :olo-definition:generateLiteratureReview
+   ./gradlew :olo-definition:generateSimpleChatConversations
    ./gradlew :olo-definition:generateAllScenarios
    ```
 

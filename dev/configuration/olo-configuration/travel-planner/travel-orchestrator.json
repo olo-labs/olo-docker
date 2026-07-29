@@ -32,27 +32,29 @@
     "portColors" : {
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "boolean" : "#fb923c",
-      "message" : "#ef4444",
-      "any" : "#94a3b8",
-      "agent-plug" : "#a855f7",
+      "string" : "#a3e635",
+      "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "object" : "#c084fc",
-      "string" : "#a3e635"
+      "agent-plug" : "#a855f7",
+      "any" : "#94a3b8",
+      "message" : "#ef4444",
+      "boolean" : "#fb923c"
     },
     "nodeTypes" : {
-      "AGENT" : {
-        "emoji" : "✈️",
-        "typeLabel" : "Agent",
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
         "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
         } ]
       },
       "START" : {
@@ -70,19 +72,17 @@
           "binding" : "inputVariableMappings"
         } ]
       },
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
-        "palette" : {
-          "name" : "End",
-          "category" : "control"
-        },
+      "AGENT" : {
+        "emoji" : "✈️",
+        "typeLabel" : "Agent",
         "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
         } ]
       }
     }
@@ -135,17 +135,36 @@
   },
   "state" : { },
   "parameters" : {
-    "model" : {
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    },
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "maxIterations" : {
@@ -166,36 +185,17 @@
         "order" : 1
       }
     },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
-      }
-    },
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     }
   },
@@ -222,8 +222,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
     }
@@ -277,8 +277,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -332,8 +332,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
     }
@@ -376,6 +376,7 @@
       "approval" : {
         "title" : "Approve ticket booking",
         "description" : "Review the request and add any missing context, constraints, or priorities before Travel Orchestrator runs. Plans trips by querying destination guides and travel offers, with specialist agents For the final human-approved action (ticket booking), provide: offerId and passengerName (optional email) for the selected package.",
+        "inputPluginId" : "olo-core:human-input-book-ticket",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
@@ -386,8 +387,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
     }
@@ -467,8 +468,8 @@
       "promptTemplate" : "You are a travel planning agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:travel-destinations\", \"arguments\": { \"region\": \"europe\" } },\n    { \"toolId\": \"olo-core:travel-offers\", \"arguments\": { \"origin\": \"London\", \"destination\": \"Paris\" } }\n  ],\n  \"directResponse\": null\n}\n3. Use olo-core:travel-destinations for destination ideas and olo-core:travel-offers for packages.\n4. Delegate only to agents listed in availableAgentsJson when specialist help is needed.\n5. If no tools are needed, set \"toolCalls\": [] and put the final answer in \"directResponse\".\n6. Final human-approved action — after itinerary-agent completes, call olo-core:book-ticket with offerId\n   and passengerName from the operator's human-input approval. Include confirmationId, bookingReference,\n   and logPath in directResponse.\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "y" : 80,
+          "x" : 1160
         }
       }
     }
@@ -496,8 +497,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1880,
-          "y" : 80
+          "y" : 80,
+          "x" : 1880
         }
       }
     }
@@ -563,8 +564,8 @@
       "delegateAgentId" : "destination-agent",
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
     }
@@ -630,8 +631,8 @@
       "delegateAgentId" : "itinerary-agent",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -685,8 +686,8 @@
       "toolId" : "olo-core:travel-destinations",
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
     }
@@ -740,8 +741,8 @@
       "toolId" : "olo-core:travel-offers",
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "y" : 80,
+          "x" : 1160
         }
       }
     }
@@ -795,8 +796,8 @@
       "toolId" : "olo-core:book-ticket",
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
     }
@@ -1048,25 +1049,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
     "agentType" : "autonomous",
-    "planningStrategy" : "react",
-    "dynamicToolExecution" : {
-      "continueNodeId" : "conversation-store",
-      "plannerNodeId" : "agent",
-      "availableAgentsVariable" : "availableAgentsJson",
-      "availableToolsVariable" : "availableToolsJson",
-      "outputVariable" : "toolCallSequenceJson"
-    },
-    "role" : "travel-orchestrator",
-    "agentSelectionStrategy" : "dynamic",
-    "description" : "Plans trips by querying destination guides and travel offers, with specialist agents",
+    "returnVariable" : "ReturnValue",
     "plannerContext" : {
       "selectedAgents" : [ "destination-agent", "itinerary-agent" ],
-      "injectAgents" : true,
-      "injectCapabilities" : false,
+      "selectedTools" : [ "olo-core:travel-destinations", "olo-core:travel-offers", "olo-core:book-ticket" ],
       "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "selectedTools" : [ "olo-core:travel-destinations", "olo-core:travel-offers", "olo-core:book-ticket" ]
-    }
+      "injectCapabilities" : false,
+      "injectAgents" : true
+    },
+    "description" : "Plans trips by querying destination guides and travel offers, with specialist agents",
+    "agentSelectionStrategy" : "dynamic",
+    "role" : "travel-orchestrator",
+    "dynamicToolExecution" : {
+      "outputVariable" : "toolCallSequenceJson",
+      "availableToolsVariable" : "availableToolsJson",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "plannerNodeId" : "agent",
+      "continueNodeId" : "conversation-store"
+    },
+    "planningStrategy" : "react"
   }
 }

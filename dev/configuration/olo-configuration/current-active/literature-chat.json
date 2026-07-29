@@ -1,14 +1,14 @@
 {
-  "id" : "architect",
-  "enabled" : false,
-  "isDefault" : true,
-  "label" : "Architect",
-  "role" : "Architect",
-  "shortDescription" : "System design and architecture guidance",
-  "emoji" : "🏗️",
+  "id" : "literature-chat",
+  "enabled" : true,
+  "isDefault" : false,
+  "label" : "Literature Chat",
+  "role" : "Literature Chat",
+  "shortDescription" : "Literature and reading conversation with prior context",
+  "emoji" : "💬",
   "designer" : {
     "paletteGroup" : "Agents",
-    "searchKeywords" : [ "architect" ],
+    "searchKeywords" : [ "literature", "reading", "chat" ],
     "nodeSize" : {
       "width" : 300,
       "height" : 120
@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -39,7 +38,8 @@
       "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
-      "integer" : "#38bdf8"
+      "integer" : "#38bdf8",
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
       "START" : {
@@ -58,7 +58,7 @@
         } ]
       },
       "AGENT" : {
-        "emoji" : "🏗️",
+        "emoji" : "💬",
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -87,21 +87,21 @@
       }
     }
   },
-  "queue" : "oloQueue1",
+  "queue" : "oloQueue2",
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ ],
   "availableAgents" : [ ],
   "version" : "1.0.0",
   "capability" : {
-    "name" : "Architect",
-    "description" : "System design and architecture guidance",
-    "tags" : [ "architect" ],
+    "name" : "Literature Chat",
+    "description" : "Literature and reading conversation with prior context",
+    "tags" : [ "chat", "literature" ],
     "examples" : [ ],
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message" ]
+    "required_context" : [ "message", "conversationSummary" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -138,7 +138,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "You are a software system architect. Provide practical design guidance with trade-offs and rationale.\n\nDesign challenge:\n{message}\n\nCover context, components, interfaces, data flow, boundaries, risks, and recommended next steps.\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "You are a literature conversation partner. Discuss books, papers, themes, evidence, and interpretation with careful nuance.\nCurrent user message:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nPrior conversation turns:\n{conversationHistory}\n\nAnswer as the assigned role, preserving useful context from the prior conversation while staying focused on the current user message.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -328,7 +328,7 @@
       "executionModel" : "INLINE",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "architect",
+        "workflowId" : "literature-chat",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -538,14 +538,15 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "role" : "architect",
+    "collection" : "simple-chat-conversations",
+    "returnVariable" : "ReturnValue",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
       "injectCapabilities" : false
     },
-    "description" : "System design and architecture guidance",
-    "returnVariable" : "ReturnValue"
+    "role" : "literature-chat",
+    "description" : "Literature and reading conversation with prior context"
   }
 }

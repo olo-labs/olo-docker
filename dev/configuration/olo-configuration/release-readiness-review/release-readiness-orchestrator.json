@@ -386,6 +386,7 @@
       "approval" : {
         "title" : "Approve release action",
         "description" : "Review the request and add any missing context, constraints, or priorities before Release Readiness Orchestrator runs. Reviews recent changes, regression risk, and QA before publishing release notes For the final human-approved action (release action), provide: commitSha+branch for git revert OR title+headBranch for hotfix pull request.",
+        "inputPluginId" : "olo-core:human-input-scenario-scope",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false

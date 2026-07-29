@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "number" : "#38bdf8",
       "agent-plug" : "#a855f7",
       "any" : "#94a3b8",
       "message" : "#ef4444",
@@ -38,7 +39,6 @@
       "integer" : "#38bdf8",
       "string" : "#a3e635",
       "object" : "#c084fc",
-      "number" : "#38bdf8",
       "array" : "#f472b6"
     },
     "nodeTypes" : {
@@ -386,6 +386,7 @@
       "approval" : {
         "title" : "Approve container restart",
         "description" : "Review the request and add any missing context, constraints, or priorities before Log RCA Orchestrator runs. Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary For the final human-approved action (container restart), provide: containerId and namespace for the recovered workload.",
+        "inputPluginId" : "olo-core:human-input-restart-container",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
@@ -1279,13 +1280,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
+    "agentSelectionStrategy" : "dynamic",
     "role" : "log-rca-orchestrator",
     "dynamicToolExecution" : {
+      "availableToolsVariable" : "availableToolsJson",
       "availableAgentsVariable" : "availableAgentsJson",
       "plannerNodeId" : "agent",
       "continueNodeId" : "conversation-store",
-      "outputVariable" : "toolCallSequenceJson",
-      "availableToolsVariable" : "availableToolsJson"
+      "outputVariable" : "toolCallSequenceJson"
     },
     "planningStrategy" : "react",
     "agentType" : "autonomous",
@@ -1297,7 +1299,6 @@
       "selectedAgents" : [ "log-failure-agent", "metrics-rca-agent", "code-change-rca-agent", "incident-summary-agent" ],
       "selectedTools" : [ "olo-core:log-reader", "olo-core:cpu-usage", "olo-core:recently-changed-code", "olo-core:restart-container" ]
     },
-    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary",
-    "agentSelectionStrategy" : "dynamic"
+    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary"
   }
 }

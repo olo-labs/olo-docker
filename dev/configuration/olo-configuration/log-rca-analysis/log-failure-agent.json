@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "number" : "#38bdf8",
       "agent-plug" : "#a855f7",
       "any" : "#94a3b8",
       "message" : "#ef4444",
@@ -38,7 +39,6 @@
       "integer" : "#38bdf8",
       "string" : "#a3e635",
       "object" : "#c084fc",
-      "number" : "#38bdf8",
       "array" : "#f472b6"
     },
     "nodeTypes" : {

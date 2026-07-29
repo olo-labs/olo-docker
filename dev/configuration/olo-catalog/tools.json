@@ -2,16 +2,16 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-06-26T16:36:47.546665400Z",
+  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
   "defaults" : {
     "runtime" : {
       "capabilities" : [ "DEBUG", "REPLAY" ]
     },
     "connectionRules" : {
-      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
-      "strategy" : "schema_match",
       "wildcards" : [ "any", "*" ],
       "version" : "1.0",
+      "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
+      "strategy" : "schema_match",
       "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
     },
     "connectionPolicy" : {
@@ -709,6 +709,269 @@
         "group" : "Query",
         "placeholder" : "839",
         "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Research",
+      "searchKeywords" : [ "research", "literature", "scenario" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:research-literature",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Research literature",
+    "description" : "Returns mock academic paper summaries for research planner scenarios",
+    "category" : "research",
+    "emoji" : "\uD83D\uDCDA",
+    "tags" : [ "research", "literature", "scenario" ],
+    "examples" : [ "Find papers on renewable energy storage", "Summarize AI safety literature for a briefing" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "query",
+      "label" : "Query",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "topic",
+      "label" : "Topic",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "limit",
+      "label" : "Limit",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 3,
+      "ui" : {
+        "widget" : "NUMBER"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Travel",
+      "searchKeywords" : [ "travel", "destinations", "scenario" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:travel-destinations",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Travel destinations",
+    "description" : "Returns mock destination guides for travel planner scenarios",
+    "category" : "travel",
+    "emoji" : "\uD83C\uDF0D",
+    "tags" : [ "travel", "destinations", "scenario" ],
+    "examples" : [ "Suggest destinations in Europe for summer", "Compare city break options in France" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "query",
+      "label" : "Query",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "region",
+      "label" : "Region",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "limit",
+      "label" : "Limit",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 3,
+      "ui" : {
+        "widget" : "NUMBER"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Travel",
+      "searchKeywords" : [ "travel", "offers", "scenario" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:travel-offers",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "Travel offers",
+    "description" : "Returns mock flight and hotel offers for travel planner scenarios",
+    "category" : "travel",
+    "emoji" : "✈️",
+    "tags" : [ "travel", "offers", "scenario" ],
+    "examples" : [ "Find weekend offers from London to Paris", "Compare hotel packages for Barcelona" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "origin",
+      "label" : "Origin",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "destination",
+      "label" : "Destination",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "query",
+      "label" : "Query",
+      "type" : "string",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING"
+      }
+    }, {
+      "id" : "limit",
+      "label" : "Limit",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 3,
+      "ui" : {
+        "widget" : "NUMBER"
       }
     } ]
   }, {

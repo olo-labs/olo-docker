@@ -30,8 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "any" : "#94a3b8",
-      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "object" : "#c084fc",
@@ -39,24 +37,11 @@
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
       "boolean" : "#fb923c",
-      "message" : "#ef4444"
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7"
     },
     "nodeTypes" : {
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
-      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -83,6 +68,21 @@
           "id" : "model",
           "widget" : "MODEL_SELECTOR",
           "label" : "Model"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       }
     }
@@ -145,6 +145,19 @@
   },
   "state" : { },
   "parameters" : {
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    },
     "maxIterations" : {
       "type" : "integer",
       "label" : "Max Iterations",
@@ -194,19 +207,6 @@
         "help" : "Higher values increase response creativity.",
         "order" : 3
       }
-    },
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
     }
   },
   "nodes" : [ {
@@ -232,8 +232,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -287,8 +287,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -342,8 +342,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -397,8 +397,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -478,8 +478,8 @@
       "promptTemplate" : "You are a performance triage and latency investigation agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Signal collection — query CPU, memory, and latency metrics for the incident window (ISO-8601 startTime/endTime).\n   Use olo-core:cpu-usage, olo-core:memory-usage, and olo-core:numeric-metric.\n2. Specialist analysis — delegate to child workflows:\n   - latency-analysis-agent: interpret p95/p99 latency spikes and user impact\n   - resource-pressure-agent: correlate CPU and memory pressure with the latency window\n   - optimization-agent: recommend tuning actions (timeouts, pool sizes, circuit breakers)\n3. Final report — delegate to performance-report-agent with findings from all prior agents.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"payment-api-7f8c9d\", \"namespace\": \"production\" }).\n  Purpose: restart the degraded service container after triage completes\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -507,8 +507,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1880
+          "x" : 1880,
+          "y" : 80
         }
       }
     }
@@ -574,8 +574,8 @@
       "delegateAgentId" : "latency-analysis-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -641,8 +641,8 @@
       "delegateAgentId" : "resource-pressure-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -708,8 +708,8 @@
       "delegateAgentId" : "optimization-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -775,8 +775,8 @@
       "delegateAgentId" : "performance-report-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -830,8 +830,8 @@
       "toolId" : "olo-core:cpu-usage",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -885,8 +885,8 @@
       "toolId" : "olo-core:memory-usage",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1880
+          "x" : 1880,
+          "y" : 80
         }
       }
     }
@@ -940,8 +940,8 @@
       "toolId" : "olo-core:numeric-metric",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 2240
+          "x" : 2240,
+          "y" : 80
         }
       }
     }
@@ -995,8 +995,8 @@
       "toolId" : "olo-core:restart-container",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 2600
+          "x" : 2600,
+          "y" : 80
         }
       }
     }
@@ -1280,25 +1280,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "role" : "performance-triage-orchestrator",
     "agentSelectionStrategy" : "dynamic",
     "description" : "Investigates latency spikes using mock metrics and specialist child workflows",
     "plannerContext" : {
-      "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
       "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:numeric-metric", "olo-core:restart-container" ],
       "selectedAgents" : [ "latency-analysis-agent", "resource-pressure-agent", "optimization-agent", "performance-report-agent" ],
-      "injectAgents" : true
+      "injectAgents" : true,
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
     },
     "returnVariable" : "ReturnValue",
     "agentType" : "autonomous",
     "planningStrategy" : "react",
     "dynamicToolExecution" : {
-      "plannerNodeId" : "agent",
-      "availableAgentsVariable" : "availableAgentsJson",
       "availableToolsVariable" : "availableToolsJson",
       "outputVariable" : "toolCallSequenceJson",
-      "continueNodeId" : "conversation-store"
-    }
+      "continueNodeId" : "conversation-store",
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson"
+    },
+    "role" : "performance-triage-orchestrator"
   }
 }

@@ -1,14 +1,14 @@
 {
-  "id" : "paper-discovery-agent",
+  "id" : "architect-chat",
   "enabled" : true,
   "isDefault" : false,
-  "label" : "Paper Discovery Agent",
-  "role" : "Paper Discovery Agent",
-  "shortDescription" : "Finds and ranks academic papers for the research question",
-  "emoji" : "🔎",
+  "label" : "Architect Chat",
+  "role" : "Architect Chat",
+  "shortDescription" : "Architecture-focused design conversation with chat history",
+  "emoji" : "💬",
   "designer" : {
     "paletteGroup" : "Agents",
-    "searchKeywords" : [ "papers", "discovery" ],
+    "searchKeywords" : [ "architecture", "design", "chat" ],
     "nodeSize" : {
       "width" : 300,
       "height" : 120
@@ -30,46 +30,18 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "agent-plug" : "#a855f7",
+      "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "object" : "#c084fc",
-      "string" : "#a3e635",
+      "agent-plug" : "#a855f7",
+      "any" : "#94a3b8",
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "boolean" : "#fb923c",
-      "message" : "#ef4444",
-      "any" : "#94a3b8"
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
-        "palette" : {
-          "name" : "End",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "🔎",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
-        } ]
-      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -84,6 +56,34 @@
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
         } ]
+      },
+      "AGENT" : {
+        "emoji" : "💬",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
       }
     }
   },
@@ -94,14 +94,14 @@
   "availableAgents" : [ ],
   "version" : "1.0.0",
   "capability" : {
-    "name" : "Paper Discovery Agent",
-    "description" : "Finds and ranks academic papers for the research question",
-    "tags" : [ "paper-discovery-agent" ],
+    "name" : "Architect Chat",
+    "description" : "Architecture-focused design conversation with chat history",
+    "tags" : [ "chat", "architecture" ],
     "examples" : [ ],
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message" ]
+    "required_context" : [ "message", "conversationSummary" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -134,17 +134,18 @@
         "order" : 3
       }
     },
-    "model" : {
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "You are a software architect. Discuss trade-offs, boundaries, interfaces, operational risks, and pragmatic next steps.\nCurrent user message:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nPrior conversation turns:\n{conversationHistory}\n\nAnswer as the assigned role, preserving useful context from the prior conversation while staying focused on the current user message.\n",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "maxIterations" : {
@@ -165,18 +166,17 @@
         "order" : 1
       }
     },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     }
   },
@@ -203,8 +203,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
     }
@@ -258,8 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -328,7 +328,7 @@
       "executionModel" : "INLINE",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "paper-discovery-agent",
+        "workflowId" : "architect-chat",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -339,8 +339,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
     }
@@ -394,8 +394,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "y" : 80,
+          "x" : 1160
         }
       }
     }
@@ -423,8 +423,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
     }
@@ -538,14 +538,15 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "description" : "Finds and ranks academic papers for the research question",
+    "collection" : "simple-chat-conversations",
+    "returnVariable" : "ReturnValue",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary" ],
-      "injectCapabilities" : false,
+      "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "selectedAgents" : [ ]
+      "injectCapabilities" : false
     },
-    "role" : "paper-discovery-agent",
-    "returnVariable" : "ReturnValue"
+    "role" : "architect-chat",
+    "description" : "Architecture-focused design conversation with chat history"
   }
 }

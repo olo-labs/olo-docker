@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -39,7 +38,8 @@
       "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
-      "integer" : "#38bdf8"
+      "integer" : "#38bdf8",
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
       "START" : {
@@ -538,7 +538,6 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "role" : "capacity-report-agent",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
@@ -546,6 +545,7 @@
       "injectCapabilities" : false
     },
     "description" : "Publishes capacity planning report for leadership review",
-    "returnVariable" : "ReturnValue"
+    "returnVariable" : "ReturnValue",
+    "role" : "capacity-report-agent"
   }
 }

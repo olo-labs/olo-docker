@@ -116,24 +116,6 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
     "systemPrompt" : {
       "type" : "string",
       "label" : "System Prompt",
@@ -177,6 +159,24 @@
         "group" : "Model Settings",
         "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
         "order" : 2
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     }
   },
@@ -538,14 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "description" : "Combines findings into an executive research brief",
     "returnVariable" : "ReturnValue",
     "role" : "synthesis-agent",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "injectCapabilities" : false
-    }
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary" ]
+    },
+    "description" : "Combines findings into an executive research brief"
   }
 }

@@ -30,31 +30,29 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
-      "message" : "#ef4444"
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c"
     },
     "nodeTypes" : {
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
-        "palette" : {
-          "name" : "End",
-          "category" : "control"
-        },
+      "AGENT" : {
+        "emoji" : "🌐",
+        "typeLabel" : "Agent",
         "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
         } ]
       },
       "START" : {
@@ -72,17 +70,19 @@
           "binding" : "inputVariableMappings"
         } ]
       },
-      "AGENT" : {
-        "emoji" : "🌐",
-        "typeLabel" : "Agent",
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
         "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
         } ]
       }
     }
@@ -145,38 +145,6 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
-    "systemPrompt" : {
-      "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
-      "required" : false,
-      "ui" : {
-        "widget" : "TEXTAREA",
-        "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
-      }
-    },
     "maxIterations" : {
       "type" : "integer",
       "label" : "Max Iterations",
@@ -193,6 +161,38 @@
         "group" : "Model Settings",
         "help" : "Caps how many planner/tool loops the agent may run.",
         "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     },
     "model" : {
@@ -386,6 +386,7 @@
       "approval" : {
         "title" : "Approve container restart",
         "description" : "Review the request and add any missing context, constraints, or priorities before API Integration Orchestrator runs. Probes HTTP endpoints, correlates logs, and delegates integration triage to child workflows For the final human-approved action (container restart), provide: containerId and namespace for the integration workload to restart.",
+        "inputPluginId" : "olo-core:human-input-restart-container",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
@@ -1279,25 +1280,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "dynamicToolExecution" : {
-      "continueNodeId" : "conversation-store",
-      "outputVariable" : "toolCallSequenceJson",
-      "availableToolsVariable" : "availableToolsJson",
-      "availableAgentsVariable" : "availableAgentsJson",
-      "plannerNodeId" : "agent"
-    },
-    "planningStrategy" : "react",
-    "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue",
-    "plannerContext" : {
-      "injectAgents" : true,
-      "selectedAgents" : [ "endpoint-probe-agent", "dependency-analysis-agent", "error-correlation-agent", "integration-report-agent" ],
-      "selectedTools" : [ "olo-core:http-tool", "olo-core:log-reader", "olo-core:web-search", "olo-core:restart-container" ],
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false
-    },
-    "description" : "Probes HTTP endpoints, correlates logs, and delegates integration triage to child workflows",
+    "role" : "api-integration-orchestrator",
     "agentSelectionStrategy" : "dynamic",
-    "role" : "api-integration-orchestrator"
+    "description" : "Probes HTTP endpoints, correlates logs, and delegates integration triage to child workflows",
+    "plannerContext" : {
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "selectedTools" : [ "olo-core:http-tool", "olo-core:log-reader", "olo-core:web-search", "olo-core:restart-container" ],
+      "selectedAgents" : [ "endpoint-probe-agent", "dependency-analysis-agent", "error-correlation-agent", "integration-report-agent" ],
+      "injectAgents" : true
+    },
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson",
+      "outputVariable" : "toolCallSequenceJson",
+      "continueNodeId" : "conversation-store"
+    }
   }
 }

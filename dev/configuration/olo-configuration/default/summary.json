@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "capabilities" : "#22c55e",
       "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
@@ -38,7 +39,6 @@
       "any" : "#94a3b8",
       "message" : "#ef4444",
       "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
       "integer" : "#38bdf8"
     },
     "nodeTypes" : {

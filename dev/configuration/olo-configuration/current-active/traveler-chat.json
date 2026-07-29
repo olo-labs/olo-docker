@@ -1,14 +1,14 @@
 {
-  "id" : "fast",
+  "id" : "traveler-chat",
   "enabled" : true,
-  "isDefault" : true,
-  "label" : "Fast",
-  "role" : "Fast",
-  "shortDescription" : "Quick, concise responses",
-  "emoji" : "⚡",
+  "isDefault" : false,
+  "label" : "Traveler Chat",
+  "role" : "Traveler Chat",
+  "shortDescription" : "Travel planning conversation with preferences remembered",
+  "emoji" : "💬",
   "designer" : {
     "paletteGroup" : "Agents",
-    "searchKeywords" : [ "fast" ],
+    "searchKeywords" : [ "travel", "itinerary", "chat" ],
     "nodeSize" : {
       "width" : 300,
       "height" : 120
@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -39,7 +38,8 @@
       "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
-      "integer" : "#38bdf8"
+      "integer" : "#38bdf8",
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
       "START" : {
@@ -58,7 +58,7 @@
         } ]
       },
       "AGENT" : {
-        "emoji" : "⚡",
+        "emoji" : "💬",
         "typeLabel" : "Agent",
         "inlineProperties" : [ {
           "id" : "parameters",
@@ -94,14 +94,14 @@
   "availableAgents" : [ ],
   "version" : "1.0.0",
   "capability" : {
-    "name" : "Fast",
-    "description" : "Quick, concise responses",
-    "tags" : [ "fast" ],
+    "name" : "Traveler Chat",
+    "description" : "Travel planning conversation with preferences remembered",
+    "tags" : [ "chat", "travel" ],
     "examples" : [ ],
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message" ]
+    "required_context" : [ "message", "conversationSummary" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -138,7 +138,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "You give fast, high-signal answers. Be brief unless detail is essential.\n\nRequest:\n{message}\n\nLead with the answer, then add only critical supporting detail.\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "You are a travel conversation specialist. Remember preferences, ask only necessary follow-up questions, and suggest practical itinerary options.\nCurrent user message:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nPrior conversation turns:\n{conversationHistory}\n\nAnswer as the assigned role, preserving useful context from the prior conversation while staying focused on the current user message.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -328,7 +328,7 @@
       "executionModel" : "INLINE",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "fast",
+        "workflowId" : "traveler-chat",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -538,14 +538,15 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "role" : "fast",
+    "collection" : "simple-chat-conversations",
+    "returnVariable" : "ReturnValue",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
       "injectCapabilities" : false
     },
-    "description" : "Quick, concise responses",
-    "returnVariable" : "ReturnValue"
+    "role" : "traveler-chat",
+    "description" : "Travel planning conversation with preferences remembered"
   }
 }

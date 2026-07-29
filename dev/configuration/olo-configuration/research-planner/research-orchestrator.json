@@ -135,24 +135,6 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
     "systemPrompt" : {
       "type" : "string",
       "label" : "System Prompt",
@@ -196,6 +178,24 @@
         "group" : "Model Settings",
         "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
         "order" : 2
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     }
   },
@@ -376,6 +376,7 @@
       "approval" : {
         "title" : "Approve publish pull request",
         "description" : "Review the request and add any missing context, constraints, or priorities before Research Orchestrator runs. Plans research tasks, queries literature, and delegates to specialist agents For the final human-approved action (publish pull request), provide: title and headBranch for the research artifact PR.",
+        "inputPluginId" : "olo-core:human-input-create-pull-request",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
         "requireCommentOnReject" : false
