@@ -42,21 +42,6 @@
       "message" : "#ef4444"
     },
     "nodeTypes" : {
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
-      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -100,6 +85,21 @@
           "widget" : "NUMBER",
           "label" : "Chunk size",
           "binding" : "chunkSize"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       }
     }
@@ -155,8 +155,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -208,7 +208,6 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "toolId" : "olo-core:rag-ingest",
       "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}",
       "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
@@ -217,10 +216,11 @@
       "extensionRef" : "pgvector-store",
       "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
       "chunkSize" : 512,
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -248,8 +248,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -308,17 +308,17 @@
     "id" : "pgvector-store",
     "type" : "VECTOR_STORE",
     "configuration" : {
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
       "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
       "table" : "${env:OLO_VECTOR_STORE_TABLE}",
       "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
       "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
-      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}"
+      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}"
     }
   } ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
     "role" : "documents-index",
-    "description" : "Dedicated ingest pipeline — creates vector DB entries only"
+    "description" : "Dedicated ingest pipeline — creates vector DB entries only",
+    "returnVariable" : "ReturnValue"
   }
 }

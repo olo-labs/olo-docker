@@ -30,31 +30,29 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
-      "message" : "#ef4444",
-      "boolean" : "#fb923c"
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444"
     },
     "nodeTypes" : {
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
-        "palette" : {
-          "name" : "End",
-          "category" : "control"
-        },
+      "AGENT" : {
+        "emoji" : "🌍",
+        "typeLabel" : "Agent",
         "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
         } ]
       },
       "START" : {
@@ -72,17 +70,19 @@
           "binding" : "inputVariableMappings"
         } ]
       },
-      "AGENT" : {
-        "emoji" : "🌍",
-        "typeLabel" : "Agent",
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
         "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
         } ]
       }
     }
@@ -116,38 +116,6 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
-    "systemPrompt" : {
-      "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
-      "required" : false,
-      "ui" : {
-        "widget" : "TEXTAREA",
-        "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
-      }
-    },
     "maxIterations" : {
       "type" : "integer",
       "label" : "Max Iterations",
@@ -164,6 +132,38 @@
         "group" : "Model Settings",
         "help" : "Caps how many planner/tool loops the agent may run.",
         "order" : 1
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     },
     "model" : {
@@ -490,9 +490,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -538,14 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
-    "role" : "destination-agent",
+    "description" : "Recommends cities and highlights for a travel region",
     "plannerContext" : {
-      "injectCapabilities" : false,
       "selectedVariables" : [ "message", "conversationSummary" ],
-      "selectedAgents" : [ ],
-      "selectedTools" : [ ]
+      "injectCapabilities" : false,
+      "selectedTools" : [ ],
+      "selectedAgents" : [ ]
     },
-    "description" : "Recommends cities and highlights for a travel region"
+    "role" : "destination-agent",
+    "returnVariable" : "ReturnValue"
   }
 }

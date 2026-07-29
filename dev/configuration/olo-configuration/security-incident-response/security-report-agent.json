@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
@@ -38,10 +39,22 @@
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
-      "message" : "#ef4444"
+      "any" : "#94a3b8"
     },
     "nodeTypes" : {
+      "AGENT" : {
+        "emoji" : "📋",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -70,19 +83,6 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "📋",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
         } ]
       }
     }
@@ -116,6 +116,19 @@
   },
   "state" : { },
   "parameters" : {
+    "model" : {
+      "type" : "string",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Model Settings",
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
+      }
+    },
     "temperature" : {
       "type" : "number",
       "label" : "Temperature",
@@ -138,7 +151,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -165,19 +178,6 @@
         "help" : "Caps how many planner/tool loops the agent may run.",
         "order" : 1
       }
-    },
-    "model" : {
-      "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
-      "required" : false,
-      "ui" : {
-        "widget" : "MODEL_SELECTOR",
-        "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
-      }
     }
   },
   "nodes" : [ {
@@ -203,8 +203,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -258,8 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -339,8 +339,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -394,8 +394,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -423,8 +423,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -490,9 +490,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -541,10 +541,10 @@
     "returnVariable" : "ReturnValue",
     "role" : "security-report-agent",
     "plannerContext" : {
+      "selectedAgents" : [ ],
       "selectedTools" : [ ],
       "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary" ],
-      "selectedAgents" : [ ]
+      "selectedVariables" : [ "message", "conversationSummary" ]
     },
     "description" : "Publishes security incident report for stakeholders"
   }

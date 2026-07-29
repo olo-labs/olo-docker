@@ -30,18 +30,31 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
       "message" : "#ef4444",
-      "boolean" : "#fb923c",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
-      "number" : "#38bdf8",
-      "array" : "#f472b6"
+      "boolean" : "#fb923c"
     },
     "nodeTypes" : {
+      "AGENT" : {
+        "emoji" : "📚",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -55,19 +68,6 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "📚",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
         } ]
       },
       "END" : {
@@ -116,18 +116,17 @@
   },
   "state" : { },
   "parameters" : {
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     },
     "maxIterations" : {
@@ -148,17 +147,18 @@
         "order" : 1
       }
     },
-    "model" : {
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "temperature" : {
@@ -490,9 +490,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -538,14 +538,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "returnVariable" : "ReturnValue",
-    "role" : "literature-agent",
+    "description" : "Finds and summarizes academic papers for a research topic",
     "plannerContext" : {
       "selectedAgents" : [ ],
-      "selectedTools" : [ ],
+      "selectedVariables" : [ "message", "conversationSummary" ],
       "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary" ]
+      "selectedTools" : [ ]
     },
-    "description" : "Finds and summarizes academic papers for a research topic"
+    "role" : "literature-agent",
+    "returnVariable" : "ReturnValue"
   }
 }

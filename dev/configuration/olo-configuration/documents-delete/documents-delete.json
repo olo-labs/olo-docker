@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
@@ -39,39 +38,10 @@
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "agent-plug" : "#a855f7",
-      "any" : "#94a3b8"
+      "any" : "#94a3b8",
+      "message" : "#ef4444"
     },
     "nodeTypes" : {
-      "TOOL" : {
-        "emoji" : "🔧",
-        "typeLabel" : "Tool",
-        "description" : "Executes a registered tool plugin (e.g. RAG ingest)",
-        "palette" : {
-          "name" : "Tool",
-          "category" : "plugins"
-        },
-        "inlineProperties" : [ {
-          "id" : "toolId",
-          "widget" : "STRING",
-          "label" : "Tool",
-          "binding" : "toolId"
-        }, {
-          "id" : "extensionRef",
-          "widget" : "STRING",
-          "label" : "Vector store",
-          "binding" : "extensionRef"
-        }, {
-          "id" : "vectorTable",
-          "widget" : "STRING",
-          "label" : "Collection table",
-          "binding" : "vectorTable"
-        }, {
-          "id" : "chunkSize",
-          "widget" : "NUMBER",
-          "label" : "Chunk size",
-          "binding" : "chunkSize"
-        } ]
-      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -100,6 +70,36 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
+        } ]
+      },
+      "TOOL" : {
+        "emoji" : "🔧",
+        "typeLabel" : "Tool",
+        "description" : "Executes a registered tool plugin (e.g. RAG ingest)",
+        "palette" : {
+          "name" : "Tool",
+          "category" : "plugins"
+        },
+        "inlineProperties" : [ {
+          "id" : "toolId",
+          "widget" : "STRING",
+          "label" : "Tool",
+          "binding" : "toolId"
+        }, {
+          "id" : "extensionRef",
+          "widget" : "STRING",
+          "label" : "Vector store",
+          "binding" : "extensionRef"
+        }, {
+          "id" : "vectorTable",
+          "widget" : "STRING",
+          "label" : "Collection table",
+          "binding" : "vectorTable"
+        }, {
+          "id" : "chunkSize",
+          "widget" : "NUMBER",
+          "label" : "Chunk size",
+          "binding" : "chunkSize"
         } ]
       }
     }
@@ -155,8 +155,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
     }
@@ -208,18 +208,18 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
-      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
-      "extensionRef" : "pgvector-store",
-      "toolId" : "olo-core:rag-delete",
       "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
       "vectorTable" : "${env:OLO_VECTOR_STORE_TABLE}",
       "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
       "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
+      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
+      "extensionRef" : "pgvector-store",
+      "toolId" : "olo-core:rag-delete",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -247,8 +247,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
     }
@@ -307,17 +307,17 @@
     "id" : "pgvector-store",
     "type" : "VECTOR_STORE",
     "configuration" : {
-      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
-      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}",
       "driver" : "${env:OLO_VECTOR_STORE_DRIVER}",
       "distance" : "${env:OLO_VECTOR_STORE_DISTANCE}",
       "table" : "${env:OLO_VECTOR_STORE_TABLE}",
-      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}"
+      "connectionRef" : "${env:OLO_VECTOR_STORE_URL}",
+      "vectorSize" : "${env:OLO_VECTOR_STORE_VECTOR_SIZE}",
+      "collection" : "${env:OLO_VECTOR_STORE_COLLECTION}"
     }
   } ],
   "metadata" : {
-    "description" : "Dedicated delete pipeline - removes vector DB entries only",
     "role" : "documents-delete",
-    "returnVariable" : "ReturnValue"
+    "returnVariable" : "ReturnValue",
+    "description" : "Dedicated delete pipeline - removes vector DB entries only"
   }
 }

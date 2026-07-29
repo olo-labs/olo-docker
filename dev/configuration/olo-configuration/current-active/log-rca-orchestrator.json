@@ -1,14 +1,14 @@
 {
-  "id" : "security-incident-orchestrator",
+  "id" : "log-rca-orchestrator",
   "enabled" : true,
   "isDefault" : true,
-  "label" : "Security Incident Orchestrator",
-  "role" : "Security Incident Orchestrator",
-  "shortDescription" : "Triages security incidents using mock logs, code changes, and specialist child workflows",
-  "emoji" : "🛡️",
+  "label" : "Log RCA Orchestrator",
+  "role" : "Log RCA Orchestrator",
+  "shortDescription" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary",
+  "emoji" : "\uD83E\uDDEF",
   "designer" : {
     "paletteGroup" : "Agents",
-    "searchKeywords" : [ "security-incident-orchestrator", "planner", "scenario" ],
+    "searchKeywords" : [ "log-rca-orchestrator", "planner", "scenario" ],
     "nodeSize" : {
       "width" : 300,
       "height" : 120
@@ -30,31 +30,18 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "capabilities" : "#22c55e",
-      "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8"
+      "object" : "#c084fc",
+      "string" : "#a3e635",
+      "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7"
     },
     "nodeTypes" : {
-      "AGENT" : {
-        "emoji" : "🛡️",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
-        } ]
-      },
       "END" : {
         "emoji" : "⏹",
         "typeLabel" : "End",
@@ -68,6 +55,19 @@
           "widget" : "VARIABLE_SELECT",
           "label" : "Output variable",
           "binding" : "outputVariableMapping"
+        } ]
+      },
+      "AGENT" : {
+        "emoji" : "\uD83E\uDDEF",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
         } ]
       },
       "START" : {
@@ -91,37 +91,37 @@
   "workflowType" : "olo",
   "runAgain" : true,
   "childWorkflows" : [ {
-    "workflowId" : "threat-detection-agent",
+    "workflowId" : "log-failure-agent",
     "workflowVersion" : "1.0.0"
   }, {
-    "workflowId" : "forensics-agent",
+    "workflowId" : "metrics-rca-agent",
     "workflowVersion" : "1.0.0"
   }, {
-    "workflowId" : "containment-agent",
+    "workflowId" : "code-change-rca-agent",
     "workflowVersion" : "1.0.0"
   }, {
-    "workflowId" : "security-report-agent",
+    "workflowId" : "incident-summary-agent",
     "workflowVersion" : "1.0.0"
   } ],
   "availableAgents" : [ {
-    "id" : "threat-detection-agent"
+    "id" : "log-failure-agent"
   }, {
-    "id" : "forensics-agent"
+    "id" : "metrics-rca-agent"
   }, {
-    "id" : "containment-agent"
+    "id" : "code-change-rca-agent"
   }, {
-    "id" : "security-report-agent"
+    "id" : "incident-summary-agent"
   } ],
   "version" : "1.0.0",
   "capability" : {
-    "name" : "Security Incident Orchestrator",
-    "description" : "Triages security incidents using mock logs, code changes, and specialist child workflows",
+    "name" : "Log RCA Orchestrator",
+    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary",
     "tags" : [ "agent", "scenario" ],
     "examples" : [ ],
     "required_inputs" : [ "input" ],
     "required_outputs" : [ "output" ],
     "tool_requirements" : [ ],
-    "required_context" : [ "message", "availableToolsJson", "toolCallSequenceJson" ]
+    "required_context" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
   },
   "runtime" : {
     "contractVersion" : "1.0",
@@ -158,22 +158,22 @@
         "order" : 2
       }
     },
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
+    "maxIterations" : {
+      "type" : "integer",
+      "label" : "Max Iterations",
+      "description" : "Maximum agent reasoning iterations",
+      "defaultValue" : 10,
       "required" : false,
       "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
+        "minimum" : 1,
+        "maximum" : 100,
+        "step" : 1
       },
       "ui" : {
-        "widget" : "SLIDER",
+        "widget" : "NUMBER",
         "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
+        "help" : "Caps how many planner/tool loops the agent may run.",
+        "order" : 1
       }
     },
     "systemPrompt" : {
@@ -190,22 +190,22 @@
         "order" : 0
       }
     },
-    "maxIterations" : {
-      "type" : "integer",
-      "label" : "Max Iterations",
-      "description" : "Maximum agent reasoning iterations",
-      "defaultValue" : 10,
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
       "required" : false,
       "validation" : {
-        "minimum" : 1.0,
-        "maximum" : 100.0,
-        "step" : 1.0
+        "minimum" : 0,
+        "maximum" : 2,
+        "step" : 0.1
       },
       "ui" : {
-        "widget" : "NUMBER",
+        "widget" : "SLIDER",
         "group" : "Model Settings",
-        "help" : "Caps how many planner/tool loops the agent may run.",
-        "order" : 1
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     }
   },
@@ -236,7 +236,8 @@
           "y" : 80
         }
       }
-    }
+    },
+    "label" : "start"
   }, {
     "id" : "conversation-load",
     "type" : "TOOL",
@@ -249,10 +250,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -262,10 +263,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -291,7 +292,8 @@
           "y" : 80
         }
       }
-    }
+    },
+    "label" : "conversation-load"
   }, {
     "id" : "conversation-store",
     "type" : "TOOL",
@@ -304,10 +306,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -317,10 +319,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -346,7 +348,8 @@
           "y" : 80
         }
       }
-    }
+    },
+    "label" : "conversation-store"
   }, {
     "id" : "human-input",
     "type" : "HUMAN",
@@ -385,7 +388,7 @@
       "routers" : [ ],
       "approval" : {
         "title" : "Approve container restart",
-        "description" : "Review the request and add any missing context, constraints, or priorities before Security Incident Orchestrator runs. Triages security incidents using mock logs, code changes, and specialist child workflows For the final human-approved action (container restart), provide: containerId and namespace for the workload to restart or isolate.",
+        "description" : "Review the request and add any missing context, constraints, or priorities before Log RCA Orchestrator runs. Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary For the final human-approved action (container restart), provide: containerId and namespace for the recovered workload.",
         "inputPluginId" : "olo-core:human-input-restart-container",
         "approvers" : [ "operator" ],
         "timeoutSeconds" : 3600,
@@ -401,7 +404,8 @@
           "y" : 80
         }
       }
-    }
+    },
+    "label" : "human-input"
   }, {
     "id" : "agent",
     "type" : "AGENT",
@@ -475,7 +479,7 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a security incident response and breach triage agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Detection — scan logs for suspicious activity (olo-core:log-reader with ISO-8601 window).\n   Optionally search threat intel stubs (olo-core:web-search with query argument).\n   Delegate to threat-detection-agent for structured threat classification.\n2. Forensics — delegate to forensics-agent; use olo-core:recently-changed-code (pullRequestNumber optional)\n   to inspect recent changes that may explain the breach vector.\n3. Containment — delegate to containment-agent with recommended immediate actions.\n4. Executive report — delegate to security-report-agent with timeline, blast radius, and remediation plan.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"compromised-api-pod\", \"namespace\": \"production\" }).\n  Purpose: restart or isolate the compromised workload after containment review\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a log failure triage and root-cause analysis agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Failure identification — scan application logs for errors, stack traces, and the incident time window.\n   Prefer olo-core:log-reader with ISO-8601 startTime/endTime when the user mentions a time range.\n   Optionally delegate to log-failure-agent for a structured failure signature and affected services.\n2. Root-cause analysis — after failures are identified, delegate to specialist child workflows:\n   - metrics-rca-agent: correlate CPU/memory spikes and latency with the failure window\n   - code-change-rca-agent: inspect recent deployments and code changes near the incident\n   Run these as separate agentCalls (each executes as its own child workflow).\n3. Final summary — when failure findings and RCA hypotheses exist in agentResultsJson, delegate once to\n   incident-summary-agent to publish an executive incident summary (timeline, root cause, impact, actions).\n4. Human-approved recovery — after the summary agent completes, call olo-core:restart-container with\n   containerId and namespace from the operator's human-input approval. Include confirmationId and logPath\n   from the tool result in directResponse.\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:log-reader\", \"arguments\": { \"startTime\": \"2026-06-14T14:30:00Z\", \"endTime\": \"2026-06-14T14:35:00Z\" } }\n  ],\n  \"agentCalls\": [\n    { \"agentId\": \"log-failure-agent\", \"message\": \"Identify failure signatures from the incident logs\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. Do not call incident-summary-agent until log-failure-agent and at least one RCA agent have completed.\n6. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
           "x" : 1160,
@@ -511,11 +515,12 @@
           "y" : 80
         }
       }
-    }
+    },
+    "label" : "end"
   }, {
-    "id" : "threat-detection-agent",
+    "id" : "log-failure-agent",
     "type" : "AGENT",
-    "label" : "Threat Detection Agent",
+    "label" : "Log Failure Agent",
     "ports" : [ {
       "id" : "in",
       "label" : "message in",
@@ -525,10 +530,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -538,10 +543,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "agentPlug",
@@ -562,7 +567,7 @@
       "executionModel" : "CHILD_WORKFLOW",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "threat-detection-agent",
+        "workflowId" : "log-failure-agent",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -571,18 +576,18 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "delegateAgentId" : "threat-detection-agent",
+      "delegateAgentId" : "log-failure-agent",
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "x" : 915,
+          "y" : 648
         }
       }
     }
   }, {
-    "id" : "forensics-agent",
+    "id" : "metrics-rca-agent",
     "type" : "AGENT",
-    "label" : "Forensics Agent",
+    "label" : "Metrics RCA Agent",
     "ports" : [ {
       "id" : "in",
       "label" : "message in",
@@ -592,10 +597,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -605,10 +610,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "agentPlug",
@@ -629,7 +634,7 @@
       "executionModel" : "CHILD_WORKFLOW",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "forensics-agent",
+        "workflowId" : "metrics-rca-agent",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -638,18 +643,18 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "delegateAgentId" : "forensics-agent",
+      "delegateAgentId" : "metrics-rca-agent",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "x" : 1172,
+          "y" : 637
         }
       }
     }
   }, {
-    "id" : "containment-agent",
+    "id" : "code-change-rca-agent",
     "type" : "AGENT",
-    "label" : "Containment Agent",
+    "label" : "Code Change RCA Agent",
     "ports" : [ {
       "id" : "in",
       "label" : "message in",
@@ -659,10 +664,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -672,10 +677,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "agentPlug",
@@ -696,7 +701,7 @@
       "executionModel" : "CHILD_WORKFLOW",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "containment-agent",
+        "workflowId" : "code-change-rca-agent",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -705,18 +710,18 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "delegateAgentId" : "containment-agent",
+      "delegateAgentId" : "code-change-rca-agent",
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "x" : 1427,
+          "y" : 626
         }
       }
     }
   }, {
-    "id" : "security-report-agent",
+    "id" : "incident-summary-agent",
     "type" : "AGENT",
-    "label" : "Security Report Agent",
+    "label" : "Incident Summary Agent",
     "ports" : [ {
       "id" : "in",
       "label" : "message in",
@@ -726,10 +731,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -739,10 +744,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "agentPlug",
@@ -763,7 +768,7 @@
       "executionModel" : "CHILD_WORKFLOW",
       "routers" : [ ],
       "workflowRef" : {
-        "workflowId" : "security-report-agent",
+        "workflowId" : "incident-summary-agent",
         "version" : "1.0.0",
         "inputMapping" : { },
         "outputMapping" : { }
@@ -772,11 +777,11 @@
     "reads" : [ ],
     "writes" : [ ],
     "configuration" : {
-      "delegateAgentId" : "security-report-agent",
+      "delegateAgentId" : "incident-summary-agent",
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "x" : 811,
+          "y" : 459
         }
       }
     }
@@ -792,10 +797,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -805,10 +810,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -830,11 +835,68 @@
       "toolId" : "olo-core:log-reader",
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "x" : 1667,
+          "y" : 611
         }
       }
-    }
+    },
+    "label" : "log-reader"
+  }, {
+    "id" : "cpu-usage",
+    "type" : "TOOL",
+    "ports" : [ {
+      "id" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "direction" : "INPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "direction" : "OUTPUT",
+      "required" : false,
+      "minConnections" : 0,
+      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "reads" : [ ],
+    "writes" : [ ],
+    "configuration" : {
+      "toolId" : "olo-core:cpu-usage",
+      "designer" : {
+        "position" : {
+          "x" : 2082,
+          "y" : 577
+        }
+      }
+    },
+    "label" : "cpu-usage"
   }, {
     "id" : "recently-changed-code",
     "type" : "TOOL",
@@ -847,10 +909,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -860,10 +922,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -885,66 +947,12 @@
       "toolId" : "olo-core:recently-changed-code",
       "designer" : {
         "position" : {
-          "x" : 1880,
-          "y" : 80
+          "x" : 2201,
+          "y" : 410
         }
       }
-    }
-  }, {
-    "id" : "web-search",
-    "type" : "TOOL",
-    "ports" : [ {
-      "id" : "in",
-      "label" : "message in",
-      "schema" : "message",
-      "type" : "message",
-      "acceptType" : "message",
-      "direction" : "INPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
-      "ui" : {
-        "position" : "LEFT",
-        "color" : "#ef4444"
-      }
-    }, {
-      "id" : "out",
-      "label" : "message out",
-      "schema" : "message",
-      "type" : "message",
-      "direction" : "OUTPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
-      "ui" : {
-        "position" : "RIGHT",
-        "color" : "#ef4444"
-      }
-    }, {
-      "id" : "capabilities",
-      "label" : "available tools",
-      "schema" : "capabilities",
-      "type" : "capabilities",
-      "direction" : "OUTPUT",
-      "required" : false,
-      "minConnections" : 0,
-      "shortDescription" : "Capability indicator for runtime prompt assembly on a connected agent",
-      "ui" : {
-        "position" : "TOP",
-        "color" : "#22c55e"
-      }
-    } ],
-    "reads" : [ ],
-    "writes" : [ ],
-    "configuration" : {
-      "toolId" : "olo-core:web-search",
-      "designer" : {
-        "position" : {
-          "x" : 2240,
-          "y" : 80
-        }
-      }
-    }
+    },
+    "label" : "recently-changed-code"
   }, {
     "id" : "restart-container",
     "type" : "TOOL",
@@ -957,10 +965,10 @@
       "direction" : "INPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Incoming workflow message",
+      "shortDescription" : "Incoming message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "LEFT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "out",
@@ -970,10 +978,10 @@
       "direction" : "OUTPUT",
       "required" : false,
       "minConnections" : 0,
-      "shortDescription" : "Outgoing workflow message",
+      "shortDescription" : "Outgoing message (routed by planner/agent at runtime)",
       "ui" : {
         "position" : "RIGHT",
-        "color" : "#ef4444"
+        "color" : "#71717a"
       }
     }, {
       "id" : "capabilities",
@@ -995,76 +1003,77 @@
       "toolId" : "olo-core:restart-container",
       "designer" : {
         "position" : {
-          "x" : 2600,
-          "y" : 80
+          "x" : 2648,
+          "y" : 272
         }
       }
-    }
+    },
+    "label" : "restart-container"
   } ],
   "edges" : [ {
     "sourceNodeId" : "start",
-    "sourcePortId" : "out",
     "targetNodeId" : "conversation-load",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-load",
-    "sourcePortId" : "out",
     "targetNodeId" : "human-input",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "human-input",
-    "sourcePortId" : "out",
     "targetNodeId" : "agent",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "agent",
-    "sourcePortId" : "out",
     "targetNodeId" : "conversation-store",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
     "sourceNodeId" : "conversation-store",
-    "sourcePortId" : "out",
     "targetNodeId" : "end",
+    "sourcePortId" : "out",
     "targetPortId" : "in"
   }, {
-    "sourceNodeId" : "threat-detection-agent",
-    "sourcePortId" : "agentPlug",
+    "sourceNodeId" : "log-failure-agent",
     "targetNodeId" : "agent",
+    "sourcePortId" : "agentPlug",
     "targetPortId" : "agentPlug"
   }, {
-    "sourceNodeId" : "forensics-agent",
-    "sourcePortId" : "agentPlug",
+    "sourceNodeId" : "metrics-rca-agent",
     "targetNodeId" : "agent",
+    "sourcePortId" : "agentPlug",
     "targetPortId" : "agentPlug"
   }, {
-    "sourceNodeId" : "containment-agent",
-    "sourcePortId" : "agentPlug",
+    "sourceNodeId" : "code-change-rca-agent",
     "targetNodeId" : "agent",
+    "sourcePortId" : "agentPlug",
     "targetPortId" : "agentPlug"
   }, {
-    "sourceNodeId" : "security-report-agent",
-    "sourcePortId" : "agentPlug",
+    "sourceNodeId" : "incident-summary-agent",
     "targetNodeId" : "agent",
+    "sourcePortId" : "agentPlug",
     "targetPortId" : "agentPlug"
   }, {
     "sourceNodeId" : "log-reader",
-    "sourcePortId" : "capabilities",
     "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
+    "targetPortId" : "capabilities"
+  }, {
+    "sourceNodeId" : "cpu-usage",
+    "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
     "targetPortId" : "capabilities"
   }, {
     "sourceNodeId" : "recently-changed-code",
-    "sourcePortId" : "capabilities",
     "targetNodeId" : "agent",
-    "targetPortId" : "capabilities"
-  }, {
-    "sourceNodeId" : "web-search",
     "sourcePortId" : "capabilities",
-    "targetNodeId" : "agent",
     "targetPortId" : "capabilities"
   }, {
     "sourceNodeId" : "restart-container",
-    "sourcePortId" : "capabilities",
     "targetNodeId" : "agent",
+    "sourcePortId" : "capabilities",
     "targetPortId" : "capabilities"
   } ],
   "variables" : [ {
@@ -1198,9 +1207,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Log Reader",
-      "description" : "Reads application logs for suspicious or error activity",
+      "description" : "Reads application logs for errors and stack traces in a time window",
       "tags" : [ ],
-      "examples" : [ "Find ERROR entries in payment-service logs during incident window" ],
+      "examples" : [ "Find ERROR entries in payment-service logs between 14:30 and 14:35 UTC" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -1211,11 +1220,28 @@
     },
     "configuration" : { }
   }, {
+    "id" : "cpu-usage",
+    "type" : "TOOL",
+    "capability" : {
+      "name" : "CPU Usage",
+      "description" : "Returns CPU utilization samples for observability correlation",
+      "tags" : [ ],
+      "examples" : [ "Check CPU spike during payment gateway outage" ],
+      "required_inputs" : [ ],
+      "required_outputs" : [ ],
+      "tool_requirements" : [ ],
+      "required_context" : [ ]
+    },
+    "runtimeBinding" : {
+      "implementationId" : "olo-core:cpu-usage"
+    },
+    "configuration" : { }
+  }, {
     "id" : "recently-changed-code",
     "type" : "TOOL",
     "capability" : {
       "name" : "Recently Changed Code",
-      "description" : "Lists recent PR/diff stubs that may relate to the incident",
+      "description" : "Lists recent commits and deployments near the incident window",
       "tags" : [ ],
       "examples" : [ "Show code changes in payment-service in the last 24 hours" ],
       "required_inputs" : [ ],
@@ -1225,23 +1251,6 @@
     },
     "runtimeBinding" : {
       "implementationId" : "olo-core:recently-changed-code"
-    },
-    "configuration" : { }
-  }, {
-    "id" : "web-search",
-    "type" : "TOOL",
-    "capability" : {
-      "name" : "Web Search",
-      "description" : "Placeholder threat-intel / advisory search (stub results)",
-      "tags" : [ ],
-      "examples" : [ "Search for CVE advisories related to payment gateway timeouts" ],
-      "required_inputs" : [ ],
-      "required_outputs" : [ ],
-      "tool_requirements" : [ ],
-      "required_context" : [ ]
-    },
-    "runtimeBinding" : {
-      "implementationId" : "olo-core:web-search"
     },
     "configuration" : { }
   }, {
@@ -1280,25 +1289,36 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "dynamicToolExecution" : {
-      "continueNodeId" : "conversation-store",
-      "outputVariable" : "toolCallSequenceJson",
-      "availableToolsVariable" : "availableToolsJson",
-      "availableAgentsVariable" : "availableAgentsJson",
-      "plannerNodeId" : "agent"
-    },
-    "planningStrategy" : "react",
-    "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue",
+    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary",
     "plannerContext" : {
+      "selectedTools" : [ "olo-core:log-reader", "olo-core:cpu-usage", "olo-core:recently-changed-code", "olo-core:restart-container" ],
+      "selectedAgents" : [ "log-failure-agent", "metrics-rca-agent", "code-change-rca-agent", "incident-summary-agent" ],
       "injectAgents" : true,
-      "selectedAgents" : [ "threat-detection-agent", "forensics-agent", "containment-agent", "security-report-agent" ],
-      "selectedTools" : [ "olo-core:log-reader", "olo-core:recently-changed-code", "olo-core:web-search", "olo-core:restart-container" ],
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
     },
-    "description" : "Triages security incidents using mock logs, code changes, and specialist child workflows",
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "outputVariable" : "toolCallSequenceJson",
+      "continueNodeId" : "conversation-store",
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson"
+    },
+    "role" : "log-rca-orchestrator",
     "agentSelectionStrategy" : "dynamic",
-    "role" : "security-incident-orchestrator"
+    "canvasView" : {
+      "viewport" : {
+        "x" : 0,
+        "y" : 0,
+        "zoom" : 1
+      },
+      "size" : {
+        "width" : 1399,
+        "height" : 1900
+      }
+    }
   }
 }

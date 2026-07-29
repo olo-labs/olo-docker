@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "any" : "#94a3b8",
       "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -38,8 +39,7 @@
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
       "boolean" : "#fb923c",
-      "message" : "#ef4444",
-      "any" : "#94a3b8"
+      "message" : "#ef4444"
     },
     "nodeTypes" : {
       "END" : {
@@ -169,7 +169,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -490,9 +490,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],

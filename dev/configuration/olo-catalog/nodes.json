@@ -2,16 +2,16 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
+  "generatedAt" : "2026-07-29T00:22:50.219946400Z",
   "defaults" : {
     "runtime" : {
       "capabilities" : [ "DEBUG", "REPLAY" ]
     },
     "connectionRules" : {
-      "wildcards" : [ "any", "*" ],
-      "version" : "1.0",
       "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
       "strategy" : "schema_match",
+      "wildcards" : [ "any", "*" ],
+      "version" : "1.0",
       "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
     },
     "connectionPolicy" : {
@@ -28,7 +28,7 @@
     }
   },
   "catalogMetadata" : {
-    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
+    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "APPROVAL_TOGGLE", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
   },
   "catalogType" : "nodes",
   "nodes" : [ {

@@ -30,18 +30,33 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
+      "integer" : "#38bdf8",
       "string" : "#a3e635",
       "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
       "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
-      "integer" : "#38bdf8"
+      "any" : "#94a3b8"
     },
     "nodeTypes" : {
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
+        "palette" : {
+          "name" : "End",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
+        } ]
+      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -68,21 +83,6 @@
           "id" : "model",
           "widget" : "MODEL_SELECTOR",
           "label" : "Model"
-        } ]
-      },
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
-        "palette" : {
-          "name" : "End",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
         } ]
       }
     }
@@ -139,7 +139,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "You troubleshoot problems with explicit, verbose reasoning suitable for debugging sessions.\n\nIssue:\n{message}\n\nReproduce symptoms, list hypotheses, narrow causes, and recommend fixes with verification steps.\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "You troubleshoot problems with explicit, verbose reasoning suitable for debugging sessions.\n\nIssue:\n{message}\n\nReproduce symptoms, list hypotheses, narrow causes, and recommend fixes with verification steps.\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -491,9 +491,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -539,14 +539,14 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
+    "returnVariable" : "ReturnValue",
     "role" : "debug",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary" ],
-      "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "injectCapabilities" : false
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary" ],
+      "selectedAgents" : [ ]
     },
-    "description" : "Verbose output for troubleshooting",
-    "returnVariable" : "ReturnValue"
+    "description" : "Verbose output for troubleshooting"
   }
 }

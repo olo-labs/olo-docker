@@ -2,16 +2,16 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
+  "generatedAt" : "2026-07-29T00:22:50.219946400Z",
   "defaults" : {
     "runtime" : {
       "capabilities" : [ "DEBUG", "REPLAY" ]
     },
     "connectionRules" : {
-      "wildcards" : [ "any", "*" ],
-      "version" : "1.0",
       "primitives" : [ "string", "number", "integer", "boolean", "object", "array" ],
       "strategy" : "schema_match",
+      "wildcards" : [ "any", "*" ],
+      "version" : "1.0",
       "wireTypes" : [ "any", "message", "capabilities", "agent-plug" ]
     },
     "connectionPolicy" : {
@@ -28,10 +28,106 @@
     }
   },
   "catalogMetadata" : {
-    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
+    "parameterWidgets" : [ "STRING", "TEXTAREA", "NUMBER", "SLIDER", "BOOLEAN", "APPROVAL_TOGGLE", "SELECT", "MULTI_SELECT", "JSON", "CODE", "MODEL_SELECTOR", "SECRET", "CRON" ]
   },
   "catalogType" : "tools",
   "tools" : [ {
+    "designer" : {
+      "paletteGroup" : "Action",
+      "searchKeywords" : [ "travel", "booking", "human-approved", "mock" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:book-ticket",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Book Ticket",
+    "description" : "Mock travel ticket booking after human approval (writes execution log)",
+    "category" : "action",
+    "emoji" : "\uD83C\uDFAB",
+    "tags" : [ "travel", "booking", "human-approved", "mock" ],
+    "examples" : [ "Book offer LON-PAR-42 for passenger Alex Morgan", "Confirm weekend package offer EU-SUMMER-7 after itinerary review" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "offerId",
+      "label" : "Offer ID",
+      "type" : "string",
+      "description" : "Travel offer identifier from travel-offers tool",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Booking",
+        "placeholder" : "LON-PAR-42",
+        "order" : 0
+      }
+    }, {
+      "id" : "passengerName",
+      "label" : "Passenger Name",
+      "type" : "string",
+      "description" : "Primary passenger name",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Booking",
+        "placeholder" : "Alex Morgan",
+        "order" : 1
+      }
+    }, {
+      "id" : "email",
+      "label" : "Contact Email",
+      "type" : "string",
+      "description" : "Booking confirmation email",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Booking",
+        "placeholder" : "alex@example.com",
+        "order" : 2
+      }
+    } ]
+  }, {
     "designer" : {
       "paletteGroup" : "Utility",
       "searchKeywords" : [ "math", "core" ]
@@ -115,6 +211,150 @@
       "values" : [ "+", "-", "*", "/" ],
       "ui" : {
         "widget" : "SELECT"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Conversation",
+      "searchKeywords" : [ "conversation", "memory", "plugin", "summary" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:conversation-load",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Conversation Load",
+    "description" : "Loads prior conversation turns as reference-only context for the workflow message",
+    "category" : "conversation",
+    "emoji" : "\uD83D\uDCAC",
+    "tags" : [ "conversation", "memory", "plugin", "summary" ],
+    "examples" : [ "Restore chat context for a returning operator session without echoing history", "Provide prior incident triage as reference before the planner runs" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "sessionId",
+      "label" : "Session ID",
+      "type" : "string",
+      "description" : "Chat session identifier (defaults to workflow correlation/run id)",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Session",
+        "placeholder" : "demo-session",
+        "order" : 0
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Conversation",
+      "searchKeywords" : [ "conversation", "memory", "plugin", "store" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:conversation-store",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Conversation Store",
+    "description" : "Persists the current user message and workflow response to conversation history",
+    "category" : "conversation",
+    "emoji" : "\uD83D\uDDC2️",
+    "tags" : [ "conversation", "memory", "plugin", "store" ],
+    "examples" : [ "Save operator triage outcome for the next turn", "Persist assistant response after scenario completion" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "sessionId",
+      "label" : "Session ID",
+      "type" : "string",
+      "description" : "Chat session identifier (defaults to workflow correlation/run id)",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Session",
+        "placeholder" : "demo-session",
+        "order" : 0
       }
     } ]
   }, {
@@ -209,6 +449,212 @@
         "group" : "Time Range",
         "placeholder" : "2026-06-14T14:32:00Z",
         "order" : 1
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Action",
+      "searchKeywords" : [ "github", "pull-request", "human-approved", "mock" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:create-pull-request",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Create Pull Request",
+    "description" : "Mock pull request creation after human approval (writes execution log)",
+    "category" : "action",
+    "emoji" : "\uD83D\uDD00",
+    "tags" : [ "github", "pull-request", "human-approved", "mock" ],
+    "examples" : [ "Open hotfix PR for payment-service timeout patch", "Create PR from feature/workflow-graph to main with generated workflow" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "title",
+      "label" : "PR Title",
+      "type" : "string",
+      "description" : "Pull request title",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Pull Request",
+        "placeholder" : "fix: restore payment gateway timeouts",
+        "order" : 0
+      }
+    }, {
+      "id" : "headBranch",
+      "label" : "Head Branch",
+      "type" : "string",
+      "description" : "Source branch for the pull request",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Pull Request",
+        "placeholder" : "hotfix/payment-timeout",
+        "order" : 1
+      }
+    }, {
+      "id" : "baseBranch",
+      "label" : "Base Branch",
+      "type" : "string",
+      "description" : "Target branch for the pull request",
+      "required" : false,
+      "defaultValue" : "main",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Pull Request",
+        "placeholder" : "main",
+        "order" : 2
+      }
+    }, {
+      "id" : "repository",
+      "label" : "Repository",
+      "type" : "string",
+      "description" : "Repository slug",
+      "required" : false,
+      "defaultValue" : "olo-labs/payment-service",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Pull Request",
+        "order" : 3
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Action",
+      "searchKeywords" : [ "git", "revert", "rollback", "human-approved", "mock" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:git-revert",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Git Revert",
+    "description" : "Mock git revert of a commit after human approval (writes execution log)",
+    "category" : "action",
+    "emoji" : "⏪",
+    "tags" : [ "git", "revert", "rollback", "human-approved", "mock" ],
+    "examples" : [ "Revert commit a1b2c3d on main after failed release", "Rollback hotfix commit on release/2.4 branch" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "commitSha",
+      "label" : "Commit SHA",
+      "type" : "string",
+      "description" : "Commit to revert",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Git",
+        "placeholder" : "a1b2c3d4e5f6",
+        "order" : 0
+      }
+    }, {
+      "id" : "branch",
+      "label" : "Branch",
+      "type" : "string",
+      "description" : "Branch where the revert commit will be created",
+      "required" : false,
+      "defaultValue" : "main",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Git",
+        "placeholder" : "main",
+        "order" : 1
+      }
+    }, {
+      "id" : "repository",
+      "label" : "Repository",
+      "type" : "string",
+      "description" : "Repository slug for the revert",
+      "required" : false,
+      "defaultValue" : "olo-labs/payment-service",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Git",
+        "order" : 2
       }
     } ]
   }, {
@@ -316,6 +762,516 @@
         "help" : "JSON body for POST requests; leave empty for GET.",
         "placeholder" : "{\"key\": \"value\"}",
         "order" : 2
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human-input",
+      "searchKeywords" : [ "human-input", "plugin", "travel", "booking" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-book-ticket",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Book Ticket Human Input",
+    "description" : "Collects operator approval and book-ticket arguments before the mock action runs",
+    "category" : "human-input",
+    "emoji" : "\uD83C\uDFAB",
+    "tags" : [ "human-input", "plugin", "travel", "booking" ],
+    "examples" : [ "Approve booking offer paris-weekend-001 for Alex Operator" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "approveBooking",
+      "label" : "Approve booking?",
+      "type" : "boolean",
+      "description" : "Select Yes to authorize the ticket booking",
+      "required" : true,
+      "ui" : {
+        "widget" : "APPROVAL_TOGGLE",
+        "group" : "Approval",
+        "order" : 0
+      }
+    }, {
+      "id" : "scopeNotes",
+      "label" : "Trip notes",
+      "type" : "string",
+      "description" : "Optional preferences or constraints for the booking",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Scope",
+        "order" : 1
+      }
+    }, {
+      "id" : "offerId",
+      "label" : "Offer ID",
+      "type" : "string",
+      "description" : "Travel offer identifier to book",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Booking action",
+        "placeholder" : "paris-weekend-001",
+        "order" : 2
+      }
+    }, {
+      "id" : "passengerName",
+      "label" : "Passenger name",
+      "type" : "string",
+      "description" : "Passenger name for the ticket",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Booking action",
+        "placeholder" : "Alex Operator",
+        "order" : 3
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human-input",
+      "searchKeywords" : [ "human-input", "plugin", "git", "pull-request" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-create-pull-request",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Create Pull Request Human Input",
+    "description" : "Collects operator approval and create-pull-request arguments before the mock action runs",
+    "category" : "human-input",
+    "emoji" : "\uD83D\uDD00",
+    "tags" : [ "human-input", "plugin", "git", "pull-request" ],
+    "examples" : [ "Approve PR from feature/scenario-demo into main" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "approvePullRequest",
+      "label" : "Approve pull request?",
+      "type" : "boolean",
+      "description" : "Select Yes to create the pull request",
+      "required" : true,
+      "ui" : {
+        "widget" : "APPROVAL_TOGGLE",
+        "group" : "Approval",
+        "order" : 0
+      }
+    }, {
+      "id" : "scopeNotes",
+      "label" : "Scope notes",
+      "type" : "string",
+      "description" : "Optional workflow or publishing constraints",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Scope",
+        "order" : 1
+      }
+    }, {
+      "id" : "title",
+      "label" : "Pull request title",
+      "type" : "string",
+      "description" : "Title for the pull request",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Publish action",
+        "placeholder" : "Scenario workflow update",
+        "order" : 2
+      }
+    }, {
+      "id" : "headBranch",
+      "label" : "Head branch",
+      "type" : "string",
+      "description" : "Source branch for the pull request",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Publish action",
+        "placeholder" : "feature/scenario-demo",
+        "order" : 3
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human-input",
+      "searchKeywords" : [ "human-input", "plugin", "git", "revert" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-git-revert",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Git Revert Human Input",
+    "description" : "Collects operator approval and git-revert arguments before the mock action runs",
+    "category" : "human-input",
+    "emoji" : "⏪",
+    "tags" : [ "human-input", "plugin", "git", "revert" ],
+    "examples" : [ "Approve revert of commit abc123def on main" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "approveRevert",
+      "label" : "Approve git revert?",
+      "type" : "boolean",
+      "description" : "Select Yes to authorize the revert",
+      "required" : true,
+      "ui" : {
+        "widget" : "APPROVAL_TOGGLE",
+        "group" : "Approval",
+        "order" : 0
+      }
+    }, {
+      "id" : "scopeNotes",
+      "label" : "Scope notes",
+      "type" : "string",
+      "description" : "Optional release or rollback context",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Scope",
+        "order" : 1
+      }
+    }, {
+      "id" : "commitSha",
+      "label" : "Commit SHA",
+      "type" : "string",
+      "description" : "Commit to revert",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Revert action",
+        "placeholder" : "abc123def",
+        "order" : 2
+      }
+    }, {
+      "id" : "branch",
+      "label" : "Branch",
+      "type" : "string",
+      "description" : "Branch to revert on",
+      "required" : true,
+      "defaultValue" : "main",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Revert action",
+        "placeholder" : "main",
+        "order" : 3
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human-input",
+      "searchKeywords" : [ "human-input", "plugin", "container", "restart" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-restart-container",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Restart Container Human Input",
+    "description" : "Collects operator approval and restart-container arguments before the mock action runs",
+    "category" : "human-input",
+    "emoji" : "\uD83D\uDD04",
+    "tags" : [ "human-input", "plugin", "container", "restart" ],
+    "examples" : [ "Approve restart of payment-api-7f8c9d in production after triage" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "approveRestart",
+      "label" : "Approve container restart?",
+      "type" : "boolean",
+      "description" : "Select Yes to authorize the restart",
+      "required" : true,
+      "ui" : {
+        "widget" : "APPROVAL_TOGGLE",
+        "group" : "Approval",
+        "order" : 0
+      }
+    }, {
+      "id" : "scopeNotes",
+      "label" : "Scope notes",
+      "type" : "string",
+      "description" : "Optional context or constraints for this run",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Scope",
+        "placeholder" : "Latency spike on checkout path…",
+        "order" : 1
+      }
+    }, {
+      "id" : "containerId",
+      "label" : "Container ID",
+      "type" : "string",
+      "description" : "Container or pod identifier to restart",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Restart action",
+        "placeholder" : "payment-api-7f8c9d",
+        "order" : 2
+      }
+    }, {
+      "id" : "namespace",
+      "label" : "Namespace",
+      "type" : "string",
+      "description" : "Kubernetes namespace or deployment group",
+      "required" : true,
+      "defaultValue" : "production",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Restart action",
+        "placeholder" : "production",
+        "order" : 3
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Human-input",
+      "searchKeywords" : [ "human-input", "plugin", "scope", "intake" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-scenario-scope",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Scenario Scope Human Input",
+    "description" : "Collects operator scope notes and constraints before a scenario planner runs",
+    "category" : "human-input",
+    "emoji" : "\uD83D\uDCDD",
+    "tags" : [ "human-input", "plugin", "scope", "intake" ],
+    "examples" : [ "Confirm investigation scope before performance triage runs" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "confirmScope",
+      "label" : "Continue with this scope?",
+      "type" : "boolean",
+      "description" : "Select Yes to proceed with the scope below",
+      "required" : true,
+      "ui" : {
+        "widget" : "APPROVAL_TOGGLE",
+        "group" : "Approval",
+        "order" : 0
+      }
+    }, {
+      "id" : "scopeNotes",
+      "label" : "Scope notes",
+      "type" : "string",
+      "description" : "Add context, constraints, or priorities for this run",
+      "required" : true,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Scope",
+        "placeholder" : "Focus on payment-api latency between 14:00-15:00 UTC…",
+        "order" : 1
       }
     } ]
   }, {
@@ -617,6 +1573,337 @@
     } ]
   }, {
     "designer" : {
+      "paletteGroup" : "Rag",
+      "searchKeywords" : [ "rag", "delete", "vector", "documents", "plugin" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:rag-delete",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "RAG Delete",
+    "description" : "Deletes RAG entries from the configured vector store",
+    "category" : "rag",
+    "emoji" : "X",
+    "tags" : [ "rag", "delete", "vector", "documents", "plugin" ],
+    "examples" : [ "Delete finance-rag from the vector store", "Remove a tokenized knowledge source from Qdrant" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "knowledgeName",
+      "label" : "Knowledge source",
+      "type" : "string",
+      "description" : "Final tokenized knowledge source name / RAG tag to delete",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Knowledge",
+        "placeholder" : "finance-rag",
+        "order" : 0
+      }
+    }, {
+      "id" : "sourceCollection",
+      "label" : "Source collection",
+      "type" : "string",
+      "description" : "Original uploaded source collection, when different from the final knowledge name",
+      "required" : false,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Knowledge",
+        "placeholder" : "finance-uploads",
+        "order" : 1
+      }
+    }, {
+      "id" : "extensionRef",
+      "label" : "Vector store extension",
+      "type" : "string",
+      "description" : "Workflow extensions[] id for VECTOR_STORE configuration",
+      "required" : false,
+      "defaultValue" : "pgvector-store",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Vector store",
+        "order" : 2
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Rag",
+      "searchKeywords" : [ "rag", "ingest", "vector", "documents", "plugin" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:rag-ingest",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "RAG Ingest",
+    "description" : "Chunks uploaded documents and writes RAG entries into the configured vector store",
+    "category" : "rag",
+    "emoji" : "\uD83D\uDCDA",
+    "tags" : [ "rag", "ingest", "vector", "documents", "plugin" ],
+    "examples" : [ "Index finance-rag PDFs after upload", "Reprocess selected files into pgvector-store collection" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "capabilitySource",
+      "label" : "Capability source",
+      "type" : "string",
+      "description" : "Upload folder key / RAG collection id",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Documents",
+        "placeholder" : "finance-rag",
+        "order" : 0
+      }
+    }, {
+      "id" : "fileNamesCsv",
+      "label" : "File names",
+      "type" : "string",
+      "description" : "Comma-separated file names to index (empty = all files in source)",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Documents",
+        "placeholder" : "policy.pdf,faq.md",
+        "order" : 1
+      }
+    }, {
+      "id" : "chunkSize",
+      "label" : "Chunk size",
+      "type" : "number",
+      "description" : "Maximum characters per indexed chunk",
+      "required" : false,
+      "defaultValue" : 512,
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Indexing",
+        "order" : 2
+      }
+    }, {
+      "id" : "extensionRef",
+      "label" : "Vector store extension",
+      "type" : "string",
+      "description" : "Workflow extensions[] id for VECTOR_STORE configuration",
+      "required" : false,
+      "defaultValue" : "pgvector-store",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Vector store",
+        "order" : 3
+      }
+    }, {
+      "id" : "embeddingProviderRef",
+      "label" : "Embedding provider",
+      "type" : "string",
+      "description" : "Embedding model provider ref from workflow modelProviders",
+      "required" : false,
+      "ui" : {
+        "widget" : "MODEL_SELECTOR",
+        "group" : "Vector store",
+        "order" : 4
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Rag",
+      "searchKeywords" : [ "rag", "query", "vector", "retrieval", "plugin" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:rag-query",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "experimental",
+    "name" : "RAG Query",
+    "description" : "Searches indexed documents for the user question and injects retrieved context into the prompt",
+    "category" : "rag",
+    "emoji" : "\uD83D\uDD0E",
+    "tags" : [ "rag", "query", "vector", "retrieval", "plugin" ],
+    "examples" : [ "Retrieve policy excerpts for finance-rag before answering", "Ground the agent response with indexed FAQ chunks" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "capabilitySource",
+      "label" : "Capability source",
+      "type" : "string",
+      "description" : "Indexed knowledge source / collection id",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Retrieval",
+        "placeholder" : "finance-rag",
+        "order" : 0
+      }
+    }, {
+      "id" : "query",
+      "label" : "Query",
+      "type" : "string",
+      "description" : "User question (defaults to workflow message)",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Retrieval",
+        "order" : 1
+      }
+    }, {
+      "id" : "topK",
+      "label" : "Top K",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 5,
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Retrieval",
+        "order" : 2
+      }
+    }, {
+      "id" : "scoreThreshold",
+      "label" : "Score threshold",
+      "type" : "number",
+      "required" : false,
+      "defaultValue" : 0.25,
+      "ui" : {
+        "widget" : "NUMBER",
+        "group" : "Retrieval",
+        "order" : 3
+      }
+    }, {
+      "id" : "extensionRef",
+      "label" : "Vector store",
+      "type" : "string",
+      "required" : false,
+      "defaultValue" : "pgvector-store",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Vector store",
+        "order" : 4
+      }
+    } ]
+  }, {
+    "designer" : {
       "paletteGroup" : "Observability",
       "searchKeywords" : [ "github", "pull-request", "code", "incident", "observability" ]
     },
@@ -794,6 +2081,91 @@
       "defaultValue" : 3,
       "ui" : {
         "widget" : "NUMBER"
+      }
+    } ]
+  }, {
+    "designer" : {
+      "paletteGroup" : "Action",
+      "searchKeywords" : [ "container", "restart", "ops", "human-approved", "mock" ]
+    },
+    "kind" : "TOOL",
+    "id" : "olo-core:restart-container",
+    "version" : "1.0.0",
+    "provider" : "olo-core",
+    "stability" : "stable",
+    "name" : "Restart Container",
+    "description" : "Mock restart of a container/pod after human approval (writes execution log)",
+    "category" : "action",
+    "emoji" : "\uD83D\uDD04",
+    "tags" : [ "container", "restart", "ops", "human-approved", "mock" ],
+    "examples" : [ "Restart payment-service pod payment-api-7f8c9 after incident RCA", "Roll payment-gateway container payment-gw-2 in namespace production" ],
+    "runtime" : {
+      "contractVersion" : "1.0",
+      "executionModel" : "ACTIVITY"
+    },
+    "inputs" : [ {
+      "id" : "in",
+      "name" : "in",
+      "label" : "message in",
+      "schema" : "message",
+      "type" : "message",
+      "acceptType" : "message",
+      "minConnections" : 0,
+      "description" : "Incoming message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "LEFT",
+        "color" : "#71717a"
+      }
+    } ],
+    "outputs" : [ {
+      "id" : "out",
+      "name" : "out",
+      "label" : "message out",
+      "schema" : "message",
+      "type" : "message",
+      "minConnections" : 0,
+      "description" : "Outgoing message (routed by planner/agent at runtime)",
+      "ui" : {
+        "position" : "RIGHT",
+        "color" : "#71717a"
+      }
+    }, {
+      "id" : "capabilities",
+      "name" : "capabilities",
+      "label" : "available tools",
+      "schema" : "capabilities",
+      "type" : "capabilities",
+      "minConnections" : 0,
+      "description" : "Capability indicator for runtime prompt assembly on a connected agent",
+      "ui" : {
+        "position" : "TOP",
+        "color" : "#22c55e"
+      }
+    } ],
+    "parameters" : [ {
+      "id" : "containerId",
+      "label" : "Container ID",
+      "type" : "string",
+      "description" : "Container or pod identifier to restart",
+      "required" : true,
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Target",
+        "placeholder" : "payment-api-7f8c9d",
+        "order" : 0
+      }
+    }, {
+      "id" : "namespace",
+      "label" : "Namespace",
+      "type" : "string",
+      "description" : "Kubernetes namespace or deployment group",
+      "required" : false,
+      "defaultValue" : "default",
+      "ui" : {
+        "widget" : "STRING",
+        "group" : "Target",
+        "placeholder" : "production",
+        "order" : 1
       }
     } ]
   }, {

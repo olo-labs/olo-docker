@@ -30,18 +30,31 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
       "message" : "#ef4444",
-      "boolean" : "#fb923c",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
-      "number" : "#38bdf8",
-      "array" : "#f472b6"
+      "boolean" : "#fb923c"
     },
     "nodeTypes" : {
+      "AGENT" : {
+        "emoji" : "🔬",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
+        } ]
+      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -55,19 +68,6 @@
           "widget" : "VARIABLE_CHECKLIST",
           "label" : "Input variables",
           "binding" : "inputVariableMappings"
-        } ]
-      },
-      "AGENT" : {
-        "emoji" : "🔬",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
         } ]
       },
       "END" : {
@@ -135,18 +135,17 @@
   },
   "state" : { },
   "parameters" : {
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     },
     "maxIterations" : {
@@ -167,17 +166,18 @@
         "order" : 1
       }
     },
-    "model" : {
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "temperature" : {
@@ -465,7 +465,7 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a research planning agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values; empty means do not call tools):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"literature-agent\", \"message\": \"Find papers on the user topic\" }\n  ],\n  \"directResponse\": null\n}\n3. When availableAgentsJson is non-empty, return agentCalls to delegate work to child workflows.\n   Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward (not back to this planner).\n4. Use toolCalls only when availableToolsJson is non-empty and a listed tool is the best fit.\n5. Use literature-agent for literature lookup and synthesis-agent to combine findings into a brief (both are child workflows, not inline synthesis).\n6. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n7. If no agents or tools are needed, set both arrays to [] and put the final answer in \"directResponse\".\n8. Final human-approved action — after synthesis-agent completes, call olo-core:create-pull-request with\n   title and headBranch from the operator's human-input approval. Include confirmationId and logPath in directResponse.\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a research planning agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values; empty means do not call tools):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"literature-agent\", \"message\": \"Find papers on the user topic\" }\n  ],\n  \"directResponse\": null\n}\n3. When availableAgentsJson is non-empty, return agentCalls to delegate work to child workflows.\n   Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward (not back to this planner).\n4. Use toolCalls only when availableToolsJson is non-empty and a listed tool is the best fit.\n5. Use literature-agent for literature lookup and synthesis-agent to combine findings into a brief (both are child workflows, not inline synthesis).\n6. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n7. If no agents or tools are needed, set both arrays to [] and put the final answer in \"directResponse\".\n8. Final human-approved action — after synthesis-agent completes, call olo-core:create-pull-request with\n   title and headBranch from the operator's human-input approval. Include confirmationId and logPath in directResponse.\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
           "y" : 80,
@@ -890,9 +890,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -972,25 +972,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "role" : "research-orchestrator",
     "dynamicToolExecution" : {
-      "availableAgentsVariable" : "availableAgentsJson",
       "plannerNodeId" : "agent",
-      "continueNodeId" : "conversation-store",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson",
       "outputVariable" : "toolCallSequenceJson",
-      "availableToolsVariable" : "availableToolsJson"
+      "continueNodeId" : "conversation-store"
     },
-    "planningStrategy" : "react",
-    "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue",
-    "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false,
-      "injectAgents" : true,
-      "selectedAgents" : [ "literature-agent", "synthesis-agent" ],
-      "selectedTools" : [ "olo-core:research-literature", "olo-core:create-pull-request" ]
-    },
+    "role" : "research-orchestrator",
+    "agentSelectionStrategy" : "dynamic",
     "description" : "Plans research tasks, queries literature, and delegates to specialist agents",
-    "agentSelectionStrategy" : "dynamic"
+    "plannerContext" : {
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "selectedTools" : [ "olo-core:research-literature", "olo-core:create-pull-request" ],
+      "selectedAgents" : [ "literature-agent", "synthesis-agent" ],
+      "injectAgents" : true
+    },
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react"
   }
 }

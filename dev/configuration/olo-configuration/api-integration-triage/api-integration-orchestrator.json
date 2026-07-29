@@ -30,7 +30,6 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "message" : "#ef4444",
       "any" : "#94a3b8",
       "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
@@ -39,22 +38,10 @@
       "string" : "#a3e635",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "boolean" : "#fb923c"
+      "boolean" : "#fb923c",
+      "message" : "#ef4444"
     },
     "nodeTypes" : {
-      "AGENT" : {
-        "emoji" : "🌐",
-        "typeLabel" : "Agent",
-        "inlineProperties" : [ {
-          "id" : "parameters",
-          "widget" : "WORKFLOW_PARAMETERS",
-          "label" : "Parameters"
-        }, {
-          "id" : "model",
-          "widget" : "MODEL_SELECTOR",
-          "label" : "Model"
-        } ]
-      },
       "START" : {
         "emoji" : "▶",
         "typeLabel" : "Start",
@@ -83,6 +70,19 @@
           "widget" : "VARIABLE_SELECT",
           "label" : "Output variable",
           "binding" : "outputVariableMapping"
+        } ]
+      },
+      "AGENT" : {
+        "emoji" : "🌐",
+        "typeLabel" : "Agent",
+        "inlineProperties" : [ {
+          "id" : "parameters",
+          "widget" : "WORKFLOW_PARAMETERS",
+          "label" : "Parameters"
+        }, {
+          "id" : "model",
+          "widget" : "MODEL_SELECTOR",
+          "label" : "Model"
         } ]
       }
     }
@@ -167,7 +167,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -475,7 +475,7 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a API integration health and dependency triage agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Endpoint probe — call olo-core:http-tool (url argument, e.g. payment gateway health URL) to check upstream availability.\n   Delegate to endpoint-probe-agent to interpret HTTP status, latency, and body hints.\n2. Log correlation — use olo-core:log-reader with ISO-8601 startTime/endTime around the failure window.\n   Delegate to error-correlation-agent to map HTTP failures to log signatures.\n3. Dependency context — use olo-core:web-search (query argument) for vendor status or CVE stubs; delegate to dependency-analysis-agent.\n4. Integration report — delegate to integration-report-agent with timeline, root cause hypothesis, and remediation steps.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"integration-gateway\", \"namespace\": \"production\" }).\n  Purpose: restart the integration gateway container after remediation is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a API integration health and dependency triage agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Endpoint probe — call olo-core:http-tool (url argument, e.g. payment gateway health URL) to check upstream availability.\n   Delegate to endpoint-probe-agent to interpret HTTP status, latency, and body hints.\n2. Log correlation — use olo-core:log-reader with ISO-8601 startTime/endTime around the failure window.\n   Delegate to error-correlation-agent to map HTTP failures to log signatures.\n3. Dependency context — use olo-core:web-search (query argument) for vendor status or CVE stubs; delegate to dependency-analysis-agent.\n4. Integration report — delegate to integration-report-agent with timeline, root cause hypothesis, and remediation steps.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"integration-gateway\", \"namespace\": \"production\" }).\n  Purpose: restart the integration gateway container after remediation is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
           "y" : 80,
@@ -1164,9 +1164,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],

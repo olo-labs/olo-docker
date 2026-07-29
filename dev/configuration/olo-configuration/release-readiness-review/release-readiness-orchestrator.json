@@ -30,6 +30,7 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
+      "any" : "#94a3b8",
       "agent-plug" : "#a855f7",
       "number" : "#38bdf8",
       "array" : "#f472b6",
@@ -38,8 +39,7 @@
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
       "boolean" : "#fb923c",
-      "message" : "#ef4444",
-      "any" : "#94a3b8"
+      "message" : "#ef4444"
     },
     "nodeTypes" : {
       "END" : {
@@ -198,7 +198,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -475,7 +475,7 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a release readiness review before production deployment agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Change inventory — use olo-core:recently-changed-code to list recent PR/diff stubs.\n   Delegate to changelog-agent to summarize user-facing and risky changes.\n2. Risk analysis — scan staging logs (olo-core:log-reader) for regressions; use olo-core:calculator\n   for simple risk scoring if needed. Delegate to regression-risk-agent.\n3. QA sign-off — delegate to qa-signoff-agent with test gaps and blocking issues.\n4. Release notes — delegate to release-notes-agent to publish customer-facing release notes.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:git-revert with arguments supplied by the operator at human-input (e.g. { \"commitSha\": \"a1b2c3d\", \"branch\": \"main\" }).\n  Purpose: revert a bad release commit when rollback is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:create-pull-request with arguments supplied by the operator at human-input (e.g. { \"title\": \"hotfix: payment timeout\", \"headBranch\": \"hotfix/payment-timeout\" }).\n  Purpose: open a hotfix pull request when forward fix is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a release readiness review before production deployment agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Change inventory — use olo-core:recently-changed-code to list recent PR/diff stubs.\n   Delegate to changelog-agent to summarize user-facing and risky changes.\n2. Risk analysis — scan staging logs (olo-core:log-reader) for regressions; use olo-core:calculator\n   for simple risk scoring if needed. Delegate to regression-risk-agent.\n3. QA sign-off — delegate to qa-signoff-agent with test gaps and blocking issues.\n4. Release notes — delegate to release-notes-agent to publish customer-facing release notes.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:git-revert with arguments supplied by the operator at human-input (e.g. { \"commitSha\": \"a1b2c3d\", \"branch\": \"main\" }).\n  Purpose: revert a bad release commit when rollback is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:create-pull-request with arguments supplied by the operator at human-input (e.g. { \"title\": \"hotfix: payment timeout\", \"headBranch\": \"hotfix/payment-timeout\" }).\n  Purpose: open a hotfix pull request when forward fix is approved\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
           "x" : 1160,
@@ -1224,9 +1224,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -1360,21 +1360,21 @@
     "agentSelectionStrategy" : "dynamic",
     "description" : "Reviews recent changes, regression risk, and QA before publishing release notes",
     "plannerContext" : {
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
       "selectedTools" : [ "olo-core:recently-changed-code", "olo-core:log-reader", "olo-core:calculator", "olo-core:git-revert", "olo-core:create-pull-request" ],
       "selectedAgents" : [ "changelog-agent", "regression-risk-agent", "qa-signoff-agent", "release-notes-agent" ],
       "injectAgents" : true,
-      "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
+      "injectCapabilities" : false
     },
     "returnVariable" : "ReturnValue",
     "agentType" : "autonomous",
     "planningStrategy" : "react",
     "dynamicToolExecution" : {
+      "availableAgentsVariable" : "availableAgentsJson",
       "availableToolsVariable" : "availableToolsJson",
       "outputVariable" : "toolCallSequenceJson",
       "continueNodeId" : "conversation-store",
-      "plannerNodeId" : "agent",
-      "availableAgentsVariable" : "availableAgentsJson"
+      "plannerNodeId" : "agent"
     },
     "role" : "release-readiness-orchestrator"
   }

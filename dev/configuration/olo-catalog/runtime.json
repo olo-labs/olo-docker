@@ -2,7 +2,7 @@
   "schemaVersion" : "1.0",
   "generatedBy" : "olo-annotation-processor",
   "generatedByVersion" : "1.0.0",
-  "generatedAt" : "2026-07-12T06:43:39.830282400Z",
+  "generatedAt" : "2026-07-29T00:22:50.219946400Z",
   "bindings" : [ {
     "kind" : "NODE",
     "id" : "olo-core:AGENT",
@@ -35,8 +35,23 @@
     "spiInterface" : "org.olo.spi.node.Node"
   }, {
     "kind" : "TOOL",
+    "id" : "olo-core:book-ticket",
+    "implementationClass" : "org.olo.core.tool.BookTicketTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
     "id" : "olo-core:calculator",
     "implementationClass" : "org.olo.core.tool.CalculatorTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:conversation-load",
+    "implementationClass" : "org.olo.core.tool.ConversationLoadTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:conversation-store",
+    "implementationClass" : "org.olo.core.tool.ConversationStoreTool",
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",
@@ -45,8 +60,43 @@
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",
+    "id" : "olo-core:create-pull-request",
+    "implementationClass" : "org.olo.core.tool.CreatePullRequestTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:git-revert",
+    "implementationClass" : "org.olo.core.tool.GitRevertTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
     "id" : "olo-core:http-tool",
     "implementationClass" : "org.olo.core.tool.HttpTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-book-ticket",
+    "implementationClass" : "org.olo.core.tool.humaninput.BookTicketHumanInputPlugin",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-create-pull-request",
+    "implementationClass" : "org.olo.core.tool.humaninput.CreatePullRequestHumanInputPlugin",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-git-revert",
+    "implementationClass" : "org.olo.core.tool.humaninput.GitRevertHumanInputPlugin",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-restart-container",
+    "implementationClass" : "org.olo.core.tool.humaninput.RestartContainerHumanInputPlugin",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:human-input-scenario-scope",
+    "implementationClass" : "org.olo.core.tool.humaninput.ScenarioScopeHumanInputPlugin",
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",
@@ -65,6 +115,21 @@
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",
+    "id" : "olo-core:rag-delete",
+    "implementationClass" : "org.olo.core.tool.rag.RagDeleteTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:rag-ingest",
+    "implementationClass" : "org.olo.core.tool.rag.RagIngestTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:rag-query",
+    "implementationClass" : "org.olo.core.tool.rag.RagVectorQueryTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
     "id" : "olo-core:recently-changed-code",
     "implementationClass" : "org.olo.core.tool.RecentlyChangedCodeTool",
     "spiInterface" : "org.olo.spi.tool.Tool"
@@ -72,6 +137,11 @@
     "kind" : "TOOL",
     "id" : "olo-core:research-literature",
     "implementationClass" : "org.olo.core.tool.ResearchLiteratureTool",
+    "spiInterface" : "org.olo.spi.tool.Tool"
+  }, {
+    "kind" : "TOOL",
+    "id" : "olo-core:restart-container",
+    "implementationClass" : "org.olo.core.tool.RestartContainerTool",
     "spiInterface" : "org.olo.spi.tool.Tool"
   }, {
     "kind" : "TOOL",

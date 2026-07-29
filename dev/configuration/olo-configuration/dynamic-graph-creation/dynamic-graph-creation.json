@@ -30,31 +30,31 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "agent-plug" : "#a855f7",
+      "object" : "#c084fc",
       "number" : "#38bdf8",
       "array" : "#f472b6",
-      "object" : "#c084fc",
-      "string" : "#a3e635",
+      "agent-plug" : "#a855f7",
+      "any" : "#94a3b8",
+      "message" : "#ef4444",
+      "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "boolean" : "#fb923c",
-      "message" : "#ef4444",
-      "any" : "#94a3b8"
+      "string" : "#a3e635"
     },
     "nodeTypes" : {
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
         "palette" : {
-          "name" : "End",
+          "name" : "Start",
           "category" : "control"
         },
         "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       },
       "AGENT" : {
@@ -70,19 +70,19 @@
           "label" : "Model"
         } ]
       },
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
         "palette" : {
-          "name" : "Start",
+          "name" : "End",
           "category" : "control"
         },
         "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
         } ]
       }
     }
@@ -134,17 +134,18 @@
         "order" : 3
       }
     },
-    "model" : {
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "{message}",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
       }
     },
     "maxIterations" : {
@@ -165,18 +166,17 @@
         "order" : 1
       }
     },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "{message}",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     }
   },
@@ -203,8 +203,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "x" : 80,
-          "y" : 80
+          "y" : 80,
+          "x" : 80
         }
       }
     }
@@ -258,8 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "x" : 440,
-          "y" : 80
+          "y" : 80,
+          "x" : 440
         }
       }
     }
@@ -313,8 +313,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "x" : 1520,
-          "y" : 80
+          "y" : 80,
+          "x" : 1520
         }
       }
     }
@@ -368,8 +368,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 800,
-          "y" : 80
+          "y" : 80,
+          "x" : 800
         }
       }
     }
@@ -445,11 +445,11 @@
       "outputVariable" : "generatedGraphJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are an Open LLM Orchestrator (OLO)                     workflow graph generator.\n\n                    Goal: produce a valid WorkflowDefinition graph for this request:\n            {message}\n\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Do not wrap the JSON in ```json``` blocks.\n3. Every graph MUST include exactly one START node, one END node, and edges connecting START -> steps -> END.\n4. Node type must be one of: START, END, AGENT, TOOL, MODEL, PARALLEL, HUMAN, CONDITION, ROUTER, PLANNER, REFLECTION, EVALUATOR, VECTOR_SEARCH, MEMORY, WORKFLOW_REF.\n   Never use pipe-separated placeholders.\n5. AGENT nodes answer the user in plain conversational text. Only this graph-planner step returns workflow JSON.\n6. Node ids must be unique kebab-case strings.\n7. Prefer the smallest valid graph that satisfies the request.\n8. TOOL nodes require configuration.toolId using olo-core tool ids, for example:\n   olo-core:web-search, olo-core:log-reader, olo-core:cpu-usage, olo-core:memory-usage,\n   olo-core:numeric-metric, olo-core:recently-changed-code, olo-core:calculator, olo-core:http-tool.\n   Human-approved mock action tools (write execution log entries):\n   olo-core:restart-container, olo-core:git-revert, olo-core:create-pull-request, olo-core:book-ticket.\n   For news or web lookup requests, prefer olo-core:web-search.\n   For observability tools (log-reader, cpu-usage, memory-usage, numeric-metric), include\n   configuration.arguments with ISO-8601 startTime and endTime when the user mentions a time window.\n   Example: \"arguments\": { \"startTime\": \"2026-06-14T14:30:00Z\", \"endTime\": \"2026-06-14T14:31:00Z\" }\n9. When the request involves human-approved actions (restart container, git revert, create pull request,\n   book ticket), include a HUMAN intake node and a TOOL node wired to the matching olo-core action tool\n   with configuration.arguments for the operator-supplied values.\n\nMinimal valid example (follow this shape):\n{\n  \"id\": \"hello-workflow\",\n  \"label\": \"Hello Workflow\",\n  \"nodes\": [\n    { \"id\": \"start\", \"type\": \"START\" },\n    { \"id\": \"greet\", \"type\": \"AGENT\" },\n    { \"id\": \"end\", \"type\": \"END\" }\n  ],\n  \"edges\": [\n    {\n      \"sourceNodeId\": \"start\",\n      \"sourcePortId\": \"out\",\n      \"targetNodeId\": \"greet\",\n      \"targetPortId\": \"in\"\n    },\n    {\n      \"sourceNodeId\": \"greet\",\n      \"sourcePortId\": \"out\",\n      \"targetNodeId\": \"end\",\n      \"targetPortId\": \"in\"\n    }\n  ]\n}\n\nIf a previous attempt failed validation, fix it:\n{generatedGraphJsonValidationError}\n\nAfter the generated graph is valid, the operator may approve olo-core:create-pull-request using title\nand headBranch from human-input. Include confirmationId and logPath when summarizing the result.\n\nRespond with JSON only.",
+      "promptTemplate" : "You are an Open LLM Orchestrator (OLO)                     workflow graph generator.\n\n                    Goal: produce a valid WorkflowDefinition graph for this request:\n            {message}\n\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Do not wrap the JSON in ```json``` blocks.\n3. Every graph MUST include exactly one START node, one END node, and edges connecting START -> steps -> END.\n4. Node type must be one of: START, END, AGENT, TOOL, MODEL, PARALLEL, HUMAN, CONDITION, ROUTER, PLANNER, REFLECTION, EVALUATOR, VECTOR_SEARCH, MEMORY, WORKFLOW_REF.\n   Never use pipe-separated placeholders.\n5. AGENT nodes answer the user in plain conversational text. Only this graph-planner step returns workflow JSON.\n6. Node ids must be unique kebab-case strings.\n7. Prefer the smallest valid graph that satisfies the request.\n8. TOOL nodes require configuration.toolId using olo-core tool ids, for example:\n   olo-core:web-search, olo-core:log-reader, olo-core:cpu-usage, olo-core:memory-usage,\n   olo-core:numeric-metric, olo-core:recently-changed-code, olo-core:calculator, olo-core:http-tool.\n   Human-approved mock action tools (write execution log entries):\n   olo-core:restart-container, olo-core:git-revert, olo-core:create-pull-request, olo-core:book-ticket.\n   For news or web lookup requests, prefer olo-core:web-search.\n   For observability tools (log-reader, cpu-usage, memory-usage, numeric-metric), include\n   configuration.arguments with ISO-8601 startTime and endTime when the user mentions a time window.\n   Example: \"arguments\": { \"startTime\": \"2026-06-14T14:30:00Z\", \"endTime\": \"2026-06-14T14:31:00Z\" }\n9. When the request involves human-approved actions (restart container, git revert, create pull request,\n   book ticket), include a HUMAN intake node and a TOOL node wired to the matching olo-core action tool\n   with configuration.arguments for the operator-supplied values.\n\nMinimal valid example (follow this shape):\n{\n  \"id\": \"hello-workflow\",\n  \"label\": \"Hello Workflow\",\n  \"nodes\": [\n    { \"id\": \"start\", \"type\": \"START\" },\n    { \"id\": \"greet\", \"type\": \"AGENT\" },\n    { \"id\": \"end\", \"type\": \"END\" }\n  ],\n  \"edges\": [\n    {\n      \"sourceNodeId\": \"start\",\n      \"sourcePortId\": \"out\",\n      \"targetNodeId\": \"greet\",\n      \"targetPortId\": \"in\"\n    },\n    {\n      \"sourceNodeId\": \"greet\",\n      \"sourcePortId\": \"out\",\n      \"targetNodeId\": \"end\",\n      \"targetPortId\": \"in\"\n    }\n  ]\n}\n\nIf a previous attempt failed validation, fix it:\n{generatedGraphJsonValidationError}\n\nAfter the generated graph is valid, the operator may approve olo-core:create-pull-request using title\nand headBranch from human-input. Include confirmationId and logPath when summarizing the result.\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
-          "x" : 1160,
-          "y" : 80
+          "y" : 80,
+          "x" : 1160
         }
       }
     }
@@ -477,8 +477,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "x" : 1880,
-          "y" : 80
+          "y" : 80,
+          "x" : 1880
         }
       }
     }
@@ -568,9 +568,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -616,19 +616,19 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
+    "returnVariable" : "ReturnValue",
     "plannerContext" : {
       "selectedVariables" : [ "message", "conversationSummary" ],
-      "injectCapabilities" : false,
+      "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "selectedAgents" : [ ]
+      "injectCapabilities" : false
     },
-    "returnVariable" : "ReturnValue",
-    "description" : "Generates Open LLM Orchestrator (OLO) workflow graphs as JSON-only structured output and expands them inline at runtime",
+    "role" : "dynamic-graph-creation",
     "dynamicGraphCreation" : {
       "continueNodeId" : "conversation-store",
-      "plannerNodeId" : "graph-planner",
-      "outputVariable" : "generatedGraphJson"
+      "outputVariable" : "generatedGraphJson",
+      "plannerNodeId" : "graph-planner"
     },
-    "role" : "dynamic-graph-creation"
+    "description" : "Generates Open LLM Orchestrator (OLO) workflow graphs as JSON-only structured output and expands them inline at runtime"
   }
 }

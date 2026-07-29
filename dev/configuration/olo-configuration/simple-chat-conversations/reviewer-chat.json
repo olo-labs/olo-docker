@@ -30,33 +30,18 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "object" : "#c084fc",
-      "number" : "#38bdf8",
-      "array" : "#f472b6",
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
       "message" : "#ef4444",
       "boolean" : "#fb923c",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "string" : "#a3e635"
+      "string" : "#a3e635",
+      "object" : "#c084fc",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "agent-plug" : "#a855f7",
+      "any" : "#94a3b8"
     },
     "nodeTypes" : {
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
-        "palette" : {
-          "name" : "Start",
-          "category" : "control"
-        },
-        "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
-        } ]
-      },
       "AGENT" : {
         "emoji" : "💬",
         "typeLabel" : "Agent",
@@ -83,6 +68,21 @@
           "widget" : "VARIABLE_SELECT",
           "label" : "Output variable",
           "binding" : "outputVariableMapping"
+        } ]
+      },
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
+        "palette" : {
+          "name" : "Start",
+          "category" : "control"
+        },
+        "inlineProperties" : [ {
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       }
     }
@@ -116,38 +116,6 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
-    "systemPrompt" : {
-      "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "You are a reviewer. Give balanced, specific critique, call out risks and gaps, and suggest concrete improvements.\nCurrent user message:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nPrior conversation turns:\n{conversationHistory}\n\nAnswer as the assigned role, preserving useful context from the prior conversation while staying focused on the current user message.\n",
-      "required" : false,
-      "ui" : {
-        "widget" : "TEXTAREA",
-        "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
-      }
-    },
     "maxIterations" : {
       "type" : "integer",
       "label" : "Max Iterations",
@@ -178,6 +146,38 @@
         "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
         "order" : 2
       }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
+      }
+    },
+    "systemPrompt" : {
+      "type" : "string",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "You are a reviewer. Give balanced, specific critique, call out risks and gaps, and suggest concrete improvements.\nCurrent user message:\n{message}\n\nReference-only prior conversation context:\n{conversationSummary}\n\nUse prior context only for continuity. Do not quote, summarize, mention, or answer it unless the current user message explicitly asks about prior conversation.\nAnswer as the assigned role while staying focused on the current user message.\n",
+      "required" : false,
+      "ui" : {
+        "widget" : "TEXTAREA",
+        "group" : "Model Settings",
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
     }
   },
   "nodes" : [ {
@@ -203,8 +203,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -258,8 +258,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -339,8 +339,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -394,8 +394,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -423,8 +423,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -490,9 +490,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -538,15 +538,15 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
+    "description" : "Review-focused conversation with history-aware critique",
     "collection" : "simple-chat-conversations",
     "returnVariable" : "ReturnValue",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary" ],
       "selectedAgents" : [ ],
       "selectedTools" : [ ],
-      "injectCapabilities" : false
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary" ]
     },
-    "role" : "reviewer-chat",
-    "description" : "Review-focused conversation with history-aware critique"
+    "role" : "reviewer-chat"
   }
 }

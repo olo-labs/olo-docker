@@ -119,7 +119,7 @@
     "systemPrompt" : {
       "type" : "string",
       "label" : "System Prompt",
-      "defaultValue" : "You answer using the retrieved knowledge context when provided.\n\nRetrieved context:\n{ragContext}\n\nQuestion:\n{message}\n\nPrevious conversation summary:\n{conversationSummary}\n\nAnswer concisely and cite the retrieved context when relevant.",
+      "defaultValue" : "You answer using the retrieved knowledge context when provided.\n\nRetrieved context:\n{ragContext}\n\nQuestion:\n{message}\n\nReference-only prior conversation context:\n{conversationSummary}\n\nUse prior context only for continuity. Do not quote, summarize, mention, or answer it unless the current question explicitly asks about prior conversation.\n\nAnswer concisely and cite the retrieved context when relevant.",
       "ui" : {
         "widget" : "TEXTAREA",
         "group" : "Model Settings",

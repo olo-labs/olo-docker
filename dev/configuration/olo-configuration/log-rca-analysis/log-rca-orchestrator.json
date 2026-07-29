@@ -31,30 +31,30 @@
     },
     "portColors" : {
       "number" : "#38bdf8",
-      "agent-plug" : "#a855f7",
-      "any" : "#94a3b8",
-      "message" : "#ef4444",
-      "boolean" : "#fb923c",
+      "array" : "#f472b6",
+      "object" : "#c084fc",
+      "string" : "#a3e635",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
-      "string" : "#a3e635",
-      "object" : "#c084fc",
-      "array" : "#f472b6"
+      "boolean" : "#fb923c",
+      "message" : "#ef4444",
+      "any" : "#94a3b8",
+      "agent-plug" : "#a855f7"
     },
     "nodeTypes" : {
-      "START" : {
-        "emoji" : "▶",
-        "typeLabel" : "Start",
-        "description" : "Workflow entry — maps caller input to workflow variables",
+      "END" : {
+        "emoji" : "⏹",
+        "typeLabel" : "End",
+        "description" : "Workflow exit — maps a workflow variable to the caller result",
         "palette" : {
-          "name" : "Start",
+          "name" : "End",
           "category" : "control"
         },
         "inlineProperties" : [ {
-          "id" : "inputVariables",
-          "widget" : "VARIABLE_CHECKLIST",
-          "label" : "Input variables",
-          "binding" : "inputVariableMappings"
+          "id" : "outputVariable",
+          "widget" : "VARIABLE_SELECT",
+          "label" : "Output variable",
+          "binding" : "outputVariableMapping"
         } ]
       },
       "AGENT" : {
@@ -70,19 +70,19 @@
           "label" : "Model"
         } ]
       },
-      "END" : {
-        "emoji" : "⏹",
-        "typeLabel" : "End",
-        "description" : "Workflow exit — maps a workflow variable to the caller result",
+      "START" : {
+        "emoji" : "▶",
+        "typeLabel" : "Start",
+        "description" : "Workflow entry — maps caller input to workflow variables",
         "palette" : {
-          "name" : "End",
+          "name" : "Start",
           "category" : "control"
         },
         "inlineProperties" : [ {
-          "id" : "outputVariable",
-          "widget" : "VARIABLE_SELECT",
-          "label" : "Output variable",
-          "binding" : "outputVariableMapping"
+          "id" : "inputVariables",
+          "widget" : "VARIABLE_CHECKLIST",
+          "label" : "Input variables",
+          "binding" : "inputVariableMappings"
         } ]
       }
     }
@@ -145,36 +145,17 @@
   },
   "state" : { },
   "parameters" : {
-    "temperature" : {
-      "type" : "number",
-      "label" : "Temperature",
-      "description" : "Sampling temperature",
-      "defaultValue" : 0.2,
-      "required" : false,
-      "validation" : {
-        "minimum" : 0.0,
-        "maximum" : 2.0,
-        "step" : 0.1
-      },
-      "ui" : {
-        "widget" : "SLIDER",
-        "group" : "Model Settings",
-        "help" : "Higher values increase response creativity.",
-        "order" : 3
-      }
-    },
-    "systemPrompt" : {
+    "model" : {
       "type" : "string",
-      "label" : "System Prompt",
-      "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "label" : "Model",
+      "description" : "Default model identifier",
+      "defaultValue" : "",
       "required" : false,
       "ui" : {
-        "widget" : "TEXTAREA",
+        "widget" : "MODEL_SELECTOR",
         "group" : "Model Settings",
-        "help" : "Include {message} to inject the workflow input into the system prompt.",
-        "placeholder" : "You are a helpful assistant…\n\n{message}",
-        "order" : 0
+        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
+        "order" : 2
       }
     },
     "maxIterations" : {
@@ -195,17 +176,36 @@
         "order" : 1
       }
     },
-    "model" : {
+    "systemPrompt" : {
       "type" : "string",
-      "label" : "Model",
-      "description" : "Default model identifier",
-      "defaultValue" : "",
+      "label" : "System Prompt",
+      "description" : "System prompt for the agent",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
-        "widget" : "MODEL_SELECTOR",
+        "widget" : "TEXTAREA",
         "group" : "Model Settings",
-        "help" : "Optional workflow default. Prefer the Model control on each Agent node.",
-        "order" : 2
+        "help" : "Include {message} to inject the workflow input into the system prompt.",
+        "placeholder" : "You are a helpful assistant…\n\n{message}",
+        "order" : 0
+      }
+    },
+    "temperature" : {
+      "type" : "number",
+      "label" : "Temperature",
+      "description" : "Sampling temperature",
+      "defaultValue" : 0.2,
+      "required" : false,
+      "validation" : {
+        "minimum" : 0.0,
+        "maximum" : 2.0,
+        "step" : 0.1
+      },
+      "ui" : {
+        "widget" : "SLIDER",
+        "group" : "Model Settings",
+        "help" : "Higher values increase response creativity.",
+        "order" : 3
       }
     }
   },
@@ -232,8 +232,8 @@
       "inputVariableMappings" : [ "message" ],
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -287,8 +287,8 @@
       "toolId" : "olo-core:conversation-load",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -342,8 +342,8 @@
       "toolId" : "olo-core:conversation-store",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -397,8 +397,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -475,11 +475,11 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a log failure triage and root-cause analysis agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Failure identification — scan application logs for errors, stack traces, and the incident time window.\n   Prefer olo-core:log-reader with ISO-8601 startTime/endTime when the user mentions a time range.\n   Optionally delegate to log-failure-agent for a structured failure signature and affected services.\n2. Root-cause analysis — after failures are identified, delegate to specialist child workflows:\n   - metrics-rca-agent: correlate CPU/memory spikes and latency with the failure window\n   - code-change-rca-agent: inspect recent deployments and code changes near the incident\n   Run these as separate agentCalls (each executes as its own child workflow).\n3. Final summary — when failure findings and RCA hypotheses exist in agentResultsJson, delegate once to\n   incident-summary-agent to publish an executive incident summary (timeline, root cause, impact, actions).\n4. Human-approved recovery — after the summary agent completes, call olo-core:restart-container with\n   containerId and namespace from the operator's human-input approval. Include confirmationId and logPath\n   from the tool result in directResponse.\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:log-reader\", \"arguments\": { \"startTime\": \"2026-06-14T14:30:00Z\", \"endTime\": \"2026-06-14T14:35:00Z\" } }\n  ],\n  \"agentCalls\": [\n    { \"agentId\": \"log-failure-agent\", \"message\": \"Identify failure signatures from the incident logs\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. Do not call incident-summary-agent until log-failure-agent and at least one RCA agent have completed.\n6. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a log failure triage and root-cause analysis agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Failure identification — scan application logs for errors, stack traces, and the incident time window.\n   Prefer olo-core:log-reader with ISO-8601 startTime/endTime when the user mentions a time range.\n   Optionally delegate to log-failure-agent for a structured failure signature and affected services.\n2. Root-cause analysis — after failures are identified, delegate to specialist child workflows:\n   - metrics-rca-agent: correlate CPU/memory spikes and latency with the failure window\n   - code-change-rca-agent: inspect recent deployments and code changes near the incident\n   Run these as separate agentCalls (each executes as its own child workflow).\n3. Final summary — when failure findings and RCA hypotheses exist in agentResultsJson, delegate once to\n   incident-summary-agent to publish an executive incident summary (timeline, root cause, impact, actions).\n4. Human-approved recovery — after the summary agent completes, call olo-core:restart-container with\n   containerId and namespace from the operator's human-input approval. Include confirmationId and logPath\n   from the tool result in directResponse.\n\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [\n    { \"toolId\": \"olo-core:log-reader\", \"arguments\": { \"startTime\": \"2026-06-14T14:30:00Z\", \"endTime\": \"2026-06-14T14:35:00Z\" } }\n  ],\n  \"agentCalls\": [\n    { \"agentId\": \"log-failure-agent\", \"message\": \"Identify failure signatures from the incident logs\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. Do not call incident-summary-agent until log-failure-agent and at least one RCA agent have completed.\n6. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -507,8 +507,8 @@
     "configuration" : {
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1880
+          "x" : 1880,
+          "y" : 80
         }
       }
     }
@@ -574,8 +574,8 @@
       "delegateAgentId" : "log-failure-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 80
+          "x" : 80,
+          "y" : 80
         }
       }
     }
@@ -641,8 +641,8 @@
       "delegateAgentId" : "metrics-rca-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 440
+          "x" : 440,
+          "y" : 80
         }
       }
     }
@@ -708,8 +708,8 @@
       "delegateAgentId" : "code-change-rca-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 800
+          "x" : 800,
+          "y" : 80
         }
       }
     }
@@ -775,8 +775,8 @@
       "delegateAgentId" : "incident-summary-agent",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1160
+          "x" : 1160,
+          "y" : 80
         }
       }
     }
@@ -830,8 +830,8 @@
       "toolId" : "olo-core:log-reader",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1520
+          "x" : 1520,
+          "y" : 80
         }
       }
     }
@@ -885,8 +885,8 @@
       "toolId" : "olo-core:cpu-usage",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 1880
+          "x" : 1880,
+          "y" : 80
         }
       }
     }
@@ -940,8 +940,8 @@
       "toolId" : "olo-core:recently-changed-code",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 2240
+          "x" : 2240,
+          "y" : 80
         }
       }
     }
@@ -995,8 +995,8 @@
       "toolId" : "olo-core:restart-container",
       "designer" : {
         "position" : {
-          "y" : 80,
-          "x" : 2600
+          "x" : 2600,
+          "y" : 80
         }
       }
     }
@@ -1164,9 +1164,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -1280,25 +1280,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "agentSelectionStrategy" : "dynamic",
-    "role" : "log-rca-orchestrator",
-    "dynamicToolExecution" : {
-      "availableToolsVariable" : "availableToolsJson",
-      "availableAgentsVariable" : "availableAgentsJson",
-      "plannerNodeId" : "agent",
-      "continueNodeId" : "conversation-store",
-      "outputVariable" : "toolCallSequenceJson"
-    },
-    "planningStrategy" : "react",
-    "agentType" : "autonomous",
-    "returnVariable" : "ReturnValue",
+    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary",
     "plannerContext" : {
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
-      "injectCapabilities" : false,
-      "injectAgents" : true,
+      "selectedTools" : [ "olo-core:log-reader", "olo-core:cpu-usage", "olo-core:recently-changed-code", "olo-core:restart-container" ],
       "selectedAgents" : [ "log-failure-agent", "metrics-rca-agent", "code-change-rca-agent", "incident-summary-agent" ],
-      "selectedTools" : [ "olo-core:log-reader", "olo-core:cpu-usage", "olo-core:recently-changed-code", "olo-core:restart-container" ]
+      "injectAgents" : true,
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
     },
-    "description" : "Plans log failure triage, delegates RCA to specialist child workflows, and publishes a final summary"
+    "returnVariable" : "ReturnValue",
+    "agentType" : "autonomous",
+    "planningStrategy" : "react",
+    "dynamicToolExecution" : {
+      "outputVariable" : "toolCallSequenceJson",
+      "continueNodeId" : "conversation-store",
+      "plannerNodeId" : "agent",
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson"
+    },
+    "role" : "log-rca-orchestrator",
+    "agentSelectionStrategy" : "dynamic"
   }
 }

@@ -30,16 +30,16 @@
       "minimapNodeColor" : "#52525b"
     },
     "portColors" : {
-      "number" : "#38bdf8",
-      "array" : "#f472b6",
-      "object" : "#c084fc",
       "string" : "#a3e635",
       "capabilities" : "#22c55e",
       "integer" : "#38bdf8",
       "boolean" : "#fb923c",
       "message" : "#ef4444",
       "any" : "#94a3b8",
-      "agent-plug" : "#a855f7"
+      "agent-plug" : "#a855f7",
+      "number" : "#38bdf8",
+      "array" : "#f472b6",
+      "object" : "#c084fc"
     },
     "nodeTypes" : {
       "END" : {
@@ -180,7 +180,7 @@
       "type" : "string",
       "label" : "System Prompt",
       "description" : "System prompt for the agent",
-      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n",
+      "defaultValue" : "Address the request clearly and helpfully.\n\nRequest:\n{message}\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n",
       "required" : false,
       "ui" : {
         "widget" : "TEXTAREA",
@@ -475,7 +475,7 @@
       "outputVariable" : "toolCallSequenceJson",
       "maxInvalidJsonRetries" : 3,
       "continueNodeId" : "conversation-store",
-      "promptTemplate" : "You are a performance triage and latency investigation agent for the Open LLM Orchestrator (OLO).\nPrevious conversation summary (from conversation-load plugin):\n{conversationSummary}\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Signal collection — query CPU, memory, and latency metrics for the incident window (ISO-8601 startTime/endTime).\n   Use olo-core:cpu-usage, olo-core:memory-usage, and olo-core:numeric-metric.\n2. Specialist analysis — delegate to child workflows:\n   - latency-analysis-agent: interpret p95/p99 latency spikes and user impact\n   - resource-pressure-agent: correlate CPU and memory pressure with the latency window\n   - optimization-agent: recommend tuning actions (timeouts, pool sizes, circuit breakers)\n3. Final report — delegate to performance-report-agent with findings from all prior agents.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"payment-api-7f8c9d\", \"namespace\": \"production\" }).\n  Purpose: restart the degraded service container after triage completes\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
+      "promptTemplate" : "You are a performance triage and latency investigation agent for the Open LLM Orchestrator (OLO).\nReference-only prior conversation context (from conversation-load plugin):\n{conversationSummary}\n\nUse this context only for continuity. Do not quote, summarize, mention, or answer it unless the current request explicitly asks about prior conversation.\n\nUser request:\n{message}\n\nAvailable tools (strict allow-list — use only these toolId values):\n{availableToolsJson}\n\nAvailable agents (strict allow-list — delegate only to these agentId values):\n{availableAgentsJson}\n\nPrior agent results (JSON array — empty on first pass):\n{agentResultsJson}\n\nInvestigation playbook (execute in order across planner passes):\n1. Signal collection — query CPU, memory, and latency metrics for the incident window (ISO-8601 startTime/endTime).\n   Use olo-core:cpu-usage, olo-core:memory-usage, and olo-core:numeric-metric.\n2. Specialist analysis — delegate to child workflows:\n   - latency-analysis-agent: interpret p95/p99 latency spikes and user impact\n   - resource-pressure-agent: correlate CPU and memory pressure with the latency window\n   - optimization-agent: recommend tuning actions (timeouts, pool sizes, circuit breakers)\n3. Final report — delegate to performance-report-agent with findings from all prior agents.\nFinal step (human-approved mock action) — after investigation agents have completed:\n- Callolo-core:restart-container with arguments supplied by the operator at human-input (e.g. { \"containerId\": \"payment-api-7f8c9d\", \"namespace\": \"production\" }).\n  Purpose: restart the degraded service container after triage completes\n  The tool records a mock execution entry; include confirmationId, logPath, and summary in directResponse.\nOutput rules (strict):\n1. Return ONLY a single JSON object — no markdown, no code fences, no commentary, no trailing text.\n2. Schema:\n{\n  \"toolCalls\": [],\n  \"agentCalls\": [\n    { \"agentId\": \"<agent-id>\", \"message\": \"<task for child workflow>\" }\n  ],\n  \"directResponse\": null\n}\n3. Each agentCall runs as a blocking child workflow (executorId=child-workflow) in order; execution then continues forward.\n4. Never repeat agentCalls for an agentId that already appears in agentResultsJson.\n5. If no tools or agents are needed, set both arrays to [] and put the final answer in \"directResponse\".\n\nIf a previous attempt failed validation, fix it:\n{toolCallSequenceJsonValidationError}\n\nRespond with JSON only.",
       "designer" : {
         "position" : {
           "x" : 1160,
@@ -1164,9 +1164,9 @@
     "type" : "TOOL",
     "capability" : {
       "name" : "Conversation Load",
-      "description" : "Loads prior conversation and attaches summary to the workflow message",
+      "description" : "Loads prior conversation as reference-only context for the workflow message",
       "tags" : [ ],
-      "examples" : [ "Restore operator chat context before triage begins" ],
+      "examples" : [ "Restore operator chat context before triage begins without echoing history" ],
       "required_inputs" : [ ],
       "required_outputs" : [ ],
       "tool_requirements" : [ ],
@@ -1280,25 +1280,25 @@
   } ],
   "extensions" : [ ],
   "metadata" : {
-    "agentSelectionStrategy" : "dynamic",
-    "description" : "Investigates latency spikes using mock metrics and specialist child workflows",
-    "plannerContext" : {
-      "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:numeric-metric", "olo-core:restart-container" ],
-      "selectedAgents" : [ "latency-analysis-agent", "resource-pressure-agent", "optimization-agent", "performance-report-agent" ],
-      "injectAgents" : true,
-      "injectCapabilities" : false,
-      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ]
-    },
     "returnVariable" : "ReturnValue",
     "agentType" : "autonomous",
     "planningStrategy" : "react",
     "dynamicToolExecution" : {
-      "availableToolsVariable" : "availableToolsJson",
-      "outputVariable" : "toolCallSequenceJson",
       "continueNodeId" : "conversation-store",
       "plannerNodeId" : "agent",
-      "availableAgentsVariable" : "availableAgentsJson"
+      "availableAgentsVariable" : "availableAgentsJson",
+      "availableToolsVariable" : "availableToolsJson",
+      "outputVariable" : "toolCallSequenceJson"
     },
-    "role" : "performance-triage-orchestrator"
+    "role" : "performance-triage-orchestrator",
+    "agentSelectionStrategy" : "dynamic",
+    "description" : "Investigates latency spikes using mock metrics and specialist child workflows",
+    "plannerContext" : {
+      "selectedAgents" : [ "latency-analysis-agent", "resource-pressure-agent", "optimization-agent", "performance-report-agent" ],
+      "injectAgents" : true,
+      "injectCapabilities" : false,
+      "selectedVariables" : [ "message", "conversationSummary", "availableToolsJson", "availableAgentsJson", "agentResultsJson", "toolCallSequenceJson" ],
+      "selectedTools" : [ "olo-core:cpu-usage", "olo-core:memory-usage", "olo-core:numeric-metric", "olo-core:restart-container" ]
+    }
   }
 }
