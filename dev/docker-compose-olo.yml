@@ -13,6 +13,9 @@ services:
       OLO_CACHE_PORT: "6379"
       OLO_CACHE_DATABASE: "0"
       OLO_TEMPORAL_TARGET: temporal:7233
+      # Temporal payload protection (OLO M5.2). This dev stack keeps history readable; production mounts a key ring
+      # and sets OLO_PAYLOAD_KEYS_FILE instead.
+      OLO_PAYLOAD_PROTECTION: ${OLO_PAYLOAD_PROTECTION:-disabled-for-development}
       OLO_UI_TENANT_DISPLAY_NAME: "Default"
       OLO_UI_USER_DISPLAY_NAME: "Public"
       # URL workers use to POST run events. Host-run worker (gradlew/IDE): localhost:47080.
@@ -88,6 +91,9 @@ services:
     restart: unless-stopped
     environment:
       OLO_WORKER_CONFIG_PATH: /app/worker/config/worker-config.yaml
+      # Temporal payload protection (OLO M5.2). This dev stack keeps history readable; production mounts a key ring
+      # and sets OLO_PAYLOAD_KEYS_FILE instead.
+      OLO_PAYLOAD_PROTECTION: ${OLO_PAYLOAD_PROTECTION:-disabled-for-development}
       OLO_LLM_BASE_URL: http://ollama:11434
       OLO_CHAT_CALLBACK_BASE_URL: http://olo:7080
       OLO_DEMO_DATA_ROOT: /app/shared/olo-core/tools
